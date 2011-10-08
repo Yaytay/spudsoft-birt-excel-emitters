@@ -198,6 +198,18 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * Flag to track whether the current sheet has been named, to enable multiple sources to be used for potential names.
 	 */
 	protected boolean sheetNamed;
+	/**
+	 * Count of the nested tables that have been started
+	 */
+	protected int nestedTableCount;
+	/**
+	 * Count of the nested rows that have been started
+	 */
+	protected int nestedRowCount;
+	/**
+	 * Count of the nested cells that have been started
+	 */
+	protected int nestedCellCount;
 	
 	/**
 	 * Logger.
@@ -287,6 +299,9 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	    styleStack = new StyleStack();
 	    sm = new StyleManager(wb, styleStack, log, smu);
 	    startSheet( report.getTitle() );
+	    nestedCellCount = 0;
+	    nestedRowCount = 0;
+	    nestedTableCount = 0;
 	}
 
 	@Override
@@ -323,12 +338,15 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.removePrefix('C');
 		log.debug("endCell");
 		super.endCell(cell);
+		--nestedCellCount;
 
-		CellStyle cellStyle = sm.getStyle(styleStack.pop(ICellContent.class));
-		currentCell.setCellStyle(cellStyle);
-		
-		colNum += cell.getColSpan();
-		currentCell = null;
+		if( nestedCellCount == 0 ) {
+			CellStyle cellStyle = sm.getStyle(styleStack.pop(ICellContent.class));
+			currentCell.setCellStyle(cellStyle);
+			
+			colNum += cell.getColSpan();
+			currentCell = null;
+		}
 	}
 
 
@@ -396,36 +414,39 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.removePrefix( 'R' );
 		log.debug("endRow");
 		super.endRow(row);
+		--nestedRowCount;
 
-		// Check whether the entire row should be deleted
-		boolean blankRow = true;
-		for(Iterator<Cell> iter = currentRow.cellIterator(); iter.hasNext(); ) {
-			Cell cell = iter.next();
-			if(! smu.cellIsEmpty(cell)) {
-				blankRow = false;
-				break;
-			}
-		}
-		if(blankRow) {
-			--rowNum;
-			log.debug("Removing blank row");
-			currentSheet.removeRow(currentRow);
-		} else {
-			DimensionType height = row.getHeight();
-			if(height != null) {
-				double points = height.convertTo(DimensionType.UNITS_PT);
-				if( !rowHeightChanged || (points > currentRow.getHeightInPoints())) {
-					rowHeightChanged = true;
-					currentRow.setHeightInPoints((float)points);
+		if( nestedRowCount == 0) {
+			// Check whether the entire row should be deleted
+			boolean blankRow = true;
+			for(Iterator<Cell> iter = currentRow.cellIterator(); iter.hasNext(); ) {
+				Cell cell = iter.next();
+				if(! smu.cellIsEmpty(cell)) {
+					blankRow = false;
+					break;
 				}
 			}
-			
-			applyBordersToArea( 0, colNum - 1, rowNum, rowNum, row.getStyle() );
+			if(blankRow) {
+				--rowNum;
+				log.debug("Removing blank row");
+				currentSheet.removeRow(currentRow);
+			} else {
+				DimensionType height = row.getHeight();
+				if(height != null) {
+					double points = height.convertTo(DimensionType.UNITS_PT);
+					if( !rowHeightChanged || (points > currentRow.getHeightInPoints())) {
+						rowHeightChanged = true;
+						currentRow.setHeightInPoints((float)points);
+					}
+				}
+				
+				applyBordersToArea( 0, colNum - 1, rowNum, rowNum, row.getStyle() );
+			}
+	
+			++rowNum;
+			currentRow = null;
+			styleStack.pop(IRowContent.class);
 		}
-
-		++rowNum;
-		currentRow = null;
-		styleStack.pop(IRowContent.class);
 	}
 	
 	/**
@@ -528,20 +549,23 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.removePrefix( 'T' );
 		log.debug("endTable");
 		super.endTable(table);
-		
-		// Drawings don't remain the same when columns are resized, so for now don't resize if there are any drawings
-		if( this.currentDrawing == null ) {
-			for( int col = 0; col < table.getColumnCount(); ++col ) {
-				log.debug( "BIRT table column width: " + col + " = " + table.getColumn(col).getWidth());
-				if( table.getColumn(col).getWidth() != null ) {
-					currentSheet.setColumnWidth(col, smu.poiColumnWidthFromDimension(table.getColumn(col).getWidth()));
+		--nestedTableCount;
+		if( nestedTableCount == 0) {
+			
+			// Drawings don't remain the same when columns are resized, so for now don't resize if there are any drawings
+			if( this.currentDrawing == null ) {
+				for( int col = 0; col < table.getColumnCount(); ++col ) {
+					log.debug( "BIRT table column width: " + col + " = " + table.getColumn(col).getWidth());
+					if( table.getColumn(col).getWidth() != null ) {
+						currentSheet.setColumnWidth(col, smu.poiColumnWidthFromDimension(table.getColumn(col).getWidth()));
+					}
 				}
 			}
+	
+			applyBordersToArea( 0, table.getColumnCount() - 1, tableStartRow, rowNum - 1, table.getStyle() );
+			
+			styleStack.pop(ITableContent.class);
 		}
-
-		applyBordersToArea( 0, table.getColumnCount() - 1, tableStartRow, rowNum - 1, table.getStyle() );
-		
-		styleStack.pop(ITableContent.class);
 	}
 
 
@@ -589,14 +613,17 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 				+ ", \ncomputedStyle: " + StyleManagerUtils.birtStyleToString(cell.getComputedStyle())
 */				);
 		super.startCell(cell);
-		currentCell = currentRow.createCell( cell.getColumn() );
-		currentCell.setCellType(Cell.CELL_TYPE_BLANK);
-				
-		if(( cell.getColSpan() > 1 )||( cell.getRowSpan() > 1 )) {
-			currentSheet.addMergedRegion( new CellRangeAddress( rowNum, rowNum + cell.getRowSpan() - 1
-					, colNum, colNum + cell.getColSpan() - 1));
+		++nestedCellCount;
+		if( nestedCellCount == 1 ) {
+			currentCell = currentRow.createCell( cell.getColumn() );
+			currentCell.setCellType(Cell.CELL_TYPE_BLANK);
+					
+			if(( cell.getColSpan() > 1 )||( cell.getRowSpan() > 1 )) {
+				currentSheet.addMergedRegion( new CellRangeAddress( rowNum, rowNum + cell.getRowSpan() - 1
+						, colNum, colNum + cell.getColSpan() - 1));
+			}
+			styleStack.push(cell);
 		}
-		styleStack.push(cell);
 	}
 
 
@@ -972,10 +999,13 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 				+ ", \ncomputedStyle: " + StyleManagerUtils.birtStyleToString(row.getComputedStyle())
 */				);
 		super.startRow(row);
-		currentRow = this.currentSheet.createRow(rowNum);
-		colNum = 0;
-		styleStack.push(row);
-		rowHeightChanged = false;
+		++nestedRowCount;
+		if( nestedRowCount == 1) {
+			currentRow = this.currentSheet.createRow(rowNum);
+			colNum = 0;
+			styleStack.push(row);
+			rowHeightChanged = false;
+		}
 	}
 
 
@@ -985,8 +1015,11 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.addPrefix( 'T' );
 		log.debug("startTable, style: " + smu.birtStyleToString(table.getStyle()));;
 		super.startTable(table);
-		styleStack.push(table);
-		tableStartRow = rowNum;
+		++nestedTableCount;
+		if( nestedTableCount == 1 ) {
+			styleStack.push(table);
+			tableStartRow = rowNum;
+		}
 /*		String tableName = table.getName();
 		if(( tableName != null ) && !sheetNamed ) {
 			wb.setSheetName(sheetNum, tableName);
