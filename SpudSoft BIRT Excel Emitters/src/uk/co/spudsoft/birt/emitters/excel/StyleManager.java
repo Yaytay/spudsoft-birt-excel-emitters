@@ -31,6 +31,7 @@ import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.content.IStyledElement;
 import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
+import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.w3c.dom.css.CSSValue;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -62,6 +63,7 @@ public class StyleManager {
 	private List<StylePair> styles = new ArrayList<StylePair>();
 	private StyleStack styleStack;
 	private StyleManagerUtils smu;
+	private CSSEngine cssEngine;
 	private Logger log;
 
 	/**
@@ -73,13 +75,16 @@ public class StyleManager {
 	 * Logger to be used during processing.
 	 * @param smu
 	 * Set of functions for carrying out conversions between BIRT and POI. 
+	 * @param cssEngine
+	 * BIRT CSS Engine for creating BIRT styles. 
 	 */
-	public StyleManager(Workbook workbook, StyleStack styleStack, Logger log, StyleManagerUtils smu) {
+	public StyleManager(Workbook workbook, StyleStack styleStack, Logger log, StyleManagerUtils smu, CSSEngine cssEngine) {
 		this.workbook = workbook;
 		this.fm = new FontManager(workbook, smu);
 		this.styleStack = styleStack;
 		this.log = log;
 		this.smu = smu;
+		this.cssEngine = cssEngine;
 	}
 	
 	/**
@@ -229,7 +234,7 @@ public class StyleManager {
 			}
 		}
 		
-		return null;
+		return new AreaStyle( cssEngine );
 	}
 
 	/**

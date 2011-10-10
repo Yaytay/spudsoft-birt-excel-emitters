@@ -296,8 +296,8 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		
 	    sheetNum = -1;
 	    wb = createWorkbook();
-	    styleStack = new StyleStack();
-	    sm = new StyleManager(wb, styleStack, log, smu);
+	    styleStack = new StyleStack();	    
+	    sm = new StyleManager(wb, styleStack, log, smu, report.getRoot().getCSSEngine());
 	    startSheet( report.getTitle() );
 	    nestedCellCount = 0;
 	    nestedRowCount = 0;
@@ -525,8 +525,11 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					for( int col = colStart; col <= colEnd; ++col ) {
 						if( ( col == colStart ) || ( col == colEnd ) || ( row == rowStart ) || ( row == rowEnd ) ) {
 							Cell styleCell = styleRow.getCell(col);
-							log.debug( "Applying border to cell [R" + styleCell.getRowIndex() + "C" + styleCell.getColumnIndex() + "]");
+							if( styleCell == null ) {
+								styleCell = styleRow.createCell(col);
+							}
 							if( styleCell != null ) {
+								log.debug( "Applying border to cell [R" + styleCell.getRowIndex() + "C" + styleCell.getColumnIndex() + "]");
 								CellStyle newStyle = sm.getStyleWithBorders( styleCell.getCellStyle()
 										, ( (row == rowEnd) ? borderStyleBottom : null ), ( (row == rowEnd) ? borderWidthBottom : null ), ( (row == rowEnd) ? borderColourBottom : null )
 										, ( (col == colStart) ? borderStyleLeft: null ), ( (col == colStart) ? borderWidthLeft: null ), ( (col == colStart) ? borderColourLeft: null )
