@@ -3,6 +3,7 @@
 	<name>SpudSoft BIRT Excel Emitters Tests</name>
 	<comment></comment>
 	<projects>
+		<project>SpudSoft BIRT Excel Emitters</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

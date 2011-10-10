@@ -22,12 +22,10 @@ package uk.co.spudsoft.birt.emitters.excel.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.birt.core.exception.BirtException;
@@ -49,25 +47,10 @@ public class NestedTablesReportTest extends ReportRunner {
 			assertEquals( "Nested Tables Test Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertNotNull( sheet.getRow(0) );
-			assertNotNull( sheet.getRow(1) );
-			assertNotNull( sheet.getRow(2) );
-			assertNotNull( sheet.getRow(3) );
-			assertNull( sheet.getRow(4) );
+			assertEquals(1, firstNullRow(sheet));
 			
-			assertEquals( 1.0, sheet.getRow(1).getCell(0).getNumericCellValue(), 0.001);
-			assertEquals( 2.0, sheet.getRow(1).getCell(1).getNumericCellValue(), 0.001);
-			assertEquals( 3.0, sheet.getRow(1).getCell(2).getNumericCellValue(), 0.001);
-			assertEquals( 2.0, sheet.getRow(2).getCell(0).getNumericCellValue(), 0.001);
-			assertEquals( 4.0, sheet.getRow(2).getCell(1).getNumericCellValue(), 0.001);
-			assertEquals( 6.0, sheet.getRow(2).getCell(2).getNumericCellValue(), 0.001);
-			assertEquals( 3.0, sheet.getRow(3).getCell(0).getNumericCellValue(), 0.001);
-			assertEquals( 6.0, sheet.getRow(3).getCell(1).getNumericCellValue(), 0.001);
-			assertEquals( 9.0, sheet.getRow(3).getCell(2).getNumericCellValue(), 0.001);
-			
-			assertEquals( 3510, sheet.getColumnWidth(0) );
-			assertEquals( 3510, sheet.getColumnWidth(1) );
-			assertEquals( 3510, sheet.getColumnWidth(2) );			
+			assertEquals( "One Two Three 1 2 3 2 4 6 3 6 9", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "One Two Three 1 2 3 2 4 6 3 6 9", sheet.getRow(0).getCell(1).getStringCellValue());
 		} finally {
 			inputStream.close();
 		}

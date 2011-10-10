@@ -508,7 +508,7 @@ public abstract class StyleManagerUtils {
 	 * A string representing a data format in Excel.
 	 */
 	private String poiNumberFormatFromBirt(String birtFormat) {
-		if( "General Number".equalsIgnoreCase(null)) {
+		if( "General Number".equalsIgnoreCase(birtFormat)) {
 			return null;
 		}
 		birtFormat = birtFormat.replace("E00", "E+00");
