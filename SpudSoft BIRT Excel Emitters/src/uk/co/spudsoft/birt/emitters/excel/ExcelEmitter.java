@@ -243,6 +243,17 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 	
 	/**
+	 * Returns the symbolic name for the plugin.
+	 */
+	protected String getSymbolicName() {
+		if( ( ExcelEmitterPlugin.getDefault() != null ) && ( ExcelEmitterPlugin.getDefault().getBundle() != null ) ) {
+			return ExcelEmitterPlugin.getDefault().getBundle().getSymbolicName();
+		} else {
+			return "uk.co.spudsoft.birt.emitters.excel";
+		}
+	}
+	
+	/**
 	 * Sets the style manager utility object.
 	 * Must be called immediately after the constructor (and cannot be made a constructor argument).
 	 * @param smu
@@ -315,7 +326,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			log.debug("ex:" + ex.toString());
 			ex.printStackTrace();
 			
-			throw new BirtException( ExcelEmitterPlugin.getDefault().getBundle().getSymbolicName()
+			throw new BirtException( getSymbolicName()
 					, "Unable to save file (\"{}\")"
 					, new Object[] { reportOutputFilename }
 					, null

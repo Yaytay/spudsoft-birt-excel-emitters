@@ -29,7 +29,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.eclipse.birt.core.archive.FileArchiveWriter;
 import org.eclipse.birt.core.archive.IDocArchiveWriter;
@@ -43,6 +47,8 @@ import org.eclipse.birt.report.engine.api.IReportEngineFactory;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
 import org.eclipse.birt.report.engine.api.IRunTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
+
+import uk.co.spudsoft.birt.emitters.excel.tests.framework.Activator;
 
 public class ReportRunner {
 	
@@ -68,6 +74,16 @@ public class ReportRunner {
 		}
 		return i;
 	}
+	
+	protected int greatestNumColumns(Sheet sheet) {
+		int result = 0;
+		for(Row row : sheet) {
+			if(row.getLastCellNum() > result) {
+				result = row.getLastCellNum();
+			}
+		}
+		return result;
+	}
 
 	protected InputStream runAndRenderReport( String filename, String outputFormat ) throws BirtException, IOException {
 
@@ -79,7 +95,27 @@ public class ReportRunner {
 		IReportEngine reportEngine = engineFactory.createReportEngine( config );
 		assertNotNull(reportEngine);
 		
+		String filepath = null;
+		if( Activator.getContext() != null ) {
+			URL bundleLocation = new URL(Activator.getContext().getBundle().getLocation()); 
+			// System.err.println( "Activator.getContext().getBundle().getLocation() = " + bundleLocation );
+			String bundleLocationFile = bundleLocation.getFile();
+			if(bundleLocationFile.startsWith("file:/")) {
+				bundleLocationFile = bundleLocationFile.substring(6);
+			}
+			// System.err.println( "bundleLocationFile = " + bundleLocationFile );
+
+			URL resourceLocation = this.getClass().getResource( filename );
+			String resourceLocationFile = resourceLocation.getFile();
+			// System.err.println( "resourceLocationFile = " + resourceLocationFile );
+			
+			
+			filepath = bundleLocationFile + "bin" + resourceLocationFile;
+			// System.err.println( "filepath = " + filepath );
+		}
+
 		InputStream resourceStream = this.getClass().getResourceAsStream( filename );
+		
 		assertNotNull( resourceStream );
 		try {
 			IReportRunnable reportRunnable = reportEngine.openReportDesign( resourceStream );
@@ -92,6 +128,16 @@ public class ReportRunner {
 				IRunTask reportRunTask = reportEngine.createRunTask( reportRunnable );
 				assertNotNull(reportRunTask);
 				try {
+					if( filepath != null ) {
+						@SuppressWarnings("unchecked")
+						Map<String,Object> appContext = (Map<String,Object>)reportRunTask.getAppContext();
+						if( appContext == null ) {
+							appContext = new HashMap<String,Object>();
+							reportRunTask.setAppContext(appContext);
+						}
+						appContext.put("__report", filepath);					
+					}
+					
 					IDocArchiveWriter archiveWriter = new FileArchiveWriter( tempDoc.getCanonicalPath() );
 					assertNotNull(archiveWriter);
 	

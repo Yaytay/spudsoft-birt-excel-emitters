@@ -80,6 +80,9 @@ public class FontManager {
 		if(!StyleManagerUtils.objectsEqual(style1.getFontFamily(), style2.getFontFamily())) {
 			return false;
 		}
+		if( style1.getFontFamily() == null ) {
+			return true;
+		}
 		// Size
 		if(!StyleManagerUtils.objectsEqual(style1.getFontSize(), style2.getFontSize())) {
 			return false;
@@ -112,6 +115,9 @@ public class FontManager {
 		
 		// Family
 		String fontName = smu.poiFontNameFromBirt(birtStyle.getFontFamily());
+		if( fontName == null ) {
+			fontName = "Calibri";
+		}
 		font.setFontName(fontName);
 		System.err.println("Font name:" + font.getFontName());
 		// Size
@@ -146,6 +152,10 @@ public class FontManager {
 	 */
 	Font getFont( IStyle birtStyle ) {
 		if( birtStyle == null ) {
+			return null;
+		}
+		
+		if( birtStyle.getFontFamily() == null ) {
 			return null;
 		}
 		

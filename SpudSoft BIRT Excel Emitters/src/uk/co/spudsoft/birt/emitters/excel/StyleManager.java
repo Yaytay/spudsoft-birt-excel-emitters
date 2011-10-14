@@ -181,7 +181,9 @@ public class StyleManager {
 		poiStyle.setAlignment(smu.poiAlignmentFromBirtAlignment(birtStyle.getTextAlign()));
 		// Font
 		Font font = fm.getFont(birtStyle);
-		poiStyle.setFont(font);
+		if( font != null ) {
+			poiStyle.setFont(font);
+		}
 		// Background colour
 		smu.addBackgroundColourToStyle(workbook, poiStyle, birtStyle.getBackgroundColor());
 		// Top border 
