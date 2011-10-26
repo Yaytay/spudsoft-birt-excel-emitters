@@ -71,6 +71,12 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	
 	/**
+	 * Number of milliseconds in a day, to determine whether a given date is date/time/datetime
+	 */
+	private static final long oneDay = 24 * 60 * 60 * 1000;
+
+	
+	/**
 	 * <p>
 	 * CellImage is used to cache all the required data for inserting images so that they can be
 	 * processed after all other spreadsheet contents has been inserted.
@@ -210,6 +216,10 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * Count of the nested cells that have been started
 	 */
 	protected int nestedCellCount;
+	/**
+	 * The last value added to a cell
+	 */
+	protected Object lastValue;
 	
 	/**
 	 * Logger.
@@ -343,6 +353,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 	
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void endCell(ICellContent cell) throws BirtException {
 		// TODO Auto-generated method stub
@@ -352,11 +363,35 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		--nestedCellCount;
 
 		if( nestedCellCount == 0 ) {
-			CellStyle cellStyle = sm.getStyle(styleStack.pop(ICellContent.class));
+			
+			ICellContent cellContent = styleStack.pop(ICellContent.class);
+			IStyle birtStyle = cellContent.getStyle();
+			
+			if( ( birtStyle.getNumberFormat() == null )
+					&& ( birtStyle.getDateFormat() == null )
+					&& ( birtStyle.getDateTimeFormat() == null )
+					&& ( birtStyle.getTimeFormat() == null )
+					&& ( lastValue != null )
+					) {
+				if( lastValue instanceof Date ) {
+					long time = ((Date)lastValue).getTime();
+					time = time - ((Date)lastValue).getTimezoneOffset() * 60000;
+					if( time % oneDay == 0 ) {
+						birtStyle.setDateFormat("Short Date");
+					} else if( time < oneDay ) {
+						birtStyle.setDateFormat("Short Time");
+					} else {
+						birtStyle.setDateFormat("General Date");
+					}
+				}
+			}
+			
+			CellStyle cellStyle = sm.getStyle(cellContent);
 			currentCell.setCellStyle(cellStyle);
 			
 			colNum += cell.getColSpan();
 			currentCell = null;
+			lastValue = null;
 		}
 	}
 
@@ -686,24 +721,31 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			if( value instanceof Double ) {
 				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				currentCell.setCellValue((Double)value);
+				lastValue = value;
 			} else if( value instanceof Integer ) {
 				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				currentCell.setCellValue((Integer)value);				
+				lastValue = value;
 			} else if( value instanceof Long ) {
 				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				currentCell.setCellValue((Long)value);				
+				lastValue = value;
 			} else if( value instanceof Date ) {
 				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				currentCell.setCellValue((Date)value);
+				lastValue = value;
 			} else if( value instanceof Boolean ) {
 				currentCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 				currentCell.setCellValue(((Boolean)value).booleanValue());
+				lastValue = value;
 			} else if( value instanceof BigDecimal ) {
 				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				currentCell.setCellValue(((BigDecimal)value).doubleValue());				
+				lastValue = value;
 			} else if( value instanceof String ) {
 				currentCell.setCellType(Cell.CELL_TYPE_STRING);
 				currentCell.setCellValue((String)value);				
+				lastValue = value;
 			} else if( value != null ){
 				log.debug( "Un-handled data: " + ( value == null ? "<null>" : value.toString() ) );
 			}
@@ -717,7 +759,9 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		case Cell.CELL_TYPE_NUMERIC:
 			break;
 		case Cell.CELL_TYPE_STRING:
-			currentCell.setCellValue( currentCell.getStringCellValue() + " " + value.toString() );
+			String newValue = currentCell.getStringCellValue() + " " + value.toString();
+			currentCell.setCellValue( newValue );
+			lastValue = newValue;
 			break;
 		}
 	}
