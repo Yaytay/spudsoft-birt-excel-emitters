@@ -477,7 +477,16 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		if( ( nestedCellCount == 0 ) && ( nestedRowCount == 0 ) && ( nestedTableCount == 0 ) ) {
 			styleStack.pop(IPageContent.class);
 			if( lastTableName != null ) {
-				wb.setSheetName(sheetNum, lastTableName);
+				log.debug("Attempting to name sheet " + sheetNum + "\"" + lastTableName + "\" ");
+				boolean alreadyFound = false;
+				for( int i = 0; i < sheetNum; ++i ) {
+					if( wb.getSheetName(i).equals(lastTableName)) {
+						alreadyFound = true;
+					}
+				}
+				if(!alreadyFound) {
+					wb.setSheetName(sheetNum, lastTableName);
+				}
 			} 
 			endSheet();
 		}

@@ -172,4 +172,50 @@ public class MultiSheetsReportTest extends ReportRunner {
 		}
 	}
 	
+	@Test
+	public void testBigTableDefaultInterval() throws BirtException, IOException {
+
+		InputStream inputStream = runAndRenderReportCustomTask("MultiSheetsBigTableFortyInterval.rptdesign", "xlsx");
+		assertNotNull(inputStream);
+		try {			
+			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+			assertNotNull(workbook);
+			
+			assertEquals( 5, workbook.getNumberOfSheets() );
+			assertEquals( "Number Formats 1", workbook.getSheetAt(0).getSheetName());
+			assertEquals( "Sheet1", workbook.getSheetAt(1).getSheetName());
+			assertEquals( "Sheet2", workbook.getSheetAt(2).getSheetName());
+			assertEquals( "Sheet3", workbook.getSheetAt(3).getSheetName());
+			assertEquals( "Sheet4", workbook.getSheetAt(4).getSheetName());
+			
+			assertEquals(41, firstNullRow(workbook.getSheetAt(0)));
+			assertEquals(41, firstNullRow(workbook.getSheetAt(1)));
+			assertEquals(41, firstNullRow(workbook.getSheetAt(2)));
+			assertEquals(41, firstNullRow(workbook.getSheetAt(3)));
+			assertEquals(32, firstNullRow(workbook.getSheetAt(4)));
+			
+		} finally {
+			inputStream.close();
+		}
+	}
+	
+	@Test
+	public void testBigTableZeroInterval() throws BirtException, IOException {
+
+		InputStream inputStream = runAndRenderReportCustomTask("MultiSheetsBigTableZeroInterval.rptdesign", "xlsx");
+		assertNotNull(inputStream);
+		try {			
+			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+			assertNotNull(workbook);
+			
+			assertEquals( 1, workbook.getNumberOfSheets() );
+			assertEquals( "Number Formats Test Report", workbook.getSheetAt(0).getSheetName());
+			
+			assertEquals(192, firstNullRow(workbook.getSheetAt(0)));
+			
+		} finally {
+			inputStream.close();
+		}
+	}
+	
 }
