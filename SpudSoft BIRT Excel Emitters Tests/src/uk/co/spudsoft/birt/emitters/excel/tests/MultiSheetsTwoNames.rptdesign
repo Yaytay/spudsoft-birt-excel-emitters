@@ -4,7 +4,6 @@
     <text-property name="title">Number Formats Test Report</text-property>
     <property name="units">in</property>
     <method name="initialize"><![CDATA[var rowCount = 0;
-// java.lang.System.out.println( "rowCount: " + rowCount );
 ]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -127,8 +126,7 @@
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
-            <method name="fetch"><![CDATA[// java.lang.System.out.println( "fetch" );
-// java.lang.System.out.println( "rowCount: " + ( rowCount == null ? "<null>" : rowCount ) );
+            <method name="fetch"><![CDATA[
 if( rowCount < 2 ) {
 	++rowCount;
 	
@@ -143,11 +141,8 @@ if( rowCount < 2 ) {
 	row[ "Date" ] = new Date(pi * 500000000000);
 	row[ "Time" ] = new Date(pi * 500000000000);
 	
-	// java.lang.System.out.println( "Date: " + row[ "Date" ] + " / " + row["Date"].getTime());
-	
 	return true;
 } else {
-	// java.lang.System.out.println( "rowCount: " + rowCount );
 	return false;
 }
 ]]></method>
@@ -225,7 +220,8 @@ if( rowCount < 2 ) {
         </simple-master-page>
     </page-setup>
     <body>
-        <table id="41">
+        <table name="Number Formats 1" id="41">
+            <property name="pageBreakAfter">auto</property>
             <property name="width">7.614583333333333in</property>
             <property name="dataSet">Data Set</property>
             <list-property name="boundDataColumns">
@@ -424,7 +420,8 @@ if( rowCount < 2 ) {
                 </row>
             </footer>
         </table>
-        <table id="97">
+        <table name="Number Formats 2" id="97">
+            <property name="pageBreakAfter">always</property>
             <property name="width">7.614583333333333in</property>
             <property name="dataSet">Data Set</property>
             <list-property name="boundDataColumns">
@@ -635,7 +632,8 @@ if( rowCount < 2 ) {
                 </row>
             </footer>
         </table>
-        <table id="156">
+        <table name="Number Formats 3" id="156">
+            <property name="pageBreakAfter">always</property>
             <property name="dataSet">Data Set</property>
             <list-property name="boundDataColumns">
                 <structure>

@@ -10,7 +10,7 @@
             format="xlsx"
             id="uk.co.spudsoft.birt.emitters.excel.XlsxEmitter"
             mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            pagination="no-pagination"
+            pagination="page-break-pagination"
             >
       </emitter>
       <emitter
@@ -18,7 +18,7 @@
             format="xls"
             id="uk.co.spudsoft.birt.emitters.excel.XlsEmitter"
             mimeType="application/vnd.ms-excel"
-            pagination="no-pagination"
+            pagination="page-break-pagination"
             >
       </emitter>
    </extension>

@@ -119,18 +119,15 @@ public class FontManager {
 			fontName = "Calibri";
 		}
 		font.setFontName(fontName);
-		System.err.println("Font name:" + font.getFontName());
 		// Size
 		short fontSize = smu.fontSizeInPoints(birtStyle.getFontSize());
 		if(fontSize > 0) {
 			font.setFontHeightInPoints(fontSize);
 		}
-		System.err.println("Font size:" + fontSize + "pt");
 		// Weight
 		short fontWeight = smu.poiFontWeightFromBirt(birtStyle.getFontWeight());
 		if(fontWeight > 0) {
 			font.setBoldweight(fontWeight);
-			System.err.println("Font weight: bold");
 		}
 		// Style
 		if("italic".equals(birtStyle.getFontStyle()) || "oblique".equals(birtStyle.getFontStyle())) {

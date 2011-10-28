@@ -201,10 +201,6 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 */
 	protected int tableStartRow;
 	/**
-	 * Flag to track whether the current sheet has been named, to enable multiple sources to be used for potential names.
-	 */
-	protected boolean sheetNamed;
-	/**
 	 * Count of the nested tables that have been started
 	 */
 	protected int nestedTableCount;
@@ -220,6 +216,14 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * The last value added to a cell
 	 */
 	protected Object lastValue;
+	/**
+	 * The last named table/grid seen, used to name sheets
+	 */
+	protected String lastTableName;
+	/**
+	 * Record whether a name was given to the first sheet
+	 */
+	protected boolean firstSheetNamed;
 	
 	/**
 	 * Logger.
@@ -285,14 +289,9 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * @param possibleTitle
 	 * A possible title for the new sheet (may be null or empty).
 	 */
-	protected void startSheet( String possibleTitle ) {
+	protected void startSheet( ) {
 	    currentSheet = wb.createSheet();
 	    ++sheetNum;
-	    sheetNamed = false;
-	    if( ( possibleTitle != null ) && ! possibleTitle.isEmpty() ) {
-	    	sheetNamed = true;
-	    	wb.setSheetName(sheetNum, possibleTitle);
-	    }
 	    rowNum = 0;
 	}
 	
@@ -319,7 +318,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	    wb = createWorkbook();
 	    styleStack = new StyleStack();	    
 	    sm = new StyleManager(wb, styleStack, log, smu, report.getRoot().getCSSEngine());
-	    startSheet( report.getTitle() );
+
 	    nestedCellCount = 0;
 	    nestedRowCount = 0;
 	    nestedTableCount = 0;
@@ -327,7 +326,15 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void end(IReportContent report) throws BirtException {
-		endSheet();
+		// endSheet();
+		
+		String reportTitle = report.getTitle();
+		if( ( wb.getNumberOfSheets() == 1 ) 
+				&& ! firstSheetNamed 
+				&& ( reportTitle != null )) {
+			wb.setSheetName(0, reportTitle);
+		}
+		
 		log.removePrefix('>');
 		log.debug("end:" + report.toString());
 		try {
@@ -356,7 +363,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void endCell(ICellContent cell) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.removePrefix('C');
 		log.debug("endCell");
 		super.endCell(cell);
@@ -398,7 +405,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endContainer(IContainerContent container) throws BirtException {
-		// TODO Auto-generated method stub
+
 		// log.debug("endContainer");
 		super.endContainer(container);
 	}
@@ -406,7 +413,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endContent(IContent content) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endContent");
 		super.endContent(content);
 	}
@@ -414,7 +421,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endGroup(IGroupContent group) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endGroup");
 		super.endGroup(group);
 	}
@@ -422,7 +429,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endList(IListContent list) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endList");
 		super.endList(list);
 	}
@@ -430,7 +437,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endListBand(IListBandContent listBand) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endListBand");
 		super.endListBand(listBand);
 	}
@@ -438,25 +445,48 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endListGroup(IListGroupContent group) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endListGroup");
 		super.endListGroup(group);
 	}
 */
 
 	@Override
+	public void startPage(IPageContent page) throws BirtException {
+		log.addPrefix( 'P' );
+		log.debug("startPage");
+		super.startPage(page);
+		if( ( nestedCellCount == 0 ) && ( nestedRowCount == 0 ) && ( nestedTableCount == 0 ) ) {
+			startSheet();
+			styleStack.push(page);
+			log.debug("Page type: " + page.getPageType());
+			
+			if( page.getPageType() != null ) {
+				setupPageSize(page);
+			}
+			
+			prepareMarginDimensions(page);
+		}
+	}
+
+	@Override
 	public void endPage(IPageContent page) throws BirtException {
-		// TODO Auto-generated method stub
 		log.removePrefix( 'P' );
 		log.debug("endPage");
 		super.endPage(page);
-		styleStack.pop(IPageContent.class);
+		if( ( nestedCellCount == 0 ) && ( nestedRowCount == 0 ) && ( nestedTableCount == 0 ) ) {
+			styleStack.pop(IPageContent.class);
+			if( lastTableName != null ) {
+				wb.setSheetName(sheetNum, lastTableName);
+			} 
+			endSheet();
+		}
 	}
 
 
 	@Override
 	public void endRow(IRowContent row) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.removePrefix( 'R' );
 		log.debug("endRow");
 		super.endRow(row);
@@ -594,7 +624,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void endTable(ITableContent table) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.removePrefix( 'T' );
 		log.debug("endTable");
 		super.endTable(table);
@@ -620,7 +650,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endTableBand(ITableBandContent band) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endTableBand");
 		super.endTableBand(band);
 	}
@@ -628,7 +658,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void endTableGroup(ITableGroupContent group) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("endTableGroup");
 		super.endTableGroup(group);
 	}
@@ -636,17 +666,18 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void initialize(IEmitterServices service) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("inintialize");
 		reportOutputStream = service.getRenderOption().getOutputStream();
 		reportOutputFilename = service.getRenderOption().getOutputFileName();
+		
 		super.initialize(service);
 	}
 
 
 	@Override
 	public void startAutoText(IAutoTextContent autoText) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startAutoText");		
 		super.startAutoText(autoText);
 	}
@@ -654,7 +685,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void startCell(ICellContent cell) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.addPrefix( 'C' );
 		log.debug("startCell [R" + cell.getRow() + "C" + cell.getColumn() + "], span:" + cell.getColSpan() +", align:" + cell.getStyle().getTextAlign()
 /*				+ ", \nstyle: " + StyleManagerUtils.birtStyleToString(cell.getStyle())
@@ -679,7 +710,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 /*	@Override
 	public void startContainer(IContainerContent container)
 			throws BirtException {
-		// TODO Auto-generated method stub
+
 		// log.debug("startContainer");
 		super.startContainer(container);
 	}
@@ -687,7 +718,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startContent(IContent content) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startContent type:" + content.getContentType());
 		super.startContent(content);
 	}
@@ -695,7 +726,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void startData(IDataContent data) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startData " + ( ( data != null ) && ( data.getValue() != null ) ? data.getValue().toString() + " (" + data.getValue().getClass().getCanonicalName() + ")" : "null" ) 
 				// + ", style: " + StyleManagerUtils.birtStyleToString(data.getStyle())
 				);
@@ -769,7 +800,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startForeign(IForeignContent foreign) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startForeign");
 		super.startForeign(foreign);
 	}
@@ -777,7 +808,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startGroup(IGroupContent group) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startGroup");
 		super.startGroup(group);
 	}
@@ -785,7 +816,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void startImage(IImageContent image) throws BirtException {
-		// TODO Auto-generated method stub
+
 		byte[] data = image.getData();
 		log.debug("startImage: "
 				+ "[" + image.getMIMEType() +"] "
@@ -958,7 +989,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void startLabel(ILabelContent label) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startLabel " + label.getLabelText() + ", style: " + smu.birtStyleToString(label.getStyle()));
 		super.startLabel(label);
 		
@@ -985,7 +1016,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startList(IListContent list) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startList");
 		super.startList(list);
 	}
@@ -993,7 +1024,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startListBand(IListBandContent listBand) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startListBand");
 		super.startListBand(listBand);
 	}
@@ -1001,7 +1032,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startListGroup(IListGroupContent group) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startListGroup");
 		super.startListGroup(group);
 	}
@@ -1031,25 +1062,8 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	protected abstract void prepareMarginDimensions(IPageContent page);
 	
 	@Override
-	public void startPage(IPageContent page) throws BirtException {
-		// TODO Auto-generated method stub
-		log.addPrefix( 'P' );
-		log.debug("startPage");
-		super.startPage(page);
-		styleStack.push(page);
-		log.debug("Page type: " + page.getPageType());
-		
-		if( page.getPageType() != null ) {
-			setupPageSize(page);
-		}
-		
-		prepareMarginDimensions(page);
-	}
-
-
-	@Override
 	public void startRow(IRowContent row) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.addPrefix( 'R' );
 		log.debug("startRow"
 /*				+ ", \nstyle: " + StyleManagerUtils.birtStyleToString(row.getStyle())
@@ -1069,7 +1083,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 	@Override
 	public void startTable(ITableContent table) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.addPrefix( 'T' );
 		log.debug("startTable, style: " + smu.birtStyleToString(table.getStyle()));;
 		super.startTable(table);
@@ -1078,16 +1092,19 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			styleStack.push(table);
 			tableStartRow = rowNum;
 		}
-/*		String tableName = table.getName();
-		if(( tableName != null ) && !sheetNamed ) {
-			wb.setSheetName(sheetNum, tableName);
+		String tableName = table.getName();
+		if( tableName != null ) {
+			lastTableName = tableName;
+			if( sheetNum == 1 ) {
+				firstSheetNamed = true;
+			}
 		}
-*/	}
+	}
 
 
 /*	@Override
 	public void startTableBand(ITableBandContent band) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startTableBand");
 		super.startTableBand(band);
 	}
@@ -1095,7 +1112,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startTableGroup(ITableGroupContent group) throws BirtException {
-		// TODO Auto-generated method stub
+
 		log.debug("startTableGroup");
 		super.startTableGroup(group);
 	}
@@ -1103,7 +1120,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 /*	@Override
 	public void startText(ITextContent text) throws BirtException {
-		// TODO Auto-generated method stub
+
 		prefix();
 		log.debug("startText " + text.getText());
 		super.startText(text);

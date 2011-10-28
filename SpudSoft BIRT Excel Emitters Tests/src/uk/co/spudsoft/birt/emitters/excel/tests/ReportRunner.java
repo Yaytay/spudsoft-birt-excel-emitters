@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,14 +41,19 @@ import org.eclipse.birt.core.archive.IDocArchiveWriter;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.EngineConfig;
+import org.eclipse.birt.report.engine.api.EngineException;
+import org.eclipse.birt.report.engine.api.IEngineTask;
 import org.eclipse.birt.report.engine.api.IRenderTask;
 import org.eclipse.birt.report.engine.api.IReportDocument;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportEngineFactory;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
+import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.IRunTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
+import org.eclipse.birt.report.engine.api.impl.ReportEngine;
 
+import uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask;
 import uk.co.spudsoft.birt.emitters.excel.tests.framework.Activator;
 
 public class ReportRunner {
@@ -86,33 +92,14 @@ public class ReportRunner {
 	}
 
 	protected InputStream runAndRenderReport( String filename, String outputFormat ) throws BirtException, IOException {
+		return runAndRenderReportCustomTask(filename, outputFormat);
+	}
 
-        EngineConfig config = new EngineConfig();
+	protected InputStream runAndRenderReportDefaultTask( String filename, String outputFormat ) throws BirtException, IOException {
 
-        IReportEngineFactory engineFactory = (IReportEngineFactory)Platform.createFactoryObject( IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY );
-		assertNotNull(engineFactory);
+        IReportEngine reportEngine = createReportEngine();
 		
-		IReportEngine reportEngine = engineFactory.createReportEngine( config );
-		assertNotNull(reportEngine);
-		
-		String filepath = null;
-		if( Activator.getContext() != null ) {
-			URL bundleLocation = new URL(Activator.getContext().getBundle().getLocation()); 
-			// System.err.println( "Activator.getContext().getBundle().getLocation() = " + bundleLocation );
-			String bundleLocationFile = bundleLocation.getFile();
-			if(bundleLocationFile.startsWith("file:/")) {
-				bundleLocationFile = bundleLocationFile.substring(6);
-			}
-			// System.err.println( "bundleLocationFile = " + bundleLocationFile );
-
-			URL resourceLocation = this.getClass().getResource( filename );
-			String resourceLocationFile = resourceLocation.getFile();
-			// System.err.println( "resourceLocationFile = " + resourceLocationFile );
-			
-			
-			filepath = bundleLocationFile + "bin" + resourceLocationFile;
-			// System.err.println( "filepath = " + filepath );
-		}
+		String filepath = deriveFilepath(filename);
 
 		InputStream resourceStream = this.getClass().getResourceAsStream( filename );
 		
@@ -128,42 +115,21 @@ public class ReportRunner {
 				IRunTask reportRunTask = reportEngine.createRunTask( reportRunnable );
 				assertNotNull(reportRunTask);
 				try {
-					if( filepath != null ) {
-						@SuppressWarnings("unchecked")
-						Map<String,Object> appContext = (Map<String,Object>)reportRunTask.getAppContext();
-						if( appContext == null ) {
-							appContext = new HashMap<String,Object>();
-							reportRunTask.setAppContext(appContext);
-						}
-						appContext.put("__report", filepath);					
-					}
+					addFilepathToAppContext(filepath, reportRunTask);
 					
-					IDocArchiveWriter archiveWriter = new FileArchiveWriter( tempDoc.getCanonicalPath() );
-					assertNotNull(archiveWriter);
-	
-					reportRunTask.run( archiveWriter );
-			        assertEquals( 0, reportRunTask.getErrors().size() );
-			        
-			        reportRunTask.close();
-			        
-			        IReportDocument reportDocument = reportEngine.openReportDocument( tempDoc.getCanonicalPath() );
-			        assertNotNull(reportDocument);
+					IReportDocument reportDocument = runReport(reportEngine,
+							reportRunTask, tempDoc);
 			        
 			        IRenderTask renderTask = reportEngine.createRenderTask( reportDocument );
 			        assertNotNull(renderTask);
 			        try {
-	
 			        	File tempOutput = File.createTempFile("Render", "." + outputFormat);
 			        	System.err.println( tempOutput );
 			        	FileOutputStream outputStream = new FileOutputStream( tempOutput ); 
 			        	
 				        assertNotNull(outputStream);
 				        try {
-					        
-					        RenderOption renderOptions = new RenderOption();
-					        renderOptions.setOutputFormat(outputFormat);
-					        renderOptions.setOutputStream( outputStream );
-					        renderTask.setRenderOption(renderOptions);
+					        renderTask.setRenderOption(prepareRenderOptions( outputFormat, outputStream ));
 					        
 					        renderTask.render();
 					        assertEquals(0, renderTask.getErrors().size());					        
@@ -185,4 +151,181 @@ public class ReportRunner {
 			resourceStream.close();
 		}
 	}
+
+	protected InputStream runAndRenderReportAsOne( String filename, String outputFormat ) throws BirtException, IOException {
+
+        IReportEngine reportEngine = createReportEngine();
+		
+		String filepath = deriveFilepath(filename);
+
+		InputStream resourceStream = this.getClass().getResourceAsStream( filename );
+		
+		assertNotNull( resourceStream );
+		try {
+			IReportRunnable reportRunnable = reportEngine.openReportDesign( resourceStream );
+			assertNotNull(reportRunnable);
+			
+			File tempDoc = File.createTempFile("runAndRenderReport", ".rptdocument");
+			assertNotNull(tempDoc);
+			
+			try {
+				IRunAndRenderTask reportRunRenderTask = reportEngine.createRunAndRenderTask( reportRunnable );
+				assertNotNull(reportRunRenderTask);
+				try {
+					addFilepathToAppContext(filepath, reportRunRenderTask);
+					
+		        	File tempOutput = File.createTempFile("Render", "." + outputFormat);
+		        	System.err.println( tempOutput );
+		        	FileOutputStream outputStream = new FileOutputStream( tempOutput ); 
+		        	
+			        assertNotNull(outputStream);
+			        try {
+				        
+				        reportRunRenderTask.setRenderOption(prepareRenderOptions( outputFormat, outputStream ));
+				        
+				        reportRunRenderTask.run();
+				        assertEquals(0, reportRunRenderTask.getErrors().size());					        
+			        } finally {
+			        	outputStream.close();
+			        }
+
+			        return new ByteArrayInputStream(getBytesFromFile(tempOutput));
+				} finally {
+					reportRunRenderTask.close();
+				}
+			} finally {
+				tempDoc.delete();
+			}
+		} finally {
+			resourceStream.close();
+		}
+	}
+
+	protected InputStream runAndRenderReportCustomTask( String filename, String outputFormat ) throws BirtException, IOException {
+
+        IReportEngine reportEngine = createReportEngine();
+		
+		String filepath = deriveFilepath(filename);
+
+		InputStream resourceStream = this.getClass().getResourceAsStream( filename );
+		
+		assertNotNull( resourceStream );
+		try {
+			IReportRunnable reportRunnable = reportEngine.openReportDesign( resourceStream );
+			assertNotNull(reportRunnable);
+			
+			File tempDoc = File.createTempFile("runAndRenderReport", ".rptdocument");
+			assertNotNull(tempDoc);
+			
+			try {
+				IRunTask reportRunTask = reportEngine.createRunTask( reportRunnable );
+				assertNotNull(reportRunTask);
+				try {
+					addFilepathToAppContext(filepath, reportRunTask);
+					
+					IReportDocument reportDocument = runReport(reportEngine,
+							reportRunTask, tempDoc);
+			        
+			        // IRenderTask renderTask = reportEngine.createRenderTask( reportDocument );
+			        IRenderTask renderTask = new FixedRenderTask( (ReportEngine)reportEngine, reportRunnable, reportDocument );
+			        assertNotNull(renderTask);
+			        try {
+			        	File tempOutput = File.createTempFile("Render", "." + outputFormat);
+			        	System.err.println( tempOutput );
+			        	FileOutputStream outputStream = new FileOutputStream( tempOutput ); 
+			        	
+				        assertNotNull(outputStream);
+				        try {
+					        
+					        renderTask.setRenderOption(prepareRenderOptions( outputFormat, outputStream ));
+					        
+					        renderTask.render();
+					        assertEquals(0, renderTask.getErrors().size());					        
+				        } finally {
+				        	outputStream.close();
+				        }
+
+				        return new ByteArrayInputStream(getBytesFromFile(tempOutput));
+			        } finally {
+				        renderTask.close();
+			        }
+				} finally {
+					reportRunTask.close();
+				}
+			} finally {
+				tempDoc.delete();
+			}
+		} finally {
+			resourceStream.close();
+		}
+	}
+
+	protected IReportEngine createReportEngine() {
+		EngineConfig config = new EngineConfig();
+
+        IReportEngineFactory engineFactory = (IReportEngineFactory)Platform.createFactoryObject( IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY );
+		assertNotNull(engineFactory);
+		
+		IReportEngine reportEngine = engineFactory.createReportEngine( config );
+		assertNotNull(reportEngine);
+		return reportEngine;
+	}
+
+	protected String deriveFilepath(String filename) throws MalformedURLException {
+		String filepath = null;
+		if( Activator.getContext() != null ) {
+			URL bundleLocation = new URL(Activator.getContext().getBundle().getLocation()); 
+			// System.err.println( "Activator.getContext().getBundle().getLocation() = " + bundleLocation );
+			String bundleLocationFile = bundleLocation.getFile();
+			if(bundleLocationFile.startsWith("file:/")) {
+				bundleLocationFile = bundleLocationFile.substring(6);
+			}
+			// System.err.println( "bundleLocationFile = " + bundleLocationFile );
+
+			URL resourceLocation = this.getClass().getResource( filename );
+			String resourceLocationFile = resourceLocation.getFile();
+			// System.err.println( "resourceLocationFile = " + resourceLocationFile );
+			
+			
+			filepath = bundleLocationFile + "bin" + resourceLocationFile;
+			// System.err.println( "filepath = " + filepath );
+		}
+		return filepath;
+	}
+
+	protected void addFilepathToAppContext(String filepath, IEngineTask task) {
+		if( filepath != null ) {
+			@SuppressWarnings("unchecked")
+			Map<String,Object> appContext = (Map<String,Object>)task.getAppContext();
+			if( appContext == null ) {
+				appContext = new HashMap<String,Object>();
+				task.setAppContext(appContext);
+			}
+			appContext.put("__report", filepath);					
+		}
+	}
+
+	protected IReportDocument runReport(IReportEngine reportEngine,
+			IRunTask reportRunTask, File tempDoc) throws IOException,
+			EngineException {
+		IDocArchiveWriter archiveWriter = new FileArchiveWriter( tempDoc.getCanonicalPath() );
+		assertNotNull(archiveWriter);
+
+		reportRunTask.run( archiveWriter );
+		assertEquals( 0, reportRunTask.getErrors().size() );
+		
+		reportRunTask.close();
+		
+		IReportDocument reportDocument = reportEngine.openReportDocument( tempDoc.getCanonicalPath() );
+		assertNotNull(reportDocument);
+		return reportDocument;
+	}
+
+	protected RenderOption prepareRenderOptions(String outputFormat, FileOutputStream outputStream) {
+		RenderOption renderOptions = new RenderOption();
+		renderOptions.setOutputFormat( outputFormat );
+		renderOptions.setOutputStream( outputStream );
+		return renderOptions;
+	}
+
 }
