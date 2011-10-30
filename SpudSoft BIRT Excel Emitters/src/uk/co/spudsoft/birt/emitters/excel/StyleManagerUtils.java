@@ -34,6 +34,10 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
+import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
+import org.eclipse.birt.report.engine.css.dom.AreaStyle;
+import org.eclipse.birt.report.engine.css.engine.CSSEngine;
+import org.eclipse.birt.report.engine.css.engine.value.DataFormatValue;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.w3c.dom.css.CSSValue;
 
@@ -587,6 +591,32 @@ public abstract class StyleManagerUtils {
 		}
 	}
 		
-	
+	/**
+	 * Create a new BIRT style that is the same as another BIRT style
+	 */
+	public IStyle copyBirtStyle( IStyle style ) {
+		CSSEngine cssEngine = ((AbstractStyle)style).getCSSEngine();
+		AreaStyle result = new AreaStyle( cssEngine );
+
+		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
+			CSSValue value = style.getProperty( i );
+			if( value != null ) {
+				if( value instanceof DataFormatValue ) {
+					DataFormatValue dataValue = (DataFormatValue)value;
+					DataFormatValue newValue = new DataFormatValue();
+					newValue.setDateFormat( dataValue.getDatePattern(), dataValue.getDateLocale() );
+					newValue.setDateTimeFormat( dataValue.getDateTimePattern(), dataValue.getDateTimeLocale() );
+					newValue.setTimeFormat( dataValue.getTimePattern(), dataValue.getTimeLocale() );
+					newValue.setNumberFormat( dataValue.getNumberPattern(), dataValue.getNumberLocale() );
+					newValue.setStringFormat( dataValue.getStringPattern(), dataValue.getStringLocale() );
+					value = newValue;
+				}
+				
+ 				result.setProperty( i , value );
+ 			}
+		}
+		
+		return result;
+	}
 	
 }

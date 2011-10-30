@@ -29,7 +29,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.content.IStyledElement;
-import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.w3c.dom.css.CSSValue;
@@ -156,10 +155,11 @@ public class StyleManager {
 			return false;
 		}
 		// Number format
+		log.debug( "Number formats: \"" + style1.getNumberFormat() + "\" and \"" + style2.getNumberFormat() + "\"" );
 		if( !StyleManagerUtils.objectsEqual(style1.getNumberFormat(), style2.getNumberFormat())
 			|| !StyleManagerUtils.objectsEqual(style1.getDateFormat(), style2.getDateFormat())
 			|| !StyleManagerUtils.objectsEqual(style1.getDateTimeFormat(), style2.getDateTimeFormat())
-			|| !StyleManagerUtils.objectsEqual(style1.getTimeFormat(), style2.getTimeFormat()) ){
+			|| !StyleManagerUtils.objectsEqual(style1.getTimeFormat(), style2.getTimeFormat()) ) {
 			return false;
 		}
 		
@@ -197,7 +197,7 @@ public class StyleManager {
 		// Number format
 		smu.applyNumberFormat(workbook, birtStyle, poiStyle);
 
-		styles.add(new StylePair(birtStyle, poiStyle));
+		styles.add(new StylePair( smu.copyBirtStyle( birtStyle ), poiStyle));
 		return poiStyle;
 	}
 
@@ -231,8 +231,7 @@ public class StyleManager {
 	private IStyle birtStyleFromCellStyle( CellStyle source ) {
 		for(StylePair stylePair : styles) {
 			if( source.equals(stylePair.poiStyle) ) {
-				AreaStyle styleCopy = new AreaStyle( (AbstractStyle)stylePair.birtStyle );
-				return styleCopy;
+				return smu.copyBirtStyle( stylePair.birtStyle );
 			}
 		}
 		
