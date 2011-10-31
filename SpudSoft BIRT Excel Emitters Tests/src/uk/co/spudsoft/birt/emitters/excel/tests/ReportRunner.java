@@ -20,8 +20,7 @@
 
 package uk.co.spudsoft.birt.emitters.excel.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -138,6 +137,64 @@ public class ReportRunner {
 				        }
 
 				        return new ByteArrayInputStream(getBytesFromFile(tempOutput));
+			        } finally {
+				        renderTask.close();
+			        }
+				} finally {
+					reportRunTask.close();
+				}
+			} finally {
+				tempDoc.delete();
+			}
+		} finally {
+			resourceStream.close();
+		}
+	}
+
+	protected InputStream runAndRenderReportFileNotStream( String filename, String outputFormat ) throws BirtException, IOException {
+
+        IReportEngine reportEngine = createReportEngine();
+		
+		String filepath = deriveFilepath(filename);
+
+		InputStream resourceStream = this.getClass().getResourceAsStream( filename );
+		
+		assertNotNull( resourceStream );
+		try {
+			IReportRunnable reportRunnable = reportEngine.openReportDesign( resourceStream );
+			assertNotNull(reportRunnable);
+			
+			File tempDoc = File.createTempFile("runAndRenderReport", ".rptdocument");
+			assertNotNull(tempDoc);
+			
+			try {
+				IRunTask reportRunTask = reportEngine.createRunTask( reportRunnable );
+				assertNotNull(reportRunTask);
+				try {
+					addFilepathToAppContext(filepath, reportRunTask);
+					
+					IReportDocument reportDocument = runReport(reportEngine,
+							reportRunTask, tempDoc);
+			        
+			        IRenderTask renderTask = reportEngine.createRenderTask( reportDocument );
+			        assertNotNull(renderTask);
+			        try {
+			        	File outputFile = File.createTempFile("Render", "." + outputFormat);
+			        	System.err.println( outputFile );
+			        	
+				        assertNotNull( outputFile );
+				        renderTask.setRenderOption(prepareRenderOptions( outputFormat, null ));
+				        renderTask.getRenderOption().setOutputFileName( outputFile.getCanonicalPath() );
+				        
+				        renderTask.render();
+				        assertEquals(0, renderTask.getErrors().size());					        
+
+				        InputStream result = new ByteArrayInputStream(getBytesFromFile(outputFile));
+				        
+				        boolean deleted = outputFile.delete();
+				        assertTrue( deleted );
+				        
+				        return result;
 			        } finally {
 				        renderTask.close();
 			        }
@@ -324,7 +381,9 @@ public class ReportRunner {
 	protected RenderOption prepareRenderOptions(String outputFormat, FileOutputStream outputStream) {
 		RenderOption renderOptions = new RenderOption();
 		renderOptions.setOutputFormat( outputFormat );
-		renderOptions.setOutputStream( outputStream );
+		if( outputStream != null ) {
+			renderOptions.setOutputStream( outputStream );
+		}
 		return renderOptions;
 	}
 

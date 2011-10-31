@@ -20,6 +20,7 @@
 
 package uk.co.spudsoft.birt.emitters.excel;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -142,6 +143,12 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * </p>
 	 */
 	protected OutputStream reportOutputStream;
+	/**
+	 * <p>
+	 * Record of whether the emitter opened the report output stream itself, and it thus responsible for closing it.
+	 * </p>
+	 */
+	protected boolean outputStreamOpened;
 	/**
 	 * <p>
 	 * Name of the file that the report is to be written to (for tracking only).
@@ -337,8 +344,24 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		
 		log.removePrefix('>');
 		log.debug("end:" + report.toString());
+		OutputStream outputStream = reportOutputStream;
 		try {
-			wb.write(reportOutputStream);
+			if( outputStream == null ) {
+				if( ( reportOutputFilename != null ) && ! reportOutputFilename.isEmpty() ) {
+					try {
+						outputStream = new FileOutputStream( reportOutputFilename );
+					} catch( IOException ex ) {
+						log.warn( 0, "File \"" + reportOutputFilename + "\" cannot be opened for writing", ex);
+						throw new BirtException( getSymbolicName()
+								, "Unable to open file (\"{}\") for writing"
+								, new Object[] { reportOutputFilename }
+								, null
+								, ex 
+								);
+					}
+				} 
+			}
+			wb.write(outputStream);
 		} catch( Throwable ex ) {
 			log.debug("ex:" + ex.toString());
 			ex.printStackTrace();
@@ -350,10 +373,17 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					, ex 
 					);
 		} finally {
+			if( reportOutputStream == null ) {
+				try {
+					outputStream.close();
+				} catch( IOException ex ) {
+					log.debug("ex:" + ex.toString());
+				}
+			}
 			wb = null;
 			styleStack = null;
 			sm = null;
-			reportOutputFilename = null;
+			reportOutputFilename = null;			
 			reportOutputStream = null;
 		}
 		super.end(report);
@@ -679,6 +709,13 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.debug("inintialize");
 		reportOutputStream = service.getRenderOption().getOutputStream();
 		reportOutputFilename = service.getRenderOption().getOutputFileName();
+		if( ( reportOutputStream == null )
+				&& ( ( reportOutputFilename == null ) || reportOutputFilename.isEmpty() ) ) {
+			throw new BirtException( getSymbolicName()
+					, "Neither output stream nor output filename have been specified"
+					, null
+					);			
+		}
 		
 		super.initialize(service);
 	}
