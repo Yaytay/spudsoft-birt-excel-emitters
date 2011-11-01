@@ -55,6 +55,7 @@ import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.emitter.ContentEmitterAdapter;
 import org.eclipse.birt.report.engine.emitter.IEmitterServices;
 import org.eclipse.birt.report.engine.ir.DimensionType;
+import org.eclipse.birt.report.engine.layout.emitter.Image;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.ExcelEmitterPlugin;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -95,10 +96,12 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		Cell cell;
 		int imageIdx;
 		IImageContent image;
-		public CellImage(Cell cell, int imageIdx, IImageContent image) {
+		boolean spanColumns;
+		public CellImage(Cell cell, int imageIdx, IImageContent image, boolean spanColumns) {
 			this.cell = cell;
 			this.imageIdx = imageIdx;
 			this.image = image;
+			this.spanColumns = spanColumns;
 		}
 	}
 	/**
@@ -898,6 +901,29 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 				log.debug( "Unrecognised/unhandled image MIME type: " + image.getMIMEType() );
 			} else {
 				int imageIdx = wb.addPicture( data, imageType );
+				
+				if( ( image.getHeight() == null ) || ( image.getWidth() == null ) ) {
+					Image birtImage = new Image();
+					birtImage.setInput( data );
+					birtImage.check();
+					log.debug( "Calculated image dimensions "
+							+ birtImage.getWidth() + " (@" + birtImage.getPhysicalWidthDpi() + "dpi=" + birtImage.getPhysicalWidthInch() + "in) x "
+							+ birtImage.getHeight() + " (@" + birtImage.getPhysicalHeightDpi() + "dpi=" + birtImage.getPhysicalHeightInch() + "in)"
+							);
+					if( image.getWidth() == null ) {
+						DimensionType Width = new DimensionType( 
+								( birtImage.getPhysicalWidthInch() > 0 ) ? birtImage.getPhysicalWidthInch() : birtImage.getWidth() / 96.0
+										, "in" );
+						image.setWidth( Width );
+					}
+					if( image.getHeight() == null ) {
+						DimensionType Height = new DimensionType( 
+								( birtImage.getPhysicalHeightInch() > 0 ) ? birtImage.getPhysicalHeightInch() : birtImage.getHeight() / 96.0
+										, "in" );
+						image.setHeight( Height );
+					}
+				}
+				
 				placeImageInCurrentCell( imageIdx, image );
 			}
 		}
@@ -939,16 +965,18 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	private void placeImageInCurrentCell( int imageIdx, IImageContent image ) {
 		log.debug("Adding image " + imageIdx);
 		Cell oldCell = currentCell;
+		boolean spanColumns = false;
 		if( currentCell == null ) {
 			currentRow = currentSheet.createRow(rowNum);
 			++rowNum;			
 			currentCell = currentRow.createCell( 0 );
 			currentCell.setCellType(Cell.CELL_TYPE_BLANK);
+			spanColumns = true;
 		} else {
 			styleStack.mergeTop(image, ICellContent.class);
 		}
 		
-		images.add( new CellImage(currentCell, imageIdx, image) );
+		images.add( new CellImage(currentCell, imageIdx, image, spanColumns) );
 
 		if( oldCell == null ) {
 			CellStyle cellStyle = sm.getStyle(image);
@@ -970,42 +998,52 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 */
 	private void processCellImage( CellImage cellImage ) {
 		Cell cell = cellImage.cell;
-		IImageContent image = cellImage.image;
+		IImageContent image = cellImage.image;		
 		
 		float ptHeight = cell.getRow().getHeightInPoints();
-		if( cellImage.image.getHeight() != null ) {
+		if( image.getHeight() != null ) {
 			ptHeight = smu.fontSizeInPoints( image.getHeight().toString() );
-			if( ptHeight > cell.getRow().getHeightInPoints()) {
-				cell.getRow().setHeightInPoints( ptHeight );
-			}
 		}
-		// Allow image to span multiple columns
-		int endCol = cell.getColumnIndex();
-        double lastColWidth = ClientAnchorConversions.widthUnits2Millimetres( (short)currentSheet.getColumnWidth( endCol ) );
-        int dx = anchorDxFromMM( lastColWidth, lastColWidth );
 
+		// Get image width
+		int endCol = cell.getColumnIndex();
+        double lastColWidth = ClientAnchorConversions.widthUnits2Millimetres( (short)currentSheet.getColumnWidth( endCol ) )
+        		+ 2.0;
+        int dx = anchorDxFromMM( lastColWidth, lastColWidth );
         double mmWidth = 0.0;
         if( smu.isAbsolute(image.getWidth())) {
             mmWidth = image.getWidth().convertTo(DimensionType.UNITS_MM);
         } else if(smu.isPixels(image.getWidth())) {
             mmWidth = ClientAnchorConversions.pixels2Millimetres( image.getWidth().getMeasure() );
         }
-        log.debug( "Image size: " + image.getWidth() + " translates as mmWidth = " + mmWidth );
-        if( mmWidth > 0) {
-            double mmAccumulatedWidth = 0;
-            for( endCol = cell.getColumnIndex(); mmAccumulatedWidth < mmWidth; ++ endCol ) {
-                lastColWidth = ClientAnchorConversions.widthUnits2Millimetres( (short)currentSheet.getColumnWidth( endCol ) );
-                mmAccumulatedWidth += lastColWidth;
-                log.debug( "lastColWidth = " + lastColWidth + "; mmAccumulatedWidth = " + mmAccumulatedWidth);
-            }
-            if( mmAccumulatedWidth > mmWidth ) {
-                mmAccumulatedWidth -= lastColWidth;
-                --endCol;
-                double mmShort = mmWidth - mmAccumulatedWidth;
-                dx = anchorDxFromMM( mmShort, lastColWidth );
-            }
-        }
-			
+		// Allow image to span multiple columns
+		if(cellImage.spanColumns) {
+	        log.debug( "Image size: " + image.getWidth() + " translates as mmWidth = " + mmWidth );
+	        if( mmWidth > 0) {
+	            double mmAccumulatedWidth = 0;
+	            for( endCol = cell.getColumnIndex(); mmAccumulatedWidth < mmWidth; ++ endCol ) {
+	                lastColWidth = ClientAnchorConversions.widthUnits2Millimetres( (short)currentSheet.getColumnWidth( endCol ) )
+	                		+ 2.0;
+	                mmAccumulatedWidth += lastColWidth;
+	                log.debug( "lastColWidth = " + lastColWidth + "; mmAccumulatedWidth = " + mmAccumulatedWidth);
+	            }
+	            if( mmAccumulatedWidth > mmWidth ) {
+	                mmAccumulatedWidth -= lastColWidth;
+	                --endCol;
+	                double mmShort = mmWidth - mmAccumulatedWidth;
+	                dx = anchorDxFromMM( mmShort, lastColWidth );
+	            }
+	        }
+		} else {
+			// Adjust the height to fit the aspect ratio caused by the column width
+			float widthRatio = (float)(mmWidth / lastColWidth);
+			ptHeight = ptHeight / widthRatio;
+		}
+
+		if( ptHeight > cell.getRow().getHeightInPoints()) {
+			cell.getRow().setHeightInPoints( ptHeight );
+		}
+		
 		Drawing drawing = getDrawing();
 	    
 		// ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
