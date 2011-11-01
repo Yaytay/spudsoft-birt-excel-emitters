@@ -796,5 +796,172 @@ if( rowCount < 2 ) {
                 </row>
             </footer>
         </table>
+        <table id="208">
+            <property name="dataSet">Data Set</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Name</property>
+                    <text-property name="displayName">Name</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Integer</property>
+                    <text-property name="displayName">Integer</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Integer"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">DateTime</property>
+                    <text-property name="displayName">DateTime</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DateTime"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">Decimal</property>
+                    <text-property name="displayName">Decimal</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Decimal"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">Float</property>
+                    <text-property name="displayName">Float</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Float"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">Boolean</property>
+                    <text-property name="displayName">Boolean</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Boolean"]</expression>
+                    <property name="dataType">boolean</property>
+                </structure>
+                <structure>
+                    <property name="name">Date</property>
+                    <text-property name="displayName">Date</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Date"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">Time</property>
+                    <text-property name="displayName">Time</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Time"]</expression>
+                    <property name="dataType">time</property>
+                </structure>
+            </list-property>
+            <column id="252"/>
+            <column id="253"/>
+            <column id="254"/>
+            <column id="255"/>
+            <column id="256"/>
+            <column id="257"/>
+            <column id="258"/>
+            <column id="259"/>
+            <header>
+                <row id="209">
+                    <cell id="210">
+                        <label id="211">
+                            <text-property name="text">Name</text-property>
+                        </label>
+                    </cell>
+                    <cell id="212">
+                        <label id="213">
+                            <text-property name="text">Integer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="214">
+                        <label id="215">
+                            <text-property name="text">DateTime</text-property>
+                        </label>
+                    </cell>
+                    <cell id="216">
+                        <label id="217">
+                            <text-property name="text">Decimal</text-property>
+                        </label>
+                    </cell>
+                    <cell id="218">
+                        <label id="219">
+                            <text-property name="text">Float</text-property>
+                        </label>
+                    </cell>
+                    <cell id="220">
+                        <label id="221">
+                            <text-property name="text">Boolean</text-property>
+                        </label>
+                    </cell>
+                    <cell id="222">
+                        <label id="223">
+                            <text-property name="text">Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="224">
+                        <label id="225">
+                            <text-property name="text">Time</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="226">
+                    <cell id="227">
+                        <data id="228">
+                            <property name="color">red</property>
+                            <property name="resultSetColumn">Name</property>
+                        </data>
+                    </cell>
+                    <cell id="229">
+                        <data id="230">
+                            <property name="color">orange</property>
+                            <property name="resultSetColumn">Integer</property>
+                        </data>
+                    </cell>
+                    <cell id="231">
+                        <data id="232">
+                            <property name="color">yellow</property>
+                            <property name="resultSetColumn">DateTime</property>
+                        </data>
+                    </cell>
+                    <cell id="233">
+                        <data id="234">
+                            <property name="color">green</property>
+                            <property name="resultSetColumn">Decimal</property>
+                        </data>
+                    </cell>
+                    <cell id="235">
+                        <data id="236">
+                            <property name="color">blue</property>
+                            <property name="resultSetColumn">Float</property>
+                        </data>
+                    </cell>
+                    <cell id="237">
+                        <data id="238">
+                            <property name="color">navy</property>
+                            <property name="resultSetColumn">Boolean</property>
+                        </data>
+                    </cell>
+                    <cell id="239">
+                        <data id="240">
+                            <property name="resultSetColumn">Date</property>
+                        </data>
+                    </cell>
+                    <cell id="241">
+                        <data id="242">
+                            <property name="resultSetColumn">Time</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="243">
+                    <cell id="244"/>
+                    <cell id="245"/>
+                    <cell id="246"/>
+                    <cell id="247"/>
+                    <cell id="248"/>
+                    <cell id="249"/>
+                    <cell id="250"/>
+                    <cell id="251"/>
+                </row>
+            </footer>
+        </table>
     </body>
 </report>

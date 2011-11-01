@@ -192,13 +192,6 @@
                                 </cell>
                             </row>
                         </detail>
-                        <footer>
-                            <row id="40">
-                                <cell id="41"/>
-                                <cell id="42"/>
-                                <cell id="43"/>
-                            </row>
-                        </footer>
                     </table>
                 </cell>
                 <cell id="52">
@@ -272,13 +265,6 @@
                                 </cell>
                             </row>
                         </detail>
-                        <footer>
-                            <row id="68">
-                                <cell id="69"/>
-                                <cell id="70"/>
-                                <cell id="71"/>
-                            </row>
-                        </footer>
                     </table>
                 </cell>
             </row>

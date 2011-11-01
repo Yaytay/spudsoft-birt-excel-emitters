@@ -43,6 +43,7 @@ public class Logger {
 	private String pluginId;
 	private org.slf4j.Logger backupLog;  
 	private StringBuilder prefix = new StringBuilder();
+	private boolean debug;
 	
 	/**
 	 * Constructor used to initialise the slf4j logger.
@@ -63,6 +64,15 @@ public class Logger {
 	Logger( ILog log, String pluginId ) {
 		this.eclipseLog = log;
 		this.pluginId = pluginId;
+	}
+	
+	/**
+	 * Set the debug state of the logger.
+	 * @param debug
+	 * When true and run within Equinox debug statements are output to the console.
+	 */
+	public void setDebug( boolean debug ) {
+		this.debug = debug;
 	}
 
 	/**
@@ -97,7 +107,9 @@ public class Logger {
 	 */
 	public void debug( String message ) {
 		if( eclipseLog != null ) {
-			// System.out.println( prefix.toString() + " " + message );
+			if( debug ) {
+				System.out.println( prefix.toString() + " " + message );
+			}
 		} else {
 			backupLog.debug( prefix.toString() + " " + message );
 		}

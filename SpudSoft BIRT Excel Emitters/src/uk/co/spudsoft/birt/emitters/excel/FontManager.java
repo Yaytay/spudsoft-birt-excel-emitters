@@ -64,6 +64,17 @@ public class FontManager {
 		this.smu = smu;
 	}
 	
+	private static String cleanupQuotes( String family ) {
+		if( ( family == null ) || family.isEmpty() ) {
+			return family;
+		}
+		if( family.startsWith( "\"" ) && family.endsWith( "\"" ) ) {
+			String newFamily = family.substring(1, family.length()-1);
+			return newFamily;
+		}
+		return family;
+	}
+	
 	/**
 	 * Test whether two BIRT styles are equivalent, as far as their font definitions are concerned.
 	 * <br/>
@@ -77,14 +88,14 @@ public class FontManager {
 	 */
 	public static boolean fontsEquivalent(IStyle style1, IStyle style2) {
 		// Family
-		if(!StyleManagerUtils.objectsEqual(style1.getFontFamily(), style2.getFontFamily())) {
+		if(!StyleManagerUtils.objectsEqual(cleanupQuotes(style1.getFontFamily()), cleanupQuotes(style2.getFontFamily()))) {
 			return false;
 		}
 		if( style1.getFontFamily() == null ) {
 			return true;
 		}
 		// Size
-		if(!StyleManagerUtils.objectsEqual(style1.getFontSize(), style2.getFontSize())) {
+		if(!StyleManagerUtils.objectsEqual(cleanupQuotes(style1.getFontSize()), cleanupQuotes(style2.getFontSize()))) {
 			return false;
 		}
 		// Weight
@@ -114,13 +125,13 @@ public class FontManager {
 		Font font = workbook.createFont();
 		
 		// Family
-		String fontName = smu.poiFontNameFromBirt(birtStyle.getFontFamily());
+		String fontName = smu.poiFontNameFromBirt(cleanupQuotes(birtStyle.getFontFamily()));
 		if( fontName == null ) {
 			fontName = "Calibri";
 		}
 		font.setFontName(fontName);
 		// Size
-		short fontSize = smu.fontSizeInPoints(birtStyle.getFontSize());
+		short fontSize = smu.fontSizeInPoints(cleanupQuotes(birtStyle.getFontSize()));
 		if(fontSize > 0) {
 			font.setFontHeightInPoints(fontSize);
 		}

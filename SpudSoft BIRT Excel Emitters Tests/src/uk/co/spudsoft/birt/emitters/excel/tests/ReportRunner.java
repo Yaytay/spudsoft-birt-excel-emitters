@@ -57,6 +57,8 @@ import uk.co.spudsoft.birt.emitters.excel.tests.framework.Activator;
 
 public class ReportRunner {
 	
+	protected boolean debug;
+	
 	private static byte[] getBytesFromFile(File file) throws IOException {
 	    InputStream is = new FileInputStream(file);
 	    try {
@@ -383,6 +385,9 @@ public class ReportRunner {
 		renderOptions.setOutputFormat( outputFormat );
 		if( outputStream != null ) {
 			renderOptions.setOutputStream( outputStream );
+		}
+		if( debug ) {
+			renderOptions.setOption( "ExcelEmitter.DEBUG", Boolean.TRUE);
 		}
 		return renderOptions;
 	}

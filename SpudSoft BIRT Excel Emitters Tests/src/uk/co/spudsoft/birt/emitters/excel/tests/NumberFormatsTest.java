@@ -28,7 +28,7 @@ public class NumberFormatsTest extends ReportRunner {
 			assertEquals( "Number Formats Test Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals(11, this.firstNullRow(sheet));
+			assertEquals(14, this.firstNullRow(sheet));
 			
 			DataFormatter formatter = new DataFormatter();
 			

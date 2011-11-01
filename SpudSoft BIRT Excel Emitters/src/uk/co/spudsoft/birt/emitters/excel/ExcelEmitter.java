@@ -42,20 +42,30 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.exception.BirtException;
+import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.content.IAutoTextContent;
 import org.eclipse.birt.report.engine.content.ICellContent;
+import org.eclipse.birt.report.engine.content.IContainerContent;
+import org.eclipse.birt.report.engine.content.IContent;
 import org.eclipse.birt.report.engine.content.IDataContent;
+import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.content.ILabelContent;
 import org.eclipse.birt.report.engine.content.IPageContent;
 import org.eclipse.birt.report.engine.content.IReportContent;
 import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.content.IStyle;
+import org.eclipse.birt.report.engine.content.IStyledElement;
 import org.eclipse.birt.report.engine.content.ITableContent;
+import org.eclipse.birt.report.engine.content.ITextContent;
+import org.eclipse.birt.report.engine.content.impl.TextContent;
+import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.emitter.ContentEmitterAdapter;
 import org.eclipse.birt.report.engine.emitter.IEmitterServices;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.engine.layout.emitter.Image;
+import org.eclipse.birt.report.engine.layout.pdf.util.HTML2Content;
+import org.eclipse.birt.report.engine.presentation.ContentEmitterVisitor;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.ExcelEmitterPlugin;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -71,6 +81,8 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
  * @author Jim Talbut
  */
 public abstract class ExcelEmitter extends ContentEmitterAdapter {
+	
+	public static final String DEBUG = "ExcelEmitter.DEBUG";
 	
 	/**
 	 * Number of milliseconds in a day, to determine whether a given date is date/time/datetime
@@ -234,6 +246,16 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * Record whether a name was given to the first sheet
 	 */
 	protected boolean firstSheetNamed;
+	/**
+	 * The report engine using this emitter
+	 */
+	protected IReportEngine reportEngine;
+	/**
+	 * 
+	 */
+	protected ContentEmitterVisitor contentVisitor;
+	protected boolean lastCellContentsWasBlock;
+	protected ITableContent tableWithoutFirstRow;
 	
 	/**
 	 * Logger.
@@ -393,7 +415,6 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 	
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void endCell(ICellContent cell) throws BirtException {
 
@@ -401,48 +422,20 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.debug("endCell");
 		super.endCell(cell);
 		--nestedCellCount;
-
+		
 		if( nestedCellCount == 0 ) {
-			
-			ICellContent cellContent = styleStack.pop(ICellContent.class);
-			IStyle birtStyle = cellContent.getStyle();
-			
-			if( ( birtStyle.getNumberFormat() == null )
-					&& ( birtStyle.getDateFormat() == null )
-					&& ( birtStyle.getDateTimeFormat() == null )
-					&& ( birtStyle.getTimeFormat() == null )
-					&& ( lastValue != null )
-					) {
-				if( lastValue instanceof Date ) {
-					long time = ((Date)lastValue).getTime();
-					time = time - ((Date)lastValue).getTimezoneOffset() * 60000;
-					if( time % oneDay == 0 ) {
-						birtStyle.setDateFormat("Short Date");
-					} else if( time < oneDay ) {
-						birtStyle.setDateFormat("Short Time");
-					} else {
-						birtStyle.setDateFormat("General Date");
-					}
-				}
+			if(lastValue == null) {
+				setCurrentCellStyle(cell);
 			}
-			
-			CellStyle cellStyle = sm.getStyle(cellContent);
-			currentCell.setCellStyle(cellStyle);
-			
+
 			colNum += cell.getColSpan();
 			currentCell = null;
 			lastValue = null;
+			styleStack.pop(ICellContent.class);
 		}
+		lastCellContentsWasBlock = false;
 	}
 
-
-/*	@Override
-	public void endContainer(IContainerContent container) throws BirtException {
-
-		// log.debug("endContainer");
-		super.endContainer(container);
-	}
-*/
 
 /*	@Override
 	public void endContent(IContent content) throws BirtException {
@@ -705,6 +698,22 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		super.endTableGroup(group);
 	}
 */
+	
+	private boolean booleanOption( Object value ) {
+		if( value != null ) {
+			if( value instanceof Boolean ) {
+				return ((Boolean)value).booleanValue();
+			}
+			if( value instanceof String ) {
+				return Boolean.parseBoolean((String)value);
+			}
+			if( value instanceof Number ) {
+				return ((Number)value).doubleValue() != 0.0;
+			}
+		}
+		return false;
+	}
+	
 
 	@Override
 	public void initialize(IEmitterServices service) throws BirtException {
@@ -719,6 +728,14 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					, null
 					);			
 		}
+				
+		boolean debug = booleanOption( service.getRenderOption().getOption(DEBUG) );
+		if( debug )  {
+			this.log.setDebug(debug);
+		}
+		
+		reportEngine = service.getReportEngine();
+		contentVisitor = new ContentEmitterVisitor( this );
 		
 		super.initialize(service);
 	}
@@ -736,7 +753,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	public void startCell(ICellContent cell) throws BirtException {
 
 		log.addPrefix( 'C' );
-		log.debug("startCell [R" + cell.getRow() + "C" + cell.getColumn() + "], span:" + cell.getColSpan() +", align:" + cell.getStyle().getTextAlign()
+		log.debug("startCell (NCC=" + nestedCellCount + ") [R" + cell.getRow() + "C" + cell.getColumn() + "], span:" + cell.getColSpan() +", align:" + cell.getStyle().getTextAlign()
 /*				+ ", \nstyle: " + StyleManagerUtils.birtStyleToString(cell.getStyle())
 				+ ", \ninlineStyle: " + StyleManagerUtils.birtStyleToString(cell.getInlineStyle())
 				+ ", \ncomputedStyle: " + StyleManagerUtils.birtStyleToString(cell.getComputedStyle())
@@ -752,26 +769,88 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 						, colNum, colNum + cell.getColSpan() - 1));
 			}
 			styleStack.push(cell);
+		} else {
+			if( cell.getColumn() > 0 ) {
+				startTextContent(null, " ");
+			}
 		}
+		lastCellContentsWasBlock = false;
 	}
 
+	@Override
+	public void startContainer(IContainerContent container) throws BirtException {
 
-/*	@Override
-	public void startContainer(IContainerContent container)
-			throws BirtException {
+		//log.addPrefix( 'O' );
+		log.debug("startContainer type:" + container.getContentType() + ", style: " + smu.birtStyleToString(container.getStyle()));
+		//containers.add( container );
+		log.debug( "Children:" + container.getChildren().size() + "; Siblings:" + container.getParent().getChildren().size() );
 
-		// log.debug("startContainer");
+		if( currentCell != null ) {
+			if( CSSConstants.CSS_BLOCK_VALUE.equals( container.getStyle().getDisplay() ) ) {
+				if( currentCell.getCellType() == Cell.CELL_TYPE_STRING ) {
+					if( container.getContentType() != IContent.CELL_CONTENT ) {
+						if( ! isFirstChild( container ) ) {
+							lastCellContentsWasBlock = true;
+						}
+					}
+				}
+			}
+		}
 		super.startContainer(container);
 	}
-*/
 
-/*	@Override
+	private boolean isFirstChild( IContent content ) {
+		@SuppressWarnings("rawtypes")
+		Iterator iter = content.getParent().getChildren().iterator(); 
+
+		if( iter.hasNext() ) {
+			Object firstSibling = iter.next();
+			return firstSibling == content;
+		}
+		return false;
+	}
+	
+	private boolean isLastChild( IContent content ) {
+		@SuppressWarnings("rawtypes")
+		Iterator iter = content.getParent().getChildren().iterator(); 
+
+		Object lastSibling = null;
+		for( ; iter.hasNext() ; ) {
+			lastSibling = iter.next();
+		}
+		return lastSibling == content;
+	}
+	
+	@Override
+	public void endContainer(IContainerContent container) throws BirtException {
+
+		//log.removePrefix( 'O' );
+		log.debug("endContainer (NRC=" + nestedRowCount + "), container type = " + container.getContentType());
+		//containers.pop();
+		log.debug( "Children:" + container.getChildren().size() + "; Siblings:" + container.getParent().getChildren().size() );
+
+		if( currentCell != null ) {
+			if( ! CSSConstants.CSS_INLINE_VALUE.equals( container.getStyle().getDisplay() ) ) {
+				if( currentCell.getCellType() == Cell.CELL_TYPE_STRING ) {
+					if( container.getContentType() != IContent.CELL_CONTENT ) {
+						lastCellContentsWasBlock = true;
+					}
+				}
+			}
+		}
+		super.endContainer(container);
+	}
+
+	@Override
 	public void startContent(IContent content) throws BirtException {
 
-		log.debug("startContent type:" + content.getContentType());
+		log.debug("startContent type:" + content.getContentType() + " = " + content.getClass().getCanonicalName() + ", style: " + smu.birtStyleToString(content.getStyle()) );
+		if( content instanceof TextContent ) {
+			log.debug( "Text: " + ((TextContent)content).getText() );
+		}
 		super.startContent(content);
 	}
-*/
+
 
 	@Override
 	public void startData(IDataContent data) throws BirtException {
@@ -784,10 +863,77 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		styleStack.mergeTop(data, ICellContent.class);
 		Object value = data.getValue();
 		
-		setCurrentCellContents(value);
+		setCurrentCellContents(value, data);
 	}
 
+	@SuppressWarnings("deprecation")
+	private void setCurrentCellStyle( IStyledElement element ) {
+		IStyle birtStyle = element.getStyle();
+		
+		if( ( birtStyle.getNumberFormat() == null )
+				&& ( birtStyle.getDateFormat() == null )
+				&& ( birtStyle.getDateTimeFormat() == null )
+				&& ( birtStyle.getTimeFormat() == null )
+				&& ( lastValue != null )
+				) {
+			if( lastValue instanceof Date ) {
+				long time = ((Date)lastValue).getTime();
+				time = time - ((Date)lastValue).getTimezoneOffset() * 60000;
+				if( time % oneDay == 0 ) {
+					birtStyle.setDateFormat("Short Date");
+				} else if( time < oneDay ) {
+					birtStyle.setDateFormat("Short Time");
+				} else {
+					birtStyle.setDateFormat("General Date");
+				}
+			}
+		}
+		
+		CellStyle cellStyle = sm.getStyle(element);
+		currentCell.setCellStyle(cellStyle);
+	}
 
+	private <T> void setEmptyCellContents(Object value, IStyledElement element ) {
+		if( value instanceof Double ) {
+			currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			currentCell.setCellValue((Double)value);
+			lastValue = value;
+		} else if( value instanceof Integer ) {
+			currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			currentCell.setCellValue((Integer)value);				
+			lastValue = value;
+		} else if( value instanceof Long ) {
+			currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			currentCell.setCellValue((Long)value);				
+			lastValue = value;
+		} else if( value instanceof Date ) {
+			currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			currentCell.setCellValue((Date)value);
+			lastValue = value;
+		} else if( value instanceof Boolean ) {
+			currentCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+			currentCell.setCellValue(((Boolean)value).booleanValue());
+			lastValue = value;
+		} else if( value instanceof BigDecimal ) {
+			currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			currentCell.setCellValue(((BigDecimal)value).doubleValue());				
+			lastValue = value;
+		} else if( value instanceof String ) {
+			currentCell.setCellType(Cell.CELL_TYPE_STRING);
+			currentCell.setCellValue((String)value);				
+			lastValue = value;
+		} else if( value != null ){
+			log.debug( "Un-handled data: " + ( value == null ? "<null>" : value.toString() ) );
+			currentCell.setCellType(Cell.CELL_TYPE_STRING);
+			currentCell.setCellValue(value.toString());				
+			lastValue = value;
+		}
+		if( ( value != null ) && ( nestedCellCount == 1 ) ) {
+			setCurrentCellStyle(element);
+		}
+		
+	}
+	
 	/**
 	 * Set the contents of the current cell.
 	 * If the current cell is empty this will format the cell optimally for the new value, if the current cell already has some contents this will simply append the text
@@ -795,40 +941,13 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * @param value
 	 * The value to put into the current cell.
 	 */
-	private void setCurrentCellContents(Object value) {
+	private <T> void setCurrentCellContents(Object value, IStyledElement element) {
+		if( value == null ) {
+			return ;
+		}
 		switch( currentCell.getCellType() ) {
 		case Cell.CELL_TYPE_BLANK:
-			if( value instanceof Double ) {
-				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				currentCell.setCellValue((Double)value);
-				lastValue = value;
-			} else if( value instanceof Integer ) {
-				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				currentCell.setCellValue((Integer)value);				
-				lastValue = value;
-			} else if( value instanceof Long ) {
-				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				currentCell.setCellValue((Long)value);				
-				lastValue = value;
-			} else if( value instanceof Date ) {
-				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				currentCell.setCellValue((Date)value);
-				lastValue = value;
-			} else if( value instanceof Boolean ) {
-				currentCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-				currentCell.setCellValue(((Boolean)value).booleanValue());
-				lastValue = value;
-			} else if( value instanceof BigDecimal ) {
-				currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				currentCell.setCellValue(((BigDecimal)value).doubleValue());				
-				lastValue = value;
-			} else if( value instanceof String ) {
-				currentCell.setCellType(Cell.CELL_TYPE_STRING);
-				currentCell.setCellValue((String)value);				
-				lastValue = value;
-			} else if( value != null ){
-				log.debug( "Un-handled data: " + ( value == null ? "<null>" : value.toString() ) );
-			}
+			setEmptyCellContents(value, element);
 			break;
 		case Cell.CELL_TYPE_BOOLEAN:
 			break;
@@ -839,7 +958,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		case Cell.CELL_TYPE_NUMERIC:
 			break;
 		case Cell.CELL_TYPE_STRING:
-			String newValue = currentCell.getStringCellValue() + " " + value.toString();
+			String newValue = currentCell.getStringCellValue() + value.toString();
 			currentCell.setCellValue( newValue );
 			lastValue = newValue;
 			break;
@@ -847,13 +966,29 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 
 
-/*	@Override
+	@Override
 	public void startForeign(IForeignContent foreign) throws BirtException {
 
-		log.debug("startForeign");
+		log.debug("startForeign: " + foreign.getContentType() + " " + foreign.getClass().getCanonicalName() );
 		super.startForeign(foreign);
+		
+		if ( IForeignContent.HTML_TYPE.equalsIgnoreCase( foreign.getRawType( ) ) )
+		{
+			HTML2Content.html2Content( foreign );
+			
+			contentVisitor.visitChildren( foreign, null );
+			
+
+/*			// HyperlinkInfo link = parseHyperLink(foreign);
+			foreign.getReportContent().getReportContext().
+			
+			this.reportEngine.reportEngine.addContainer( foreign.getComputedStyle( ), link );			
+			contentVisitor.visitChildren( foreign, null );
+			engine.endContainer( );
+*/		}
+		
 	}
-*/
+
 
 /*	@Override
 	public void startGroup(IGroupContent group) throws BirtException {
@@ -1070,13 +1205,8 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		}
 		return currentDrawing;
 	}
-
-	@Override
-	public void startLabel(ILabelContent label) throws BirtException {
-
-		log.debug("startLabel " + label.getLabelText() + ", style: " + smu.birtStyleToString(label.getStyle()));
-		super.startLabel(label);
-		
+	
+	private void startTextContent( ITextContent content, String text) throws BirtException {
 		Cell oldCell = currentCell;
 		if( currentCell == null ) {
 			currentRow = this.currentSheet.createRow(rowNum);
@@ -1084,19 +1214,62 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			++rowNum;			
 			currentCell = currentRow.createCell( 0 );
 			currentCell.setCellType(Cell.CELL_TYPE_BLANK);
-		} else {
-			styleStack.mergeTop(label, ICellContent.class);
+			++nestedTableCount;
+			++nestedRowCount;
+			++nestedCellCount;
+		} else if( ( nestedCellCount == 1 ) && ( content != null ) ) {
+			styleStack.mergeTop(content, ICellContent.class);
 		}
-		setCurrentCellContents( label.getLabelText() );
+		if( lastCellContentsWasBlock 
+				&& ( currentCell.getCellType() != Cell.CELL_TYPE_BLANK ) 
+				&& !text.startsWith("\n") 
+				&& !currentCell.getStringCellValue().endsWith("\n") ) {
+			text = "\n" + text;
+			lastCellContentsWasBlock = false;
+		}
+		setCurrentCellContents( text, content);		
 		if( oldCell == null ) {
-			CellStyle cellStyle = sm.getStyle(label);
+			CellStyle cellStyle = sm.getStyle(content);
 			currentCell.setCellStyle(cellStyle);
 			
 			currentCell = null;
 			currentRow = null;
+			--nestedCellCount;
+			--nestedRowCount;
+			--nestedTableCount;
 		}
 	}
 
+	@Override
+	public void startLabel(ILabelContent label) throws BirtException {
+
+		log.debug("startLabel \"" + ( label.getLabelText() == null ? label.getText() : label.getLabelText() ) + "\", style: " + smu.birtStyleToString(label.getStyle()));
+		super.startLabel(label);
+			
+		if( label.getLabelText() != null ) {
+			startTextContent( label, label.getLabelText() );
+		} else if( label.getText() != null ) {
+			startTextContent( label, label.getText() );
+		}
+
+		if( ! CSSConstants.CSS_INLINE_VALUE.equals( label.getStyle().getDisplay() ) ) {
+			lastCellContentsWasBlock = true;
+		}
+
+	}
+
+	@Override
+	public void startText(ITextContent text) throws BirtException {
+
+		log.debug("startText \"" + text.getText() + "\", style: " + smu.birtStyleToString(text.getStyle()));
+		if( text.getContentType() == TextContent.TEXT_CONTENT ) {
+			startTextContent( text, text.getText() );
+
+			if( ! CSSConstants.CSS_INLINE_VALUE.equals( text.getStyle().getDisplay() ) ) {
+				lastCellContentsWasBlock = true;
+			}
+		}
+	}
 
 /*	@Override
 	public void startList(IListContent list) throws BirtException {
@@ -1161,6 +1334,12 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			colNum = 0;
 			styleStack.push(row);
 			rowHeightChanged = false;
+		} else {
+			if( ( tableWithoutFirstRow == null ) && ( currentCell != null ) && ( currentCell.getCellType() != Cell.CELL_TYPE_BLANK ) ) {
+				startTextContent(null, "\n");
+			} else {
+				tableWithoutFirstRow = null;
+			}
 		}
 	}
 
@@ -1175,6 +1354,11 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		if( nestedTableCount == 1 ) {
 			styleStack.push(table);
 			tableStartRow = rowNum;
+		} else {
+			if( ( currentCell != null ) && ( currentCell.getCellType() != Cell.CELL_TYPE_BLANK ) ) {
+				startTextContent(null, "\n");
+			}
+			tableWithoutFirstRow = table;
 		}
 		String tableName = table.getName();
 		if( tableName != null ) {
@@ -1202,14 +1386,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 */
 
-/*	@Override
-	public void startText(ITextContent text) throws BirtException {
 
-		prefix();
-		log.debug("startText " + text.getText());
-		super.startText(text);
-	}
-*/
 	
 	
 	

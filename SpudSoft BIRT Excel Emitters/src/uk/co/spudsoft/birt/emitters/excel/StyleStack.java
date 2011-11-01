@@ -96,7 +96,7 @@ public class StyleStack {
 		IStyledElement target = stack.lastElement();
 		assert(clazz.isInstance(target));
 		if( ! clazz.isInstance(target)) {
-			throw new IllegalStateException( "The top element on the stack is of type " + element.getClass().getName() + " rather than the expected " + clazz.getName());
+			throw new IllegalStateException( "The top element on the stack is of type " + target.getClass().getName() + " rather than the expected " + clazz.getName());
 		}
 		
 		IStyle targetStyle = target.getStyle();

@@ -36,6 +36,7 @@ public class NestedTablesReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
+		debug = true;
 		InputStream inputStream = runAndRenderReport("NestedTables.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
@@ -49,8 +50,8 @@ public class NestedTablesReportTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(1, firstNullRow(sheet));
 			
-			assertEquals( "One Two Three 1 2 3 2 4 6 3 6 9", sheet.getRow(0).getCell(0).getStringCellValue());
-			assertEquals( "One Two Three 1 2 3 2 4 6 3 6 9", sheet.getRow(0).getCell(1).getStringCellValue());
+			assertEquals( "One Two Three\n1 2 3\n2 4 6\n3 6 9", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "One Two Three\n1 2 3\n2 4 6\n3 6 9", sheet.getRow(0).getCell(1).getStringCellValue());
 		} finally {
 			inputStream.close();
 		}

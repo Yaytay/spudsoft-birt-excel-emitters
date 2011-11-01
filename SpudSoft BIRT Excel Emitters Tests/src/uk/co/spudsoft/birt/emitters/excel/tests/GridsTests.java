@@ -29,11 +29,11 @@ public class GridsTests extends ReportRunner {
 			assertEquals( "Combined Grid Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 1, this.firstNullRow(sheet));
+			assertEquals( 3, this.firstNullRow(sheet));
 			
 			DataFormatter formatter = new DataFormatter();
 			
-			assertEquals( "1",                     formatter.formatCellValue(sheet.getRow(1).getCell(1)));
+			assertEquals( "This is a label\nHeading 1\nThis is text\nHeading 2\nStyles\nBold, Italic, Bold and italic and finally Underline.\n• Oh\n• Dear\nIsle of Mann\nPlain text.\nAnd this is a label",                     formatter.formatCellValue(sheet.getRow(0).getCell(1)));
 			
 		} finally {
 			inputStream.close();
@@ -43,6 +43,7 @@ public class GridsTests extends ReportRunner {
 	@Test
 	public void testRunReportXls() throws BirtException, IOException {
 
+		debug = true;
 		InputStream inputStream = runAndRenderReport("CombinedGrid.rptdesign", "xls");
 		assertNotNull(inputStream);
 		try {
@@ -54,11 +55,11 @@ public class GridsTests extends ReportRunner {
 			assertEquals( "Combined Grid Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 1, this.firstNullRow(sheet));
+			assertEquals( 3, this.firstNullRow(sheet));
 			
 			DataFormatter formatter = new DataFormatter();
 			
-			assertEquals( "1",                     formatter.formatCellValue(sheet.getRow(1).getCell(1)));
+			assertEquals( "This is a label\nHeading 1\nThis is text\nHeading 2\nStyles\nBold, Italic, Bold and italic and finally Underline.\n• Oh\n• Dear\nIsle of Mann\nPlain text.\nAnd this is a label",                     formatter.formatCellValue(sheet.getRow(0).getCell(1)));
 			
 		} finally {
 			inputStream.close();
