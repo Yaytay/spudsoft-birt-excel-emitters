@@ -60,6 +60,14 @@
                     </label>
                 </cell>
             </row>
+            <row id="28">
+                <cell id="29">
+                    <label id="30">
+                        <property name="textUnderline">underline</property>
+                        <text-property name="text">Sans Serif 10pt Underlined</text-property>
+                    </label>
+                </cell>
+            </row>
             <row id="11">
                 <cell id="12">
                     <label id="20">

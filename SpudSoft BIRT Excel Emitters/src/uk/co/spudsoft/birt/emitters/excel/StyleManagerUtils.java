@@ -20,17 +20,24 @@
 
 package uk.co.spudsoft.birt.emitters.excel;
 
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
+import java.text.AttributedString;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
@@ -38,9 +45,11 @@ import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.value.DataFormatValue;
+import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.w3c.dom.css.CSSValue;
 
+import uk.co.spudsoft.birt.emitters.excel.ExcelEmitter.RichTextRun;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
 /**
@@ -118,6 +127,8 @@ public abstract class StyleManagerUtils {
 
 	protected Logger log;	
 	
+	protected static final FontRenderContext frc = new FontRenderContext(null, false, false);
+	
 	/**
 	 * @param log
 	 * The Logger to use for any information reports to be made.
@@ -125,6 +136,17 @@ public abstract class StyleManagerUtils {
 	public StyleManagerUtils(Logger log) {
 		this.log = log;
 	}
+	
+	
+	/**
+	 * Create a RichTextString representing a given string.
+	 * @param value
+	 * The string to represent in the RichTextString.
+	 * @return
+	 * A RichTextString representing value.
+	 */
+	public abstract RichTextString createRichTextString(String value);
+	
 
 	/**
 	 * Compare two objects in a null-safe manner.
@@ -147,13 +169,13 @@ public abstract class StyleManagerUtils {
 	 * One of the CellStyle.ALIGN* constants.
 	 */
 	public short poiAlignmentFromBirtAlignment(String alignment) {
-		if("left".equals(alignment)) {
+		if(CSSConstants.CSS_LEFT_VALUE.equals(alignment)) {
 			return CellStyle.ALIGN_LEFT;
 		}
-		if("right".equals(alignment)) {
+		if(CSSConstants.CSS_RIGHT_VALUE.equals(alignment)) {
 			return CellStyle.ALIGN_RIGHT;
 		}
-		if("center".equals(alignment)) {
+		if(CSSConstants.CSS_CENTER_VALUE.equals(alignment)) {
 			return CellStyle.ALIGN_CENTER;
 		}
 		return CellStyle.ALIGN_GENERAL;
@@ -168,7 +190,7 @@ public abstract class StyleManagerUtils {
 	 */
 	public short fontSizeInPoints(String fontSize) {
 		if( fontSize == null ) {
-			return 0;
+			return 11;
 		}
 		if("xx-small".equals(fontSize)) {
 			return 6;
@@ -177,7 +199,7 @@ public abstract class StyleManagerUtils {
 		} else if("small".equals(fontSize)) {
 			return 10;
 		} else if("medium".equals(fontSize)) {
-			return 12;
+			return 11;
 		} else if("large".equals(fontSize)) {
 			return 14;
 		} else if("x-large".equals(fontSize)) {
@@ -193,11 +215,16 @@ public abstract class StyleManagerUtils {
 		DimensionType dim = DimensionType.parserUnit(fontSize, "pt");
 		log.debug( "fontSize: \"" + fontSize + "\", parses as: \"" + dim.toString() + "\" (" + dim.getMeasure() + " " + dim.getUnits() + ")");
 		if(DimensionType.UNITS_PX.equals(dim.getUnits())) {
-			log.debug( ", cannot convert px, so returning " + dim.getMeasure() );
-			return (short)dim.getMeasure();
-		} else {
+			double px = dim.getMeasure();
+			double inches = px / 96;
+			double points = 72 * inches;
+			return (short)points;
+		} else if(DimensionType.UNITS_EM.equals(dim.getUnits())) {
+			return (short)(12 * dim.getMeasure());
+		} else if(DimensionType.UNITS_PERCENTAGE.equals(dim.getUnits())) {
+			return (short)(12 * dim.getMeasure() / 100.0);
+		} else {			
 			double points = dim.convertTo(DimensionType.UNITS_PT);
-			log.debug( ", converts as: \"" + points + "pt\"");
 			return (short)points;
 		}
 	}
@@ -211,7 +238,14 @@ public abstract class StyleManagerUtils {
 	 */
 	public int poiColumnWidthFromDimension( DimensionType dim ) {
 		if (dim != null) {
-			double mmWidth = dim.convertTo( "mm" );
+			double mmWidth = dim.getMeasure();
+			if( ( DimensionType.UNITS_CM == dim.getUnits() ) 
+					|| ( DimensionType.UNITS_IN == dim.getUnits() )
+					|| ( DimensionType.UNITS_PT == dim.getUnits() )
+					|| ( DimensionType.UNITS_PC == dim.getUnits() )
+					) {
+				mmWidth = dim.convertTo( "mm" );
+			}
 			int result = ClientAnchorConversions.millimetres2WidthUnits(mmWidth);
 			log.debug( "Column width in mm: " + mmWidth + "; converted result: " + result );			
 			return result;
@@ -251,6 +285,8 @@ public abstract class StyleManagerUtils {
 			return "Times New Roman";
 		} else if("sans-serif".equals(fontName)) {
 			return "Arial";
+		} else if("monospace".equals(fontName)) {
+			return "Courier New";
 		}
 		return fontName;
 	}
@@ -293,6 +329,9 @@ public abstract class StyleManagerUtils {
 	 * A string representing all the configured values in the BIRT style.
 	 */
 	public String birtStyleToString(IStyle style) {
+		if( style == null ) {
+			return "<null>";
+		}
 		StringBuilder result = new StringBuilder();
 		if(!style.isEmpty()) {
 			for( int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {				
@@ -516,6 +555,7 @@ public abstract class StyleManagerUtils {
 			return null;
 		}
 		birtFormat = birtFormat.replace("E00", "E+00");
+		birtFormat = birtFormat.replaceAll("^([^0#.\\-,E;%\u2030\u00A4']*)", "\"$1\"");
 		int brace = birtFormat.indexOf('{');
 		if( brace >= 0 ) {
 			birtFormat = birtFormat.substring(0, brace);
@@ -619,4 +659,120 @@ public abstract class StyleManagerUtils {
 		return result;
 	}
 	
+	/**
+	 * Add font details to an AttributedString.
+	 * @param attrString
+	 * The AttributedString to modify.
+	 * @param font
+	 * The font to take attributes from.
+	 * @param startIdx
+	 * The index of the first character to be attributed (inclusive).
+	 * @param endIdx
+	 * The index of the last character to be attributed (inclusive). 
+	 */
+	protected void addFontAttributes( AttributedString attrString, Font font, int startIdx, int endIdx) {
+		attrString.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
+		attrString.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints(), startIdx, endIdx);
+        if (font.getBoldweight() == Font.BOLDWEIGHT_BOLD) attrString.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
+        if (font.getItalic() ) attrString.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
+        if (font.getUnderline() == Font.U_SINGLE ) attrString.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
+	}
+	
+	/**
+	 * Find a RichTextRun that includes a specific index.
+	 * @param richTextRuns
+	 * The list of RichTextRuns to search.
+	 * @param startIndex
+	 * The character index being sought.
+	 * @return
+	 * The index into richTextRuns such that richTextRuns.get(index).startIndex has the largest value less that startIndex.
+	 */
+	protected int getRichTextRunIndexForStart( List< ExcelEmitter.RichTextRun> richTextRuns, int startIndex ) {
+		if( richTextRuns.isEmpty() ) {
+			return -1;
+		}
+		for( int i = 0; i < richTextRuns.size(); ++i ) {
+			if( richTextRuns.get( i ).startIndex >= startIndex ) {
+				return i - 1;
+			}
+		}
+		return richTextRuns.size() - 1;
+	}
+	
+	/**
+	 * Calculate the height of a string formatted according to a set of RichTextRuns and fitted within a give width.
+	 * @param sourceText
+	 * The string to be measured.
+	 * @param defaultFont
+	 * The font to be used prior to the first RichTextRun.
+	 * @param widthMM
+	 * The width of the output.
+	 * @param richTextRuns
+	 * The list of RichTextRuns to be applied to the string
+	 * @return
+	 * The heigh, in points, of a box big enough to contain the formatted sourceText.
+	 */
+	public float calculateTextHeightPoints( String sourceText, Font defaultFont, double widthMM, List< ExcelEmitter.RichTextRun> richTextRuns ) {
+		log.debug( "Calculating height for " + sourceText);
+		
+		final float widthPt = (float)(72 * widthMM / 25.4); 
+		
+		float totalHeight = 0;
+		String[] textLines = sourceText.split("\n");
+		int lineStartIndex = 0;
+		String lastLine = null;
+		Font font = defaultFont;
+		for( String textLine : textLines ) {
+			if( lastLine != null ) {
+				lineStartIndex += lastLine.length() + 1;
+			} else {
+				lastLine = textLine;
+			}
+
+			AttributedString attrString = new AttributedString(textLine);
+			int runEnd = textLine.length();
+			
+			int richTextRunIndex = getRichTextRunIndexForStart(richTextRuns, lineStartIndex);
+			if( richTextRunIndex >= 0 ) {
+				font = richTextRuns.get(richTextRunIndex).font;
+				if( ( richTextRunIndex < richTextRuns.size() - 1 ) && ( richTextRuns.get(richTextRunIndex + 1).startIndex < runEnd ) ) {
+					runEnd = richTextRuns.get(richTextRunIndex + 1).startIndex;
+				}
+			}
+			
+			log.debug( "Adding attribute - [" + 0 + " - " + runEnd + "] = " + defaultFont.getFontName() + " " + defaultFont.getFontHeightInPoints() + "pt" );
+			addFontAttributes(attrString, font, 0, runEnd );
+
+			for( ++richTextRunIndex; ( richTextRunIndex < richTextRuns.size() ) && ( richTextRuns.get( richTextRunIndex ).startIndex < lineStartIndex + textLine.length() ) ; ++richTextRunIndex ) {
+				RichTextRun run = richTextRuns.get( richTextRunIndex );
+				RichTextRun nextRun = richTextRunIndex < richTextRuns.size() - 1 ? richTextRuns.get( richTextRunIndex + 1) : null;
+				if( ( run.startIndex >= lineStartIndex ) && ( run.startIndex < lineStartIndex + textLine.length() + 1 ) ) {
+					int startIdx = run.startIndex - lineStartIndex;
+					int endIdx = ( nextRun == null ? sourceText.length() : nextRun.startIndex ) - lineStartIndex;
+					if( endIdx > textLine.length() ) {
+						endIdx = textLine.length();
+					}
+					if( startIdx < endIdx ) {
+						log.debug( "Adding attribute: [" + startIdx + " - " + endIdx + "] = " + run.font.getFontName() + " " + run.font.getFontHeightInPoints() + "pt" );
+						addFontAttributes(attrString, run.font, startIdx, endIdx );
+					}
+				}
+			}		
+			
+			LineBreakMeasurer measurer = new LineBreakMeasurer( attrString.getIterator(), frc);
+		     
+			while (measurer.getPosition() < textLine.length()) {
+		         TextLayout layout = measurer.nextLayout( widthPt );
+		         float lineHeight = layout.getAscent() + layout.getDescent() + layout.getLeading() + 1;
+		         log.debug ( "Line: " + textLine + " gives height " + lineHeight);
+		         totalHeight += lineHeight;
+			}
+		}
+		totalHeight += 4;
+		log.debug( "Height calculated as " + totalHeight );
+		return totalHeight;
+	}
+	
+	public abstract Font correctFontColorIfBackground( FontManager fm, CellStyle cellStyle, Font font );
+	public abstract void correctFontColorIfBackground( StyleManager sm, Cell cell );
 }

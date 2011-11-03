@@ -27,7 +27,7 @@ public class OutputFileNotStreamTest extends ReportRunner {
 			assertEquals( "Number Formats Test Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals(14, this.firstNullRow(sheet));
+			assertEquals(18, this.firstNullRow(sheet));
 		} finally {
 			inputStream.close();
 		}

@@ -23,13 +23,17 @@ package uk.co.spudsoft.birt.emitters.excel;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
+import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
 
@@ -48,6 +52,11 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 	 */
 	public StyleManagerHUtils(Logger log) {
 		super(log);
+	}
+	
+	@Override
+	public RichTextString createRichTextString(String value) {
+		return new HSSFRichTextString(value);
 	}
 
 	/**
@@ -193,5 +202,27 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 			}
 		}
 	}
-			
+
+	@Override
+	public Font correctFontColorIfBackground(FontManager fm, CellStyle cellStyle, Font font) {
+		if( cellStyle.getFillForegroundColor() != ((HSSFFont)font).getColor() ) {
+			return font; 
+		}
+		
+		IStyle addedStyle = new AreaStyle( fm.getCssEngine() );
+		if( font.getColor() == HSSFColor.BLACK.index ) {
+			addedStyle.setColor("rgb(255, 255, 255)");
+		} else {
+			addedStyle.setColor("rgb(0, 0, 0)");
+		}
+		
+		return fm.getFontWithExtraStyle( font, addedStyle );
+	}
+
+	@Override
+	public void correctFontColorIfBackground(StyleManager sm, Cell cell) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

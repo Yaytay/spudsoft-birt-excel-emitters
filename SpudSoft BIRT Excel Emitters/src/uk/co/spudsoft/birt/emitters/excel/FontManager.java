@@ -24,8 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.report.engine.content.IStyle;
+import org.eclipse.birt.report.engine.css.dom.AreaStyle;
+import org.eclipse.birt.report.engine.css.engine.CSSEngine;
+import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
+import org.w3c.dom.css.CSSValue;
 
 /**
  * FontManager is a cache of fonts to enable POI Fonts to be reused based upon their BIRT styles.
@@ -52,6 +57,8 @@ public class FontManager {
 	private Workbook workbook;
 	private StyleManagerUtils smu;
 	private List<FontPair> fonts = new ArrayList<FontPair>();
+	private Font defaultFont = null;
+	private CSSEngine cssEngine;
 
 	/**
 	 * @param workbook
@@ -59,11 +66,26 @@ public class FontManager {
 	 * @param smu
 	 * The StyleManagerUtils instance that will be used in the comparison of styles and manipulation of colours.
 	 */
-	public FontManager(Workbook workbook, StyleManagerUtils smu) {
+	public FontManager(CSSEngine cssEngine, Workbook workbook, StyleManagerUtils smu) {
+		this.cssEngine = cssEngine;
 		this.workbook = workbook;
 		this.smu = smu;
 	}
+
+	/**
+	 * Obtain the CSS Engine known by this font manager.
+	 */
+	CSSEngine getCssEngine() {
+		return cssEngine;
+	}
 	
+	/**
+	 * Remove quotes surrounding a string.
+	 * @param family
+	 * The string that may be surrounded by double quotes.
+	 * @return
+	 * family, without any surrounding double quotes.
+	 */
 	private static String cleanupQuotes( String family ) {
 		if( ( family == null ) || family.isEmpty() ) {
 			return family;
@@ -91,9 +113,6 @@ public class FontManager {
 		if(!StyleManagerUtils.objectsEqual(cleanupQuotes(style1.getFontFamily()), cleanupQuotes(style2.getFontFamily()))) {
 			return false;
 		}
-		if( style1.getFontFamily() == null ) {
-			return true;
-		}
 		// Size
 		if(!StyleManagerUtils.objectsEqual(cleanupQuotes(style1.getFontSize()), cleanupQuotes(style2.getFontSize()))) {
 			return false;
@@ -104,6 +123,10 @@ public class FontManager {
 		}
 		// Italic
 		if(!StyleManagerUtils.objectsEqual(style1.getFontStyle(), style2.getFontStyle())) {
+			return false;
+		}
+		// Underline
+		if(!StyleManagerUtils.objectsEqual(style1.getProperty(IStyle.STYLE_TEXT_UNDERLINE), style2.getProperty(IStyle.STYLE_TEXT_UNDERLINE))) {
 			return false;
 		}
 		// Colour
@@ -144,12 +167,35 @@ public class FontManager {
 		if("italic".equals(birtStyle.getFontStyle()) || "oblique".equals(birtStyle.getFontStyle())) {
 			font.setItalic(true);
 		}
+		// Underline
+		if( ( birtStyle.getProperty(IStyle.STYLE_TEXT_UNDERLINE) != null )
+			&& CSSConstants.CSS_UNDERLINE_VALUE.equals(birtStyle.getProperty(IStyle.STYLE_TEXT_UNDERLINE).getCssText())) {
+			font.setUnderline(FontUnderline.SINGLE.getByteValue());
+		}
 		// Colour
 		smu.addColourToFont(workbook, font, birtStyle.getColor());
 				
 		fonts.add(new FontPair(birtStyle, font));
 		return font;
 	}
+	
+	/**
+	 * <p>
+	 * Return the default font for the workbook.
+	 * </p><p>
+	 * At this stage this is hardcoded to return Calibri 11pt, but it could be changed to either pull a value from POI
+	 * or to have a parameterised value set from the emitter (via the constructor).
+	 * @return
+	 * A Font object representing the default to use when no other options are available.
+	 */
+	private Font getDefaultFont() {
+		if( defaultFont == null ) {
+			defaultFont = workbook.createFont();
+			defaultFont.setFontName("Calibri");
+			defaultFont.setFontHeightInPoints((short)11);
+		}
+		return defaultFont;
+	}	
 	
 	/**
 	 * Get a Font matching the BIRT style, either from the cache or by creating a new one.
@@ -160,11 +206,16 @@ public class FontManager {
 	 */
 	Font getFont( IStyle birtStyle ) {
 		if( birtStyle == null ) {
-			return null;
+			return getDefaultFont();
 		}
 		
-		if( birtStyle.getFontFamily() == null ) {
-			return null;
+		if( ( birtStyle.getFontFamily() == null )
+				&& ( birtStyle.getFontSize() == null )
+				&& ( birtStyle.getFontWeight() == null )
+				&& ( birtStyle.getFontStyle() == null )
+				&& ( birtStyle.getColor() == null )
+				) {
+			return getDefaultFont();
 		}
 		
 		for(FontPair fontPair : fonts) {
@@ -175,4 +226,40 @@ public class FontManager {
 		
 		return createFont(birtStyle);
 	}
+	
+	private IStyle birtStyleFromFont( Font source ) {
+		for(FontPair fontPair : fonts) {
+			if( source.equals(fontPair.poiFont) ) {
+				return smu.copyBirtStyle( fontPair.birtStyle );
+			}
+		}
+		
+		return new AreaStyle( cssEngine );
+	}
+	
+	/**
+	 * Return a POI font created by combining a POI font with a BIRT style, where the BIRT style overrides the values in the POI font.
+	 * @param source
+	 * The POI font that represents the base font.
+	 * @param birtExtraStyle
+	 * The BIRT style to overlay on top of the POI style.
+	 * @return
+	 * A POI font representing the combination of source and birtExtraStyle.
+	 */
+	public Font getFontWithExtraStyle( Font source, IStyle birtExtraStyle ) {
+
+		IStyle birtStyle = birtStyleFromFont( source );
+		
+		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
+			CSSValue value = birtExtraStyle.getProperty( i );
+			if( value != null ) {
+				birtStyle.setProperty( i , value );
+			}
+		}
+
+		Font newFont = getFont(birtStyle);
+		return newFont;
+	}
+	
+	
 }

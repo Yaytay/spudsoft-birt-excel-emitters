@@ -54,7 +54,7 @@ public class XlsxEmitter extends ExcelEmitter {
 
 	@Override
 	protected int anchorDxFromMM( double widthMM, double colWidthMM ) {
-        return (int)(widthMM * 36000); // ClientAnchorConversions.millimetres2Pixels( widthMM ) * XSSFShape.EMU_PER_PIXEL;
+        return (int)(widthMM * 36000); 
 	}
 	
 	@Override

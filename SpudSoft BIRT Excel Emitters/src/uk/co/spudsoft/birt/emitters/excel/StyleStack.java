@@ -72,7 +72,7 @@ public class StyleStack {
 	 * @return
 	 * The value of the property from the top-most item on the stack to specify it.
 	 */
-	public CSSValue getProperty( int property ) {
+	public CSSValue getProperty1( int property ) {
 		for(ListIterator<IStyledElement> iter = stack.listIterator(stack.size()); iter.hasPrevious();){
 			IStyledElement element = iter.previous();
 			CSSValue value = element.getStyle().getProperty( property );
@@ -92,12 +92,8 @@ public class StyleStack {
 	 * @throws IllegalStateException
 	 * If the top item on the stack is not an instance of clazz.
 	 */
-	public <T> void mergeTop( IStyledElement element, Class<T> clazz ) {
+	public <T> void mergeTop1( IStyledElement element, Class<T> clazz ) {
 		IStyledElement target = stack.lastElement();
-		assert(clazz.isInstance(target));
-		if( ! clazz.isInstance(target)) {
-			throw new IllegalStateException( "The top element on the stack is of type " + target.getClass().getName() + " rather than the expected " + clazz.getName());
-		}
 		
 		IStyle targetStyle = target.getStyle();
 		IStyle sourceStyle = element.getStyle();

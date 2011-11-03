@@ -28,7 +28,7 @@ public class NumberFormatsTest extends ReportRunner {
 			assertEquals( "Number Formats Test Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals(14, this.firstNullRow(sheet));
+			assertEquals(18, this.firstNullRow(sheet));
 			
 			DataFormatter formatter = new DataFormatter();
 			
@@ -80,6 +80,7 @@ public class NumberFormatsTest extends ReportRunner {
 			assertEquals( "2019-10-11",            formatter.formatCellValue(sheet.getRow(10).getCell(6)));
 			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(10).getCell(7)));
 			
+			assertEquals( "MSRP $3.14",            formatter.formatCellValue(sheet.getRow(15).getCell(1)));
 			
 		} finally {
 			inputStream.close();

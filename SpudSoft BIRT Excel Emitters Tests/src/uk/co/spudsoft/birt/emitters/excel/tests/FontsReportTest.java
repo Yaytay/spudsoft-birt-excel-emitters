@@ -65,13 +65,15 @@ public class FontsReportTest extends ReportRunner {
 			assertNotNull( sheet.getRow(2) );
 			assertNotNull( sheet.getRow(3) );
 			assertNotNull( sheet.getRow(4) );
-			assertNull( sheet.getRow(5) );
+			assertNotNull( sheet.getRow(5) );
+			assertNull( sheet.getRow(6) );
 			
 			assertFontCell( sheet, 0, 0, "Sans Serif 10pt"       , "Arial"          , 10);
-			assertFontCell( sheet, 1, 0, "Serif 10pt"            , "Times New Roman", 10);
-			assertFontCell( sheet, 2, 0, "Tahoma Medium"         , "Tahoma"         , 12);
-			assertFontCell( sheet, 3, 0, "Comic Sans MS X Small" , "Comic Sans MS"  , 8);
-			assertFontCell( sheet, 4, 0, "Verdana XX Large"      , "Verdana"        , 20);
+			assertFontCell( sheet, 1, 0, "Sans Serif 10pt Underlined"       , "Arial"          , 10);
+			assertFontCell( sheet, 2, 0, "Serif 10pt"            , "Times New Roman", 10);
+			assertFontCell( sheet, 3, 0, "Tahoma Medium"         , "Tahoma"         , 12);
+			assertFontCell( sheet, 4, 0, "Comic Sans MS X Small" , "Comic Sans MS"  , 8);
+			assertFontCell( sheet, 5, 0, "Verdana XX Large"      , "Verdana"        , 20);
 			
 		} finally {
 			inputStream.close();

@@ -79,11 +79,19 @@ public class StyleManager {
 	 */
 	public StyleManager(Workbook workbook, StyleStack styleStack, Logger log, StyleManagerUtils smu, CSSEngine cssEngine) {
 		this.workbook = workbook;
-		this.fm = new FontManager(workbook, smu);
+		this.fm = new FontManager(cssEngine, workbook, smu);
 		this.styleStack = styleStack;
 		this.log = log;
 		this.smu = smu;
 		this.cssEngine = cssEngine;
+	}
+	
+	public FontManager getFontManager() {
+		return fm;
+	}
+	
+	public CSSEngine getCssEngine() {
+		return cssEngine;
 	}
 	
 	/**
@@ -95,14 +103,24 @@ public class StyleManager {
 	 * @return
 	 * The style after merging (this is not a new instance).
 	 */
-	private IStyle mergeStyles(IStyle style) {
-		CSSValue bgColor = style.getProperty(IStyle.STYLE_BACKGROUND_COLOR);
-		// System.err.println( "bgColor: " + ( bgColor == null ? "<null>" : bgColor.toString() ) );
-		if((bgColor == null) || IStyle.TRANSPARENT_VALUE.equals(bgColor)) {
-			bgColor = styleStack.getProperty(IStyle.STYLE_BACKGROUND_COLOR);
-			// System.err.println( "stack bgColor: " + ( bgColor == null ? "<null>" : bgColor.toString() ) );
-			style.setProperty(IStyle.STYLE_BACKGROUND_COLOR, bgColor);
+	public IStyle mergeStyles(IStyle style) {
+
+		for( int elemIndex = styleStack.stack.size() - 1; elemIndex >= 0; --elemIndex ) {
+			IStyledElement element = styleStack.stack.get( elemIndex );
+			IStyle sourceStyle = element.getStyle();
+			
+			for(int propIndex = 0; propIndex < IStyle.NUMBER_OF_STYLE; ++propIndex ) {
+				if( ( style.getProperty(propIndex) == null ) 
+						|| ( ( propIndex == IStyle.STYLE_BACKGROUND_COLOR )
+							&& ( IStyle.TRANSPARENT_VALUE.equals( style.getProperty(propIndex) ) ) ) ) {
+					CSSValue value = sourceStyle.getProperty( propIndex );
+					if( value != null ) {
+						style.setProperty( propIndex , value );
+					}
+				}
+			}			
 		}
+	
 		return style;
 	}
 	
@@ -316,4 +334,29 @@ public class StyleManager {
 		CellStyle newStyle = getStyle( birtStyle );
 		return newStyle;
 	}
+	
+	/**
+	 * Return a POI style created by combining a POI style with a BIRT style, where the BIRT style overrides the values in the POI style.
+	 * @param source
+	 * The POI style that represents the base style.
+	 * @param birtExtraStyle
+	 * The BIRT style to overlay on top of the POI style.
+	 * @return
+	 * A POI style representing the combination of source and birtExtraStyle.
+	 */
+	public CellStyle getStyleWithExtraStyle( CellStyle source, IStyle birtExtraStyle ) {
+
+		IStyle birtStyle = birtStyleFromCellStyle( source );
+		
+		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
+			CSSValue value = birtExtraStyle.getProperty( i );
+			if( value != null ) {
+				birtStyle.setProperty( i , value );
+			}
+		}
+
+		CellStyle newStyle = getStyle( birtStyle );
+		return newStyle;
+	}
+	
 }

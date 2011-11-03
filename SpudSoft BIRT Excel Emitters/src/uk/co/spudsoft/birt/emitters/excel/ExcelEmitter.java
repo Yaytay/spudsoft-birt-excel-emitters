@@ -35,8 +35,11 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -59,6 +62,8 @@ import org.eclipse.birt.report.engine.content.IStyledElement;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
 import org.eclipse.birt.report.engine.content.impl.TextContent;
+import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
+import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.emitter.ContentEmitterAdapter;
 import org.eclipse.birt.report.engine.emitter.IEmitterServices;
@@ -83,6 +88,43 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	
 	public static final String DEBUG = "ExcelEmitter.DEBUG";
+	public static final String REMOVE_BLANK_ROWS = "ExcelEmitter.RemoveBlankRows";
+	
+	protected static DataFormatter formatter = new DataFormatter();
+
+	/**
+	 * <p>
+	 * Class to capture the RichText information needed for nested (and HTML) cells.
+	 * </p><p>
+	 * In theory this information could be captured using the RichTextString class from POI, but
+	 * experiments found that to produce NullPoiiunterExceptions and multiple entries in the XLSX files.
+	 * </p> 
+	 * @author jtalbut
+	 *
+	 */
+	class RichTextRun {
+		/**
+		 * The index of the first character to be formatted using this font.
+		 */
+		int startIndex;
+		/**
+		 * The font to apply to characters following this.
+		 */
+		Font font;
+		public RichTextRun(int startIndex, Font font) {
+			super();
+			this.startIndex = startIndex;
+			this.font = font;
+		}
+		/**
+		 * For debug purposes.
+		 */
+		@Override
+		public String toString() {
+			return "RichTextRun [" + startIndex + ", " + font.toString().replaceAll("\n", "") + "]";
+		}
+		
+	}
 	
 	/**
 	 * Number of milliseconds in a day, to determine whether a given date is date/time/datetime
@@ -239,6 +281,10 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 */
 	protected Object lastValue;
 	/**
+	 * The BIRT element that provided the lastValue
+	 */
+	protected IStyledElement lastElement;
+	/**
 	 * The last named table/grid seen, used to name sheets
 	 */
 	protected String lastTableName;
@@ -251,11 +297,36 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 */
 	protected IReportEngine reportEngine;
 	/**
-	 * 
+	 * Visitor to enable processing of child elements created for foreign (HTML) elements.
 	 */
 	protected ContentEmitterVisitor contentVisitor;
+	/**
+	 * Track whether the last cell content should be represented as a block, which will cause a newline character to be
+	 * inserted before the next value.
+	 */
 	protected boolean lastCellContentsWasBlock;
+	/**
+	 * Track tables that have been created that have not yet had a first row.
+	 * Used purely to track row separations for subtables. 
+	 */
 	protected ITableContent tableWithoutFirstRow;
+	/**
+	 * List of font changes for a single cell.
+	 */
+	protected List<RichTextRun> richTextRuns = new ArrayList<RichTextRun>();
+	/**
+	 * Track the emitter option for removing blank rows. 
+	 */
+	protected boolean removeBlankRows;
+	/**
+	 * Remember the span of the currentCell.
+	 * Used to avoid the considerable work of finding the region that starts with the current cell.
+	 */
+	protected int cellColSpan;
+	/**
+	 * The minimum height that the current row will need to present data seen.
+	 */
+	protected float requiredRowHeightInPoints;
 	
 	/**
 	 * Logger.
@@ -423,19 +494,96 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		super.endCell(cell);
 		--nestedCellCount;
 		
-		if( nestedCellCount == 0 ) {
-			if(lastValue == null) {
-				setCurrentCellStyle(cell);
-			}
+		if( nestedCellCount == 0 ) {			
+			endCurrentCell(cell);
 
 			colNum += cell.getColSpan();
-			currentCell = null;
-			lastValue = null;
 			styleStack.pop(ICellContent.class);
 		}
 		lastCellContentsWasBlock = false;
 	}
+	
+	/**
+	 * Calculate the width of a set of columns, in millimetres.
+	 * @param startCol
+	 * The first column to consider (inclusive).
+	 * @param endCol
+	 * The last column to consider (inclusive).
+	 * @return
+	 * The sum of the widths of all columns between startCol and endCol (inclusive) in millimetres.
+	 */
+	private double spanWidthMillimetres( int startCol, int endCol ) {
+		short result = 0;
+		for ( int columnIndex = startCol; columnIndex <= endCol; ++columnIndex ) {
+			result += currentSheet.getColumnWidth(columnIndex);
+		}
+		return ClientAnchorConversions.widthUnits2Millimetres( result );
+	}
+	
+	/**
+	 * Finish processing for the current (real) cell.
+	 * @param element
+	 * The element that signifies the end of the cell (this may not be an ICellContent object if the 
+	 * cell is created for a label or text outside of a table). 
+	 */
+	private void endCurrentCell(IStyledElement element) {
+		if( lastValue != null ) {
+			if( lastValue instanceof String ) {
+				String lastString = (String)lastValue;
 
+				smu.correctFontColorIfBackground( sm, currentCell );
+				for( RichTextRun run  : richTextRuns ) {
+					run.font = smu.correctFontColorIfBackground( sm.getFontManager(), currentCell.getCellStyle(), run.font ); 
+				}
+				
+				if( lastString.contains("\n") ) {
+					currentCell.getCellStyle().setWrapText(true);
+				}
+				
+				if( ! richTextRuns.isEmpty() ) {
+					RichTextString rich = smu.createRichTextString( lastString );
+					int runStart = richTextRuns.get(0).startIndex;
+					Font lastFont = richTextRuns.get(0).font;
+					for( int i = 0; i < richTextRuns.size(); ++i ) {
+						RichTextRun run = richTextRuns.get(i);
+						log.debug( "Run: " + run.startIndex + " font :" + run.font.toString().replace( "\n", "" ) ); 
+						if( ! lastFont.equals( run.font ) ) {
+							log.debug("Applying " + runStart + " - " + run.startIndex );
+							rich.applyFont(runStart, run.startIndex, lastFont);
+							runStart = run.startIndex;
+							lastFont = richTextRuns.get(i).font;						
+						}
+					}
+					
+					log.debug("Finalising with " + runStart + " - " + lastString.length() );
+					rich.applyFont(runStart, lastString.length(), lastFont);
+					
+					setEmptyCellContents( rich, null );
+				} else {
+					
+					setEmptyCellContents( lastString, lastElement );
+				}
+
+				if( cellColSpan > 1 ) {
+					Font defaultFont = wb.getFontAt(currentCell.getCellStyle().getFontIndex());
+					double cellWidth = spanWidthMillimetres( currentCell.getColumnIndex(), currentCell.getColumnIndex() + cellColSpan - 1 );
+					float cellDesiredHeight = smu.calculateTextHeightPoints( lastString, defaultFont, cellWidth, richTextRuns ); 
+					if( cellDesiredHeight > this.requiredRowHeightInPoints ) {
+						requiredRowHeightInPoints = cellDesiredHeight;
+					}
+				}
+			} else {
+				setEmptyCellContents( lastValue, lastElement );
+			}
+		} else {
+			setCurrentCellStyle(element);
+		}
+
+		currentCell = null;
+		lastValue = null;
+		lastElement = null;
+		richTextRuns.clear();
+	}
 
 /*	@Override
 	public void endContent(IContent content) throws BirtException {
@@ -541,6 +689,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 				--rowNum;
 				log.debug("Removing blank row");
 				currentSheet.removeRow(currentRow);
+				// currentRow.setHeight( (short)40 );
 			} else {
 				DimensionType height = row.getHeight();
 				if(height != null) {
@@ -549,6 +698,8 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 						rowHeightChanged = true;
 						currentRow.setHeightInPoints((float)points);
 					}
+				} else if( requiredRowHeightInPoints > currentSheet.getDefaultRowHeightInPoints() ) {
+					currentRow.setHeightInPoints(requiredRowHeightInPoints);
 				}
 				
 				applyBordersToArea( 0, colNum - 1, rowNum, rowNum, row.getStyle() );
@@ -666,16 +817,6 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		--nestedTableCount;
 		if( nestedTableCount == 0) {
 			
-			// Drawings don't remain the same when columns are resized, so for now don't resize if there are any drawings
-			if( this.currentDrawing == null ) {
-				for( int col = 0; col < table.getColumnCount(); ++col ) {
-					log.debug( "BIRT table column width: " + col + " = " + table.getColumn(col).getWidth());
-					if( table.getColumn(col).getWidth() != null ) {
-						currentSheet.setColumnWidth(col, smu.poiColumnWidthFromDimension(table.getColumn(col).getWidth()));
-					}
-				}
-			}
-	
 			applyBordersToArea( 0, table.getColumnCount() - 1, tableStartRow, rowNum - 1, table.getStyle() );
 			
 			styleStack.pop(ITableContent.class);
@@ -699,19 +840,28 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 */
 	
-	private boolean booleanOption( Object value ) {
+	/**
+	 * Convert an Object to a boolean, with quite a few options about the class of the Object. 
+	 * @param value
+	 * A value that can be of any type.
+	 * @param defaultValue
+	 * Value to return if value is null.
+	 * @return
+	 * true if value in some way represents a boolean TRUE value.
+	 */
+	private boolean booleanOption( Object value, boolean defaultValue ) {
 		if( value != null ) {
 			if( value instanceof Boolean ) {
 				return ((Boolean)value).booleanValue();
 			}
-			if( value instanceof String ) {
-				return Boolean.parseBoolean((String)value);
-			}
 			if( value instanceof Number ) {
 				return ((Number)value).doubleValue() != 0.0;
 			}
+			if( value != null ) {
+				return Boolean.parseBoolean(value.toString());
+			}
 		}
-		return false;
+		return defaultValue;
 	}
 	
 
@@ -729,10 +879,12 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					);			
 		}
 				
-		boolean debug = booleanOption( service.getRenderOption().getOption(DEBUG) );
+		boolean debug = booleanOption( service.getRenderOption().getOption(DEBUG), false );
 		if( debug )  {
 			this.log.setDebug(debug);
 		}
+		
+		removeBlankRows = booleanOption( service.getRenderOption().getOption(REMOVE_BLANK_ROWS), true ); 
 		
 		reportEngine = service.getReportEngine();
 		contentVisitor = new ContentEmitterVisitor( this );
@@ -767,8 +919,12 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			if(( cell.getColSpan() > 1 )||( cell.getRowSpan() > 1 )) {
 				currentSheet.addMergedRegion( new CellRangeAddress( rowNum, rowNum + cell.getRowSpan() - 1
 						, colNum, colNum + cell.getColSpan() - 1));
+				cellColSpan = cell.getColSpan();
+			} else {
+				cellColSpan = 1;
 			}
 			styleStack.push(cell);
+			richTextRuns.clear();
 		} else {
 			if( cell.getColumn() > 0 ) {
 				startTextContent(null, " ");
@@ -777,17 +933,39 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		lastCellContentsWasBlock = false;
 	}
 
+	/**
+	 * Determine whether an element is the first child of its parent.
+	 * @param content
+	 * The element to test.
+	 * @return
+	 * true, if content.parent().getChildren().get(0) would return content.
+	 */
+	private boolean isFirstChild( IContent content ) {
+		@SuppressWarnings("rawtypes")
+		Iterator iter = content.getParent().getChildren().iterator(); 
+
+		if( iter.hasNext() ) {
+			Object firstSibling = iter.next();
+			return firstSibling == content;
+		}
+		return false;
+	}
+		
 	@Override
 	public void startContainer(IContainerContent container) throws BirtException {
 
+		if( IContainerContent.CONTAINER_CONTENT == container.getContentType()) {
+			log.addPrefix( 'O' );
+			styleStack.push( container );
+		}
 		//log.addPrefix( 'O' );
 		log.debug("startContainer type:" + container.getContentType() + ", style: " + smu.birtStyleToString(container.getStyle()));
 		//containers.add( container );
 		log.debug( "Children:" + container.getChildren().size() + "; Siblings:" + container.getParent().getChildren().size() );
 
 		if( currentCell != null ) {
-			if( CSSConstants.CSS_BLOCK_VALUE.equals( container.getStyle().getDisplay() ) ) {
-				if( currentCell.getCellType() == Cell.CELL_TYPE_STRING ) {
+			if( ! CSSConstants.CSS_INLINE_VALUE.equals( container.getStyle().getDisplay() ) ) {
+				if( lastValue instanceof String ) {
 					if( container.getContentType() != IContent.CELL_CONTENT ) {
 						if( ! isFirstChild( container ) ) {
 							lastCellContentsWasBlock = true;
@@ -799,31 +977,14 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		super.startContainer(container);
 	}
 
-	private boolean isFirstChild( IContent content ) {
-		@SuppressWarnings("rawtypes")
-		Iterator iter = content.getParent().getChildren().iterator(); 
-
-		if( iter.hasNext() ) {
-			Object firstSibling = iter.next();
-			return firstSibling == content;
-		}
-		return false;
-	}
-	
-	private boolean isLastChild( IContent content ) {
-		@SuppressWarnings("rawtypes")
-		Iterator iter = content.getParent().getChildren().iterator(); 
-
-		Object lastSibling = null;
-		for( ; iter.hasNext() ; ) {
-			lastSibling = iter.next();
-		}
-		return lastSibling == content;
-	}
-	
 	@Override
 	public void endContainer(IContainerContent container) throws BirtException {
 
+		if( IContainerContent.CONTAINER_CONTENT == container.getContentType()) {
+			log.removePrefix( 'O' );
+			styleStack.pop( IContainerContent.class );
+		}
+		
 		//log.removePrefix( 'O' );
 		log.debug("endContainer (NRC=" + nestedRowCount + "), container type = " + container.getContentType());
 		//containers.pop();
@@ -831,7 +992,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 		if( currentCell != null ) {
 			if( ! CSSConstants.CSS_INLINE_VALUE.equals( container.getStyle().getDisplay() ) ) {
-				if( currentCell.getCellType() == Cell.CELL_TYPE_STRING ) {
+				if( lastValue instanceof String ) {
 					if( container.getContentType() != IContent.CELL_CONTENT ) {
 						lastCellContentsWasBlock = true;
 					}
@@ -860,12 +1021,21 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 				);
 		super.startData(data);
 
-		styleStack.mergeTop(data, ICellContent.class);
-		Object value = data.getValue();
-		
-		setCurrentCellContents(value, data);
+		styleStack.push( data );
+		Object value = data.getValue();		
+		setCurrentCellContents(value, data);		
+		styleStack.pop( IDataContent.class );
+
+		if( ! CSSConstants.CSS_INLINE_VALUE.equals( data.getStyle().getDisplay() ) ) {
+			lastCellContentsWasBlock = true;
+		}
 	}
 
+	/**
+	 * Set the style of the current cell based on the style of a BIRT element.
+	 * @param element
+	 * The BIRT element to take the style from.
+	 */
 	@SuppressWarnings("deprecation")
 	private void setCurrentCellStyle( IStyledElement element ) {
 		IStyle birtStyle = element.getStyle();
@@ -893,6 +1063,14 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		currentCell.setCellStyle(cellStyle);
 	}
 
+	/**
+	 * Set the contents of an empty cell.
+	 * This should now be the only way in which a cell value is set (cells should not be modified). 
+	 * @param value
+	 * The value to set.
+	 * @param element
+	 * The BIRT element supplying the value, used to set the style of the cell.
+	 */
 	private <T> void setEmptyCellContents(Object value, IStyledElement element ) {
 		if( value instanceof Double ) {
 			currentCell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -922,16 +1100,19 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			currentCell.setCellType(Cell.CELL_TYPE_STRING);
 			currentCell.setCellValue((String)value);				
 			lastValue = value;
+		} else if( value instanceof RichTextString ) {
+			currentCell.setCellType(Cell.CELL_TYPE_STRING);
+			currentCell.setCellValue((RichTextString)value);				
+			lastValue = value;
 		} else if( value != null ){
-			log.debug( "Un-handled data: " + ( value == null ? "<null>" : value.toString() ) );
+			log.debug( "Unhandled data: " + ( value == null ? "<null>" : value.toString() ) );
 			currentCell.setCellType(Cell.CELL_TYPE_STRING);
 			currentCell.setCellValue(value.toString());				
 			lastValue = value;
 		}
-		if( ( value != null ) && ( nestedCellCount == 1 ) ) {
+		if( ( value != null ) && ( nestedCellCount == 0 ) && ( element != null ) ) {
 			setCurrentCellStyle(element);
 		}
-		
 	}
 	
 	/**
@@ -940,28 +1121,56 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * value to the current contents.
 	 * @param value
 	 * The value to put into the current cell.
-	 */
+	 */ 
 	private <T> void setCurrentCellContents(Object value, IStyledElement element) {
 		if( value == null ) {
 			return ;
 		}
-		switch( currentCell.getCellType() ) {
-		case Cell.CELL_TYPE_BLANK:
-			setEmptyCellContents(value, element);
-			break;
-		case Cell.CELL_TYPE_BOOLEAN:
-			break;
-		case Cell.CELL_TYPE_ERROR:
-			break;
-		case Cell.CELL_TYPE_FORMULA:
-			break;
-		case Cell.CELL_TYPE_NUMERIC:
-			break;
-		case Cell.CELL_TYPE_STRING:
-			String newValue = currentCell.getStringCellValue() + value.toString();
-			currentCell.setCellValue( newValue );
-			lastValue = newValue;
-			break;
+		if( lastValue == null ) {
+			lastValue = value;
+			lastElement = element;
+			currentCell.setCellStyle( sm.getStyle( element ) );
+			return ;
+		}
+		// Both to be improved to include formatting
+		String oldValue = lastValue.toString();
+		String newComponent = value.toString();
+		
+		if( lastCellContentsWasBlock 
+				&& !newComponent.startsWith("\n") 
+				&& ! oldValue.endsWith("\n") ) {
+			oldValue = oldValue + "\n";
+			lastCellContentsWasBlock = false;
+		}
+
+		String newValue = oldValue + newComponent;
+		lastValue = newValue;
+		
+		Font newFont = null;
+		IStyle elementStyle = null;
+		if( ( element != null ) && ( element.getStyle() != null ) ) {
+			elementStyle = element.getStyle();
+			elementStyle = sm.mergeStyles(elementStyle);
+		}
+		newFont = sm.getFontManager().getFont( elementStyle );
+
+		richTextRuns.add(new RichTextRun(oldValue.length(), newFont));
+				
+		if( ( element != null ) && ( element.getStyle() != null ) ) {
+			if( elementStyle instanceof AbstractStyle ) {
+				AbstractStyle abstractElementStyle = (AbstractStyle)elementStyle;
+				short newAlignment = smu.poiAlignmentFromBirtAlignment( elementStyle.getTextAlign() );
+				if( newAlignment < currentCell.getCellStyle().getAlignment() ) {
+					IStyle addedStyle = new AreaStyle( abstractElementStyle.getCSSEngine() );
+					if( elementStyle.getTextAlign() != null ) {
+						addedStyle.setTextAlign( elementStyle.getTextAlign() );
+					} else {
+						addedStyle.setTextAlign( "general" );
+					}
+					
+					currentCell.setCellStyle( sm.getStyleWithExtraStyle( currentCell.getCellStyle(), addedStyle ) );
+				}
+			}
 		}
 	}
 
@@ -976,16 +1185,8 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		{
 			HTML2Content.html2Content( foreign );
 			
-			contentVisitor.visitChildren( foreign, null );
-			
-
-/*			// HyperlinkInfo link = parseHyperLink(foreign);
-			foreign.getReportContent().getReportContext().
-			
-			this.reportEngine.reportEngine.addContainer( foreign.getComputedStyle( ), link );			
-			contentVisitor.visitChildren( foreign, null );
-			engine.endContainer( );
-*/		}
+			contentVisitor.visitChildren( foreign, null );			
+		}
 		
 	}
 
@@ -1108,7 +1309,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			currentCell.setCellType(Cell.CELL_TYPE_BLANK);
 			spanColumns = true;
 		} else {
-			styleStack.mergeTop(image, ICellContent.class);
+			styleStack.push(image);
 		}
 		
 		images.add( new CellImage(currentCell, imageIdx, image, spanColumns) );
@@ -1119,6 +1320,8 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			
 			currentCell = null;
 			currentRow = null;
+		} else {
+			styleStack.pop( IImageContent.class );
 		}
 	}
 
@@ -1206,6 +1409,18 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		return currentDrawing;
 	}
 	
+	/**
+	 * <p>
+	 * Output text content to the current cell (lastValue)
+	 * </p><p>
+	 * This is common functionality refactored from startLabel and startText.
+	 * </p>
+	 * @param content
+	 * The BIRT element supplying the text.
+	 * @param text
+	 * The text value.
+	 * @throws BirtException
+	 */
 	private void startTextContent( ITextContent content, String text) throws BirtException {
 		Cell oldCell = currentCell;
 		if( currentCell == null ) {
@@ -1218,25 +1433,21 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			++nestedRowCount;
 			++nestedCellCount;
 		} else if( ( nestedCellCount == 1 ) && ( content != null ) ) {
-			styleStack.mergeTop(content, ICellContent.class);
-		}
-		if( lastCellContentsWasBlock 
-				&& ( currentCell.getCellType() != Cell.CELL_TYPE_BLANK ) 
-				&& !text.startsWith("\n") 
-				&& !currentCell.getStringCellValue().endsWith("\n") ) {
-			text = "\n" + text;
-			lastCellContentsWasBlock = false;
+			styleStack.push(content);
 		}
 		setCurrentCellContents( text, content);		
 		if( oldCell == null ) {
 			CellStyle cellStyle = sm.getStyle(content);
 			currentCell.setCellStyle(cellStyle);
+			endCurrentCell(content);			
 			
 			currentCell = null;
 			currentRow = null;
 			--nestedCellCount;
 			--nestedRowCount;
 			--nestedTableCount;
+		} else if( ( nestedCellCount == 1 ) && ( content != null ) ) {
+			styleStack.pop(ITextContent.class);
 		}
 	}
 
@@ -1334,8 +1545,9 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			colNum = 0;
 			styleStack.push(row);
 			rowHeightChanged = false;
+			requiredRowHeightInPoints = 0;
 		} else {
-			if( ( tableWithoutFirstRow == null ) && ( currentCell != null ) && ( currentCell.getCellType() != Cell.CELL_TYPE_BLANK ) ) {
+			if( tableWithoutFirstRow == null ) {
 				startTextContent(null, "\n");
 			} else {
 				tableWithoutFirstRow = null;
@@ -1354,8 +1566,16 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		if( nestedTableCount == 1 ) {
 			styleStack.push(table);
 			tableStartRow = rowNum;
+			
+			for( int col = 0; col < table.getColumnCount(); ++col ) {
+				log.debug( "BIRT table column width: " + col + " = " + table.getColumn(col).getWidth());
+				if( table.getColumn(col).getWidth() != null ) {
+					currentSheet.setColumnWidth(col, smu.poiColumnWidthFromDimension(table.getColumn(col).getWidth()));
+				}
+			}
+			
 		} else {
-			if( ( currentCell != null ) && ( currentCell.getCellType() != Cell.CELL_TYPE_BLANK ) ) {
+			if( lastValue instanceof String ) {
 				startTextContent(null, "\n");
 			}
 			tableWithoutFirstRow = table;

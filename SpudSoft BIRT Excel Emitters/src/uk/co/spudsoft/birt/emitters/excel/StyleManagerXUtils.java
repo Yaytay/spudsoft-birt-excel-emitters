@@ -21,15 +21,21 @@
 package uk.co.spudsoft.birt.emitters.excel;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
+import org.eclipse.birt.report.engine.css.dom.AreaStyle;
+import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
 
@@ -50,6 +56,21 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 		super(log);
 	}
 
+	@Override
+	public RichTextString createRichTextString(String value) {
+		XSSFRichTextString result = new XSSFRichTextString(value);
+		return result;
+	}
+	
+	/**
+	 * Converts a BIRT border style into a POI BorderStyle.
+	 * @param birtBorder
+	 * The BIRT border style.
+	 * @param width
+	 * The width of the border as understood by BIRT.
+	 * @return
+	 * A POI BorderStyle object.
+	 */
 	private BorderStyle poiBorderStyleFromBirt( String birtBorder, String width ) {
 		if( "none".equals(birtBorder) ) {
 			return BorderStyle.NONE;
@@ -127,8 +148,8 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 		if( rgbInt == null ) {
 			return null;
 		}
-		// result.
 		byte[] rgbByte = { (byte)-1, (byte)rgbInt[0], (byte)rgbInt[1], (byte)rgbInt[2] };
+		// System.out.println( "The X colour for " + colour + " is [ " + rgbByte[0] + "," + rgbByte[1] + "," + rgbByte[2] + "," + rgbByte[3] + "]" );
 		XSSFColor result = new XSSFColor( rgbByte );
 		return result;		
 	}
@@ -171,5 +192,59 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 		}
 	}
 			
+	private boolean fontColorOk( CellStyle cellStyle, XSSFColor fontColour ) {
+		if( cellStyle.getFillForegroundColorColor() == null ) {
+			if( fontColour == null ) {
+				return true;
+			}
+			byte[] argb = fontColour.getARgb();
+			// Note that this handling is explicitly wrong, because POI is trying to compensate for Excel handling colours back to front
+			if( ( argb[1] != 0 ) && ( argb[2] != 0 ) && ( argb[3] != 0 ) ) {
+				return true; 
+			}
+		} else if( ! cellStyle.getFillForegroundColorColor().equals(fontColour) ) {
+			return true; 
+		}
+		
+		return false;
+	}
+	
+	private IStyle prepareBirtStyleWithSafeColour(CSSEngine cssEngine, XSSFColor colour) {
+		byte[] argb = colour.getARgb();
+		IStyle addedStyle = new AreaStyle( cssEngine );
+		// Note that this handling is explicitly wrong, because POI is trying to compensate for Excel handling colours back to front
+		if( ( argb[0] == 0 ) && ( argb[1] == 0 ) && ( argb[2] == 0 ) && ( argb[3] == 0 ) ) {
+			addedStyle.setColor("rgb(255, 255, 255)");
+		} else {
+			addedStyle.setColor("rgb(0, 0, 0)");
+		}
+		return addedStyle;
+	}
+	
+	public Font correctFontColorIfBackground( FontManager fm, CellStyle cellStyle, Font font ) {
+		XSSFColor colour = ((XSSFFont)font).getXSSFColor();
+
+		if( fontColorOk(cellStyle, colour)) {
+			return font;
+		}
+		
+		IStyle addedStyle = prepareBirtStyleWithSafeColour(fm.getCssEngine(), colour);
+		
+		return fm.getFontWithExtraStyle( font, addedStyle );
+	}
+
+	@Override
+	public void correctFontColorIfBackground(StyleManager sm, Cell cell) {
+		XSSFColor colour = ((XSSFCell)cell).getCellStyle().getFont().getXSSFColor();
+
+		if( fontColorOk(cell.getCellStyle(), colour)) {
+			return ;
+		}
+		
+		IStyle addedStyle = prepareBirtStyleWithSafeColour(sm.getCssEngine(), colour);
+		
+		cell.setCellStyle( sm.getStyleWithExtraStyle( cell.getCellStyle(), addedStyle ) );
+	}
+	
 	
 }
