@@ -221,10 +221,11 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 		return addedStyle;
 	}
 	
-	public Font correctFontColorIfBackground( FontManager fm, CellStyle cellStyle, Font font ) {
+	@Override
+	public Font correctFontColorIfBackground( FontManager fm, Cell cell, Font font ) {
 		XSSFColor colour = ((XSSFFont)font).getXSSFColor();
 
-		if( fontColorOk(cellStyle, colour)) {
+		if( fontColorOk(cell.getCellStyle(), colour)) {
 			return font;
 		}
 		

@@ -533,11 +533,14 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 				smu.correctFontColorIfBackground( sm, currentCell );
 				for( RichTextRun run  : richTextRuns ) {
-					run.font = smu.correctFontColorIfBackground( sm.getFontManager(), currentCell.getCellStyle(), run.font ); 
+					run.font = smu.correctFontColorIfBackground( sm.getFontManager(), currentCell, run.font ); 
 				}
 				
 				if( lastString.contains("\n") ) {
 					currentCell.getCellStyle().setWrapText(true);
+					if( ! richTextRuns.isEmpty() ) {
+						currentCell.getCellStyle().setVerticalAlignment( CellStyle.VERTICAL_TOP );
+					}
 				}
 				
 				if( ! richTextRuns.isEmpty() ) {

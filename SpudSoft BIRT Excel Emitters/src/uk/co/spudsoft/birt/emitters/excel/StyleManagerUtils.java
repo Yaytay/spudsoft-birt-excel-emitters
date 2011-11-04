@@ -127,7 +127,7 @@ public abstract class StyleManagerUtils {
 
 	protected Logger log;	
 	
-	protected static final FontRenderContext frc = new FontRenderContext(null, false, false);
+	protected static final FontRenderContext frc = new FontRenderContext(null, true, true);
 	
 	/**
 	 * @param log
@@ -239,10 +239,10 @@ public abstract class StyleManagerUtils {
 	public int poiColumnWidthFromDimension( DimensionType dim ) {
 		if (dim != null) {
 			double mmWidth = dim.getMeasure();
-			if( ( DimensionType.UNITS_CM == dim.getUnits() ) 
-					|| ( DimensionType.UNITS_IN == dim.getUnits() )
-					|| ( DimensionType.UNITS_PT == dim.getUnits() )
-					|| ( DimensionType.UNITS_PC == dim.getUnits() )
+			if( ( DimensionType.UNITS_CM.equals( dim.getUnits() ) ) 
+					|| ( DimensionType.UNITS_IN.equals( dim.getUnits() ) )
+					|| ( DimensionType.UNITS_PT.equals( dim.getUnits() ) )
+					|| ( DimensionType.UNITS_PC.equals( dim.getUnits() ) )
 					) {
 				mmWidth = dim.convertTo( "mm" );
 			}
@@ -715,7 +715,7 @@ public abstract class StyleManagerUtils {
 	public float calculateTextHeightPoints( String sourceText, Font defaultFont, double widthMM, List< ExcelEmitter.RichTextRun> richTextRuns ) {
 		log.debug( "Calculating height for " + sourceText);
 		
-		final float widthPt = (float)(72 * widthMM / 25.4); 
+		final float widthPt = (float)(72 * Math.max( 0, widthMM - 6 ) / 25.4); 
 		
 		float totalHeight = 0;
 		String[] textLines = sourceText.split("\n");
@@ -763,16 +763,17 @@ public abstract class StyleManagerUtils {
 		     
 			while (measurer.getPosition() < textLine.length()) {
 		         TextLayout layout = measurer.nextLayout( widthPt );
-		         float lineHeight = layout.getAscent() + layout.getDescent() + layout.getLeading() + 1;
+		         float lineHeight = layout.getAscent() + layout.getDescent() + layout.getLeading();
 		         log.debug ( "Line: " + textLine + " gives height " + lineHeight);
 		         totalHeight += lineHeight;
 			}
+			
+			totalHeight += 1;
 		}
-		totalHeight += 4;
 		log.debug( "Height calculated as " + totalHeight );
 		return totalHeight;
 	}
 	
-	public abstract Font correctFontColorIfBackground( FontManager fm, CellStyle cellStyle, Font font );
+	public abstract Font correctFontColorIfBackground( FontManager fm, Cell cell, Font font );
 	public abstract void correctFontColorIfBackground( StyleManager sm, Cell cell );
 }

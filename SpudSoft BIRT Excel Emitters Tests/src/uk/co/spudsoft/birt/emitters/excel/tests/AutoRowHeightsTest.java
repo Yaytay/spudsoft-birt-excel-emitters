@@ -17,7 +17,7 @@ public class AutoRowHeightsTest extends ReportRunner {
 	@Test
 	public void testRunReportXlsx() throws BirtException, IOException {
 
-		debug = true;
+		// debug = true;
 		InputStream inputStream = runAndRenderReport("AutoRowHeight.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
@@ -30,12 +30,12 @@ public class AutoRowHeightsTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 6, this.firstNullRow(sheet));
 			
-			assertEquals( 309, sheet.getRow(0).getHeight() );
-			assertEquals( 907, sheet.getRow(1).getHeight() );
-			assertEquals( 769, sheet.getRow(2).getHeight() );
+			assertEquals( 300, sheet.getRow(0).getHeight() );
+			assertEquals( 847, sheet.getRow(1).getHeight() );
+			assertEquals( 749, sheet.getRow(2).getHeight() );
 			assertEquals( 1394, sheet.getRow(3).getHeight() );
-			assertEquals( 3069, sheet.getRow(4).getHeight() );
-			assertEquals( 4632, sheet.getRow(5).getHeight() );
+			assertEquals( 2859, sheet.getRow(4).getHeight() );
+			assertEquals( 4652, sheet.getRow(5).getHeight() );
 			
 		} finally {
 			inputStream.close();
@@ -58,12 +58,12 @@ public class AutoRowHeightsTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 6, this.firstNullRow(sheet));
 			
-			assertEquals( 309, sheet.getRow(0).getHeight() );
-			assertEquals( 907, sheet.getRow(1).getHeight() );
-			assertEquals( 769, sheet.getRow(2).getHeight() );
+			assertEquals( 255, sheet.getRow(0).getHeight() );
+			assertEquals( 847, sheet.getRow(1).getHeight() );
+			assertEquals( 749, sheet.getRow(2).getHeight() );
 			assertEquals( 1394, sheet.getRow(3).getHeight() );
-			assertEquals( 3069, sheet.getRow(4).getHeight() );
-			assertEquals( 4632, sheet.getRow(5).getHeight() );
+			assertEquals( 2859, sheet.getRow(4).getHeight() );
+			assertEquals( 4652, sheet.getRow(5).getHeight() );
 
 		} finally {
 			inputStream.close();

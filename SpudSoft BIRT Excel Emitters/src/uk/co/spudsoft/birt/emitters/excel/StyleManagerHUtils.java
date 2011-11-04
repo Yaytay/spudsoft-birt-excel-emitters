@@ -204,13 +204,26 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 	}
 
 	@Override
-	public Font correctFontColorIfBackground(FontManager fm, CellStyle cellStyle, Font font) {
-		if( cellStyle.getFillForegroundColor() != ((HSSFFont)font).getColor() ) {
+	public Font correctFontColorIfBackground(FontManager fm, Cell cell, Font font) {
+		CellStyle cellStyle = cell.getCellStyle();
+		Workbook workbook = cell.getSheet().getWorkbook();
+		HSSFPalette palette = ((HSSFWorkbook)workbook).getCustomPalette();
+		
+		String bgColour = HSSFColor.WHITE.hexString;
+		if( ( cellStyle.getFillForegroundColor() != HSSFColor.AUTOMATIC.index ) && ( cellStyle.getFillForegroundColor() != Short.MAX_VALUE ) ) {
+			bgColour = palette.getColor(cellStyle.getFillForegroundColor()).getHexString();
+		} 
+		String fontColour = HSSFColor.BLACK.hexString;
+		if( font.getColor() != Short.MAX_VALUE ) {
+			fontColour = palette.getColor(font.getColor()).getHexString();
+		}
+		
+		if( ! bgColour.equals(fontColour) ) {
 			return font; 
 		}
 		
 		IStyle addedStyle = new AreaStyle( fm.getCssEngine() );
-		if( font.getColor() == HSSFColor.BLACK.index ) {
+		if( HSSFColor.BLACK.hexString.equals( fontColour ) )  {
 			addedStyle.setColor("rgb(255, 255, 255)");
 		} else {
 			addedStyle.setColor("rgb(0, 0, 0)");
@@ -221,7 +234,37 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 
 	@Override
 	public void correctFontColorIfBackground(StyleManager sm, Cell cell) {
-		// TODO Auto-generated method stub
+		CellStyle cellStyle = cell.getCellStyle();
+		Workbook workbook = cell.getSheet().getWorkbook();
+		Font font = workbook.getFontAt( cellStyle.getFontIndex() );
+		HSSFPalette palette = ((HSSFWorkbook)workbook).getCustomPalette();
+		System.out.println( "cellStyle.getFillForegroundColor() == " + cellStyle.getFillForegroundColor() );
+		System.out.println( "font.getColor()).getHexString() == " + font.getColor() );
+		
+		String bgColour = HSSFColor.WHITE.hexString;
+		if( ( cellStyle.getFillForegroundColor() != HSSFColor.AUTOMATIC.index ) && ( cellStyle.getFillForegroundColor() != Short.MAX_VALUE ) ) {
+			bgColour = palette.getColor(cellStyle.getFillForegroundColor()).getHexString();
+		}
+		String fontColour = HSSFColor.BLACK.hexString;
+		if( font.getColor() != Short.MAX_VALUE ) {
+			fontColour = palette.getColor(font.getColor()).getHexString();
+		}
+		
+		if( ! bgColour.equals(fontColour) ) {
+			return ; 
+		}		
+		
+		IStyle addedStyle = new AreaStyle( sm.getCssEngine() );
+		System.out.println( "fontColour == " + fontColour );
+		if( HSSFColor.BLACK.hexString.equals( fontColour ) )  {
+			addedStyle.setColor("rgb(255, 255, 255)");
+		} else {
+			addedStyle.setColor("rgb(0, 0, 0)");
+		}
+		System.out.println( "Added style " + addedStyle.getColor() );
+		
+		cell.setCellStyle( sm.getStyleWithExtraStyle( cellStyle, addedStyle ) );
+		System.out.println( "Color after = " + palette.getColor(workbook.getFontAt( cell.getCellStyle().getFontIndex() ).getColor()).getHexString() );
 		
 	}
 	
