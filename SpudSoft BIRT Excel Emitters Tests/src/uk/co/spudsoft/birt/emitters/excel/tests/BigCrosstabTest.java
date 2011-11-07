@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import org.junit.Test;
 public class BigCrosstabTest extends ReportRunner {
 
 	@Test
-	public void test1() throws Exception {
+	public void testXlsx() throws Exception {
 
 		InputStream inputStream = runAndRenderReport("BigCrosstab.rptdesign", "xlsx");
 		assertNotNull(inputStream);
@@ -22,6 +23,31 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
+			assertEquals( 15, workbook.getNumCellStyles() );
+			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
+			
+			Sheet sheet = workbook.getSheetAt(0);
+			assertEquals( 236, firstNullRow(sheet));
+			
+			assertEquals(28, greatestNumColumns(sheet));
+			
+		} finally {
+			inputStream.close();
+		}
+	}
+
+	@Test
+	public void testXslx() throws Exception {
+
+		InputStream inputStream = runAndRenderReport("BigCrosstab.rptdesign", "xls");
+		assertNotNull(inputStream);
+		try {
+			
+			HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
+			assertNotNull(workbook);
+			
+			assertEquals( 1, workbook.getNumberOfSheets() );
+			assertEquals( 35, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);

@@ -51,6 +51,7 @@ import org.eclipse.birt.report.engine.content.ICellContent;
 import org.eclipse.birt.report.engine.content.IContainerContent;
 import org.eclipse.birt.report.engine.content.IContent;
 import org.eclipse.birt.report.engine.content.IDataContent;
+import org.eclipse.birt.report.engine.content.IElement;
 import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.content.ILabelContent;
@@ -329,6 +330,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	 * The minimum height that the current row will need to present data seen.
 	 */
 	protected float requiredRowHeightInPoints;
+	protected CSSEngine cssEngine;
 	
 	/**
 	 * Logger.
@@ -422,7 +424,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	    sheetNum = -1;
 	    wb = createWorkbook();
 	    styleStack = new StyleStack();
-	    CSSEngine cssEngine = report.getRoot().getCSSEngine();
+	    cssEngine = report.getRoot().getCSSEngine();
 	    sm = new StyleManager( wb, styleStack, log, smu, cssEngine );
 	    styleStack.setCssEngine( cssEngine );
 
@@ -483,6 +485,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			wb = null;
 			styleStack = null;
 			sm = null;
+			cssEngine = null;
 			reportOutputFilename = null;			
 			reportOutputStream = null;
 		}
@@ -540,13 +543,6 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					run.font = smu.correctFontColorIfBackground( sm.getFontManager(), currentCell, run.font ); 
 				}
 				
-				if( lastString.contains("\n") ) {
-					currentCell.getCellStyle().setWrapText(true);
-					if( ! richTextRuns.isEmpty() ) {
-						currentCell.getCellStyle().setVerticalAlignment( CellStyle.VERTICAL_TOP );
-					}
-				}
-				
 				if( ! richTextRuns.isEmpty() ) {
 					RichTextString rich = smu.createRichTextString( lastString );
 					int runStart = richTextRuns.get(0).startIndex;
@@ -579,6 +575,27 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 						requiredRowHeightInPoints = cellDesiredHeight;
 					}
 				}
+				
+				IStyle addedStyle = null;
+				if( lastString.contains("\n") ) {
+					if( ! CSSConstants.CSS_NOWRAP_VALUE.equals( styleStack.top().getStyle().getWhiteSpace() ) ) {
+						if( addedStyle == null ) {
+							addedStyle = new AreaStyle( cssEngine );
+						}
+						addedStyle.setWhiteSpace( CSSConstants.CSS_PRE_VALUE );
+					}
+				}					
+				if( ! richTextRuns.isEmpty() ) {
+					if( addedStyle == null ) {
+						addedStyle = new AreaStyle( cssEngine );
+					}
+					addedStyle.setVerticalAlign( CSSConstants.CSS_TOP_VALUE );
+				}
+				
+				if( addedStyle != null ) {
+					currentCell.setCellStyle( sm.getStyleWithExtraStyle( currentCell.getCellStyle(), addedStyle ) );
+				}				
+				
 			} else {
 				styleStack.mergeTop( lastElement, CellContent.class );				
 				setEmptyCellContents( lastValue, styleStack.top() );
@@ -634,21 +651,6 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 	}
 */
 	
-/*	private String indent( int indent ) {
-		StringBuilder result = new StringBuilder();
-		for(int i= 0; i < indent; ++i) {
-			result.append( ' ' );
-		}
-		return result.toString();
-	}
-	
-	private void dumpChildren( IElement element, int indent ) {
-		System.out.println( indent(indent) + element.getClass().getSimpleName() );
-		for( Object childObject : element.getChildren() ) {
-			dumpChildren( (IElement)childObject, indent + 2 );
-		}
-	}
-*/
 	@Override
 	public void startPage(IPageContent page) throws BirtException {
 		log.addPrefix( 'P' );
@@ -927,6 +929,25 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		super.startAutoText(autoText);
 	}
 
+	private String indent( int indent ) {
+		StringBuilder result = new StringBuilder();
+		for(int i= 0; i < indent; ++i) {
+			result.append( ' ' );
+		}
+		return result.toString();
+	}
+	
+	private void dumpChildren( IElement element, int indent ) {
+		System.out.print( indent(indent) + element.getClass().getSimpleName() );
+		if( element instanceof ICellContent ) {
+			ICellContent cell = (ICellContent)element;
+			System.out.print( "Span:" + cell.getColSpan() + ", Column:" + cell.getColumnInstance() );
+		}
+		System.out.println();
+		for( Object childObject : element.getChildren() ) {
+			dumpChildren( (IElement)childObject, indent + 2 );
+		}
+	}
 
 	@Override
 	public void startCell(ICellContent cell) throws BirtException {
@@ -938,6 +959,13 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 				+ ", \ncomputedStyle: " + StyleManagerUtils.birtStyleToString(cell.getComputedStyle())
 */				);
 		super.startCell(cell);
+		
+/*		IElement parent = cell.getParent();
+		while( ! ( parent instanceof ITableContent ) ) {
+			parent = parent.getParent();
+		}
+		dumpChildren( parent, 0 );
+*/		
 		++nestedCellCount;
 		if( nestedCellCount == 1 ) {
 			currentCell = currentRow.createCell( cell.getColumn() );

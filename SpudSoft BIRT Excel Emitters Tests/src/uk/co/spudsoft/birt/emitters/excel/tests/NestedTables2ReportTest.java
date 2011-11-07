@@ -43,6 +43,7 @@ public class NestedTables2ReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
+		debug = true;
 		InputStream inputStream = runAndRenderReport("NestedTables2.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {

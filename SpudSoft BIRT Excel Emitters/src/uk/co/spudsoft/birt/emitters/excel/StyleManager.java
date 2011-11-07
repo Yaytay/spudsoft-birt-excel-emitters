@@ -33,6 +33,7 @@ import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
+import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -145,7 +146,8 @@ public class StyleManager {
 		StyleConstants.STYLE_BORDER_BOTTOM_STYLE,
 		StyleConstants.STYLE_BORDER_BOTTOM_WIDTH,
 		StyleConstants.STYLE_BORDER_BOTTOM_COLOR,
-		StyleConstants.STYLE_DATA_FORMAT,
+		StyleConstants.STYLE_WHITE_SPACE,
+		StyleConstants.STYLE_VERTICAL_ALIGN,
 	};
 	
 	/**
@@ -160,15 +162,24 @@ public class StyleManager {
 	 * true if style1 and style2 would produce identical CellStyles if passed to createStyle.
 	 */
 	private boolean stylesEquivalent(IStyle style1, IStyle style2) {
-		for( int prop : COMPARE_CSS_PROPERTIES ) {
+		for( int i = 0; i < COMPARE_CSS_PROPERTIES.length; ++i ) {
+			int prop = COMPARE_CSS_PROPERTIES[ i ];
 			CSSValue value1 = style1.getProperty( prop );
 			CSSValue value2 = style2.getProperty( prop );
 			if( ! StyleManagerUtils.objectsEqual( value1, value2 ) ) {
 				return false;
 			}
 		}
+		// Number format
+        if( !StyleManagerUtils.objectsEqual(style1.getNumberFormat(), style2.getNumberFormat())
+                || !StyleManagerUtils.objectsEqual(style1.getDateFormat(), style2.getDateFormat())
+                || !StyleManagerUtils.objectsEqual(style1.getDateTimeFormat(), style2.getDateTimeFormat())
+                || !StyleManagerUtils.objectsEqual(style1.getTimeFormat(), style2.getTimeFormat()) ) {
+                return false;
+        }
+        
 		// Font
-		if(!FontManager.fontsEquivalent(style1, style2)) {
+		if( !FontManager.fontsEquivalent( style1, style2 ) ) {
 			return false;
 		}
 		return true;
@@ -182,7 +193,8 @@ public class StyleManager {
 	 * The CellStyle whose attributes are described by the BIRT style. 
 	 */
 	private CellStyle createStyle(IStyle birtStyle) {
-		log.debug( "Creating style" );
+		log.debug( "Creating style " + smu.birtStyleToString( birtStyle ) );
+		System.out.println( "Creating style " + smu.birtStyleToString( birtStyle ) );
 		
 		CellStyle poiStyle = workbook.createCellStyle();
 		// Alignment
@@ -204,6 +216,18 @@ public class StyleManager {
 		smu.applyBorderStyle(workbook, poiStyle, BorderSide.BOTTOM, birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_WIDTH));
 		// Number format
 		smu.applyNumberFormat(workbook, birtStyle, poiStyle);
+		// Whitespace/wrap
+		if( CSSConstants.CSS_PRE_VALUE.equals( birtStyle.getWhiteSpace() ) ) {
+			poiStyle.setWrapText( true );
+		}
+		// Vertical alignment
+		if( CSSConstants.CSS_TOP_VALUE.equals( birtStyle.getVerticalAlign() ) ) {
+			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_TOP );
+		} else if ( CSSConstants.CSS_MIDDLE_VALUE.equals( birtStyle.getVerticalAlign() ) ) {
+			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_CENTER );
+		} else if ( CSSConstants.CSS_BOTTOM_VALUE.equals( birtStyle.getVerticalAlign() ) ) {
+			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_BOTTOM );
+		} 
 
 		styles.add(new StylePair( smu.copyBirtStyle( birtStyle ), poiStyle));
 		return poiStyle;
