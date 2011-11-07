@@ -26,17 +26,32 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.birt.core.exception.BirtException;
 import org.junit.Test;
 
-public class NestedTablesReportTest extends ReportRunner {
+public class Borders2ReportTest extends ReportRunner {
 
+	private void assertBorder( Sheet sheet, int row, int col, short bottom, short left, short right, short top ) {
+		
+		Cell cell = sheet.getRow(row).getCell(col);
+		CellStyle style = cell.getCellStyle();
+		
+		assertEquals( bottom, style.getBorderBottom() );
+		assertEquals( left,   style.getBorderLeft() );
+		assertEquals( right,  style.getBorderRight() );
+		assertEquals( top,    style.getBorderTop() );
+	}
+	
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
-		InputStream inputStream = runAndRenderReport("NestedTables.rptdesign", "xlsx");
+		// debug = true;
+		removeEmptyRows = false;
+		InputStream inputStream = runAndRenderReport("Borders2.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
 			
@@ -44,15 +59,18 @@ public class NestedTablesReportTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( "Nested Tables Test Report", workbook.getSheetAt(0).getSheetName());
+			assertEquals( "Borders Test Report 2", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals(1, firstNullRow(sheet));
+			assertEquals( 4, firstNullRow(sheet));
 			
-			assertEquals( "One Two Three\n1 2 3\n2 4 6\n3 6 9", sheet.getRow(0).getCell(0).getStringCellValue());
-			assertEquals( "One Two Three\n1 2 3\n2 4 6\n3 6 9", sheet.getRow(0).getCell(1).getStringCellValue());
+			assertBorder( sheet, 1, 2, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_MEDIUM );
+
+			assertBorder( sheet, 1, 4, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_MEDIUM );
+			
 		} finally {
 			inputStream.close();
 		}
 	}
+
 }

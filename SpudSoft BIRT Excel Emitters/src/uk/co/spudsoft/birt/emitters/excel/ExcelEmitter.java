@@ -61,9 +61,11 @@ import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.content.IStyledElement;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
+import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.content.impl.TextContent;
 import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
+import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.emitter.ContentEmitterAdapter;
 import org.eclipse.birt.report.engine.emitter.IEmitterServices;
@@ -419,8 +421,10 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		
 	    sheetNum = -1;
 	    wb = createWorkbook();
-	    styleStack = new StyleStack();	    
-	    sm = new StyleManager(wb, styleStack, log, smu, report.getRoot().getCSSEngine());
+	    styleStack = new StyleStack();
+	    CSSEngine cssEngine = report.getRoot().getCSSEngine();
+	    sm = new StyleManager( wb, styleStack, log, smu, cssEngine );
+	    styleStack.setCssEngine( cssEngine );
 
 	    nestedCellCount = 0;
 	    nestedRowCount = 0;
@@ -560,11 +564,11 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					
 					log.debug("Finalising with " + runStart + " - " + lastString.length() );
 					rich.applyFont(runStart, lastString.length(), lastFont);
-					
+
 					setEmptyCellContents( rich, null );
 				} else {
-					
-					setEmptyCellContents( lastString, lastElement );
+					styleStack.mergeTop( lastElement, CellContent.class );
+					setEmptyCellContents( lastString, styleStack.top() );
 				}
 
 				if( cellColSpan > 1 ) {
@@ -576,9 +580,11 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 					}
 				}
 			} else {
-				setEmptyCellContents( lastValue, lastElement );
+				styleStack.mergeTop( lastElement, CellContent.class );				
+				setEmptyCellContents( lastValue, styleStack.top() );
 			}
 		} else {
+			styleStack.mergeTop( element, CellContent.class );
 			setCurrentCellStyle(element);
 		}
 
@@ -627,12 +633,30 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		super.endListGroup(group);
 	}
 */
-
+	
+/*	private String indent( int indent ) {
+		StringBuilder result = new StringBuilder();
+		for(int i= 0; i < indent; ++i) {
+			result.append( ' ' );
+		}
+		return result.toString();
+	}
+	
+	private void dumpChildren( IElement element, int indent ) {
+		System.out.println( indent(indent) + element.getClass().getSimpleName() );
+		for( Object childObject : element.getChildren() ) {
+			dumpChildren( (IElement)childObject, indent + 2 );
+		}
+	}
+*/
 	@Override
 	public void startPage(IPageContent page) throws BirtException {
 		log.addPrefix( 'P' );
 		log.debug("startPage");
 		super.startPage(page);
+		
+		// dumpChildren( page, 0 );
+		
 		if( ( nestedCellCount == 0 ) && ( nestedRowCount == 0 ) && ( nestedTableCount == 0 ) ) {
 			startSheet();
 			styleStack.push(page);
@@ -680,7 +704,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 
 		if( nestedRowCount == 0) {
 			// Check whether the entire row should be deleted
-			boolean blankRow = true;
+			boolean blankRow = removeBlankRows;
 			for(Iterator<Cell> iter = currentRow.cellIterator(); iter.hasNext(); ) {
 				Cell cell = iter.next();
 				if(! smu.cellIsEmpty(cell)) {
@@ -1022,7 +1046,13 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 		log.debug("startData " + ( ( data != null ) && ( data.getValue() != null ) ? data.getValue().toString() + " (" + data.getValue().getClass().getCanonicalName() + ")" : "null" ) 
 				// + ", style: " + StyleManagerUtils.birtStyleToString(data.getStyle())
 				);
-		super.startData(data);
+/*		IStyle birtStyle = data.getStyle();
+		System.out.println( "INitailly>>: " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_WIDTH) + " ], " 
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_WIDTH) + " ], "
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_WIDTH) + " ], "
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_WIDTH) + " ], "
+				);
+*/		super.startData(data);
 
 		styleStack.push( data );
 		Object value = data.getValue();		
@@ -1114,7 +1144,7 @@ public abstract class ExcelEmitter extends ContentEmitterAdapter {
 			lastValue = value;
 		}
 		if( ( value != null ) && ( nestedCellCount == 0 ) && ( element != null ) ) {
-			setCurrentCellStyle(element);
+			setCurrentCellStyle( element );
 		}
 	}
 	

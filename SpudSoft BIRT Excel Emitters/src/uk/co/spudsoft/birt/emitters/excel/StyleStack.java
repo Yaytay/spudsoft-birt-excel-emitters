@@ -20,11 +20,12 @@
 
 package uk.co.spudsoft.birt.emitters.excel;
 
-import java.util.ListIterator;
 import java.util.Stack;
 
 import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.content.IStyledElement;
+import org.eclipse.birt.report.engine.css.engine.CSSEngine;
+import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -36,7 +37,12 @@ import org.w3c.dom.css.CSSValue;
 public class StyleStack {
 	
 	Stack<IStyledElement> stack = new Stack<IStyledElement>();
-
+	private CSSEngine cssEngine;
+	
+	public void setCssEngine( CSSEngine cssEngine ) {
+		this.cssEngine = cssEngine;
+	}
+	
 	/**
 	 * Push a new BIRT styled element onto the stack.
 	 * @param element
@@ -65,22 +71,38 @@ public class StyleStack {
 		}
 	}
 	
-	/**
-	 * Get a property from the stack of styles, returning the top-most value that is set.
-	 * @param property
-	 * The property to be returned.
-	 * @return
-	 * The value of the property from the top-most item on the stack to specify it.
-	 */
-	public CSSValue getProperty1( int property ) {
-		for(ListIterator<IStyledElement> iter = stack.listIterator(stack.size()); iter.hasPrevious();){
-			IStyledElement element = iter.previous();
-			CSSValue value = element.getStyle().getProperty( property );
-			if( value != null ) {
-				return value;
+	
+/*	private void dumpStack() {
+		System.out.print( "Stack: ");
+		for( IStyledElement element : stack ) {
+			System.out.print( element.getClass().getSimpleName() );
+			System.out.print( "[ " + element.getStyle().getBorderBottomColor() + "]" );
+			System.out.print( "; " );
+		}
+		System.out.println();
+	}
+*/	
+	private void mergeAllIfAny( IStyle destStyle, IStyle sourceStyle, int[] properties, String[] defaults ) {
+
+		boolean any = false;
+		for( int prop : properties ) {
+			if( sourceStyle.getProperty( prop ) != null ) {
+				any = true;
+				break;
 			}
 		}
-		return null;
+		
+		if( any ) {
+			for( int i = 0; i < properties.length; ++i ) {
+				int prop = properties[ i ];
+				CSSValue value = sourceStyle.getProperty( prop );
+				if( value == null ) {
+					destStyle.setProperty( prop, cssEngine.parsePropertyValue( prop, defaults[ i ] ) );
+				} else {
+					destStyle.setProperty( prop, value );
+				}
+			}			
+		}
 	}
 	
 	/**
@@ -92,17 +114,49 @@ public class StyleStack {
 	 * @throws IllegalStateException
 	 * If the top item on the stack is not an instance of clazz.
 	 */
-	public <T> void mergeTop1( IStyledElement element, Class<T> clazz ) {
-		IStyledElement target = stack.lastElement();
+	public <T> void mergeTop( IStyledElement element, Class<T> clazz ) {
+		// System.out.println( "mergeTop [" +element.getClass().getSimpleName() + "]" + "[ " + element.getStyle().getBorderBottomColor() + "]" );
+		// dumpStack();
+		IStyledElement topElement = stack.lastElement();
+/*		if( ! clazz.isInstance(topElement) ) {
+			throw new IllegalStateException( "The top element on the stack is of type " + topElement.getClass().getName() + " rather than the expected " + clazz.getName());
+		}
+*/		
+/*		IStyle birtStyle = topElement.getComputedStyle();
+		System.out.println( "B4>>: " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_WIDTH) + " ], " 
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_WIDTH) + " ], "
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_WIDTH) + " ], "
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_WIDTH) + " ], "
+				);
+*/
 		
-		IStyle targetStyle = target.getStyle();
+		IStyle topStyle = topElement.getStyle();
 		IStyle sourceStyle = element.getStyle();
 		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
 			CSSValue value = sourceStyle.getProperty( i );
 			if( value != null ) {
-				targetStyle.setProperty( i , value );
+				topStyle.setProperty( i , value );
 			}
 		}
+		
+		// Special handling for borders, to permit defaults with null value values
+		mergeAllIfAny( topStyle, sourceStyle, new int[] { StyleConstants.STYLE_BORDER_TOP_STYLE, StyleConstants.STYLE_BORDER_TOP_COLOR, StyleConstants.STYLE_BORDER_TOP_WIDTH }, new String[] { "solid", "rgb(0,0,0)", "medium" } );
+		mergeAllIfAny( topStyle, sourceStyle, new int[] { StyleConstants.STYLE_BORDER_RIGHT_STYLE, StyleConstants.STYLE_BORDER_RIGHT_COLOR, StyleConstants.STYLE_BORDER_RIGHT_WIDTH }, new String[] { "solid", "rgb(0,0,0)", "medium" } );
+		mergeAllIfAny( topStyle, sourceStyle, new int[] { StyleConstants.STYLE_BORDER_BOTTOM_STYLE, StyleConstants.STYLE_BORDER_BOTTOM_COLOR, StyleConstants.STYLE_BORDER_BOTTOM_WIDTH }, new String[] { "solid", "rgb(0,0,0)", "medium" } );
+		mergeAllIfAny( topStyle, sourceStyle, new int[] { StyleConstants.STYLE_BORDER_LEFT_STYLE, StyleConstants.STYLE_BORDER_LEFT_COLOR, StyleConstants.STYLE_BORDER_LEFT_WIDTH }, new String[] { "solid", "rgb(0,0,0)", "medium" } );
+		
+
+/*		birtStyle = topElement.getComputedStyle();
+		System.out.println( "AFTER>>: " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_WIDTH) + " ], " 
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_WIDTH) + " ], "
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_WIDTH) + " ], "
+				+ birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_STYLE) + "[ " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_COLOR) + " & " + birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_WIDTH) + " ], "
+				);
+*/
+	}
+	
+	public IStyledElement top() {
+		return stack.lastElement();
 	}
 	
 }

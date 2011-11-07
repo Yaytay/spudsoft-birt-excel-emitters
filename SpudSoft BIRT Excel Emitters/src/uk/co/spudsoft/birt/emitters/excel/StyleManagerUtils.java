@@ -385,7 +385,7 @@ public abstract class StyleManagerUtils {
 	 * @param width
 	 * The width of the new border.
 	 */
-	public abstract void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, String colour, String borderStyle, String width);
+	public abstract void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, CSSValue colour, CSSValue borderStyle, CSSValue width);
 	
 	/**
 	 * <p>

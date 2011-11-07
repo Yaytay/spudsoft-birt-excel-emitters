@@ -36,6 +36,7 @@ import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
+import org.w3c.dom.css.CSSValue;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
@@ -130,13 +131,17 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 	}
 
 	@Override
-	public void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, String colour, String borderStyle, String width) {
-		if( ( colour != null ) && ( borderStyle != null ) && ( width != null ) ) {
+	public void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, CSSValue colour, CSSValue borderStyle, CSSValue width) {
+		if( ( colour == null ) || ( borderStyle != null ) || ( width != null ) ) {
+			String colourString = colour == null ? "rgb(0,0,0)" : colour.getCssText();
+			String borderStyleString = borderStyle == null ? "solid" : borderStyle.getCssText();
+			String widthString = width == null ? "medium" : width.getCssText();
+
 			if( style instanceof HSSFCellStyle ) {
 				HSSFCellStyle hStyle = (HSSFCellStyle)style;
 				
-				short hBorderStyle = poiBorderStyleFromBirt(borderStyle, width);
-				short colourIndex = getHColour((HSSFWorkbook)workbook, colour);
+				short hBorderStyle = poiBorderStyleFromBirt(borderStyleString, widthString);
+				short colourIndex = getHColour((HSSFWorkbook)workbook, colourString);
 				if( colourIndex > 0 ) {
 					if(hBorderStyle != CellStyle.BORDER_NONE) {
 						switch( side ) {
@@ -238,8 +243,6 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 		Workbook workbook = cell.getSheet().getWorkbook();
 		Font font = workbook.getFontAt( cellStyle.getFontIndex() );
 		HSSFPalette palette = ((HSSFWorkbook)workbook).getCustomPalette();
-		System.out.println( "cellStyle.getFillForegroundColor() == " + cellStyle.getFillForegroundColor() );
-		System.out.println( "font.getColor()).getHexString() == " + font.getColor() );
 		
 		String bgColour = HSSFColor.WHITE.hexString;
 		if( ( cellStyle.getFillForegroundColor() != HSSFColor.AUTOMATIC.index ) && ( cellStyle.getFillForegroundColor() != Short.MAX_VALUE ) ) {
@@ -255,17 +258,13 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 		}		
 		
 		IStyle addedStyle = new AreaStyle( sm.getCssEngine() );
-		System.out.println( "fontColour == " + fontColour );
 		if( HSSFColor.BLACK.hexString.equals( fontColour ) )  {
 			addedStyle.setColor("rgb(255, 255, 255)");
 		} else {
 			addedStyle.setColor("rgb(0, 0, 0)");
 		}
-		System.out.println( "Added style " + addedStyle.getColor() );
 		
 		cell.setCellStyle( sm.getStyleWithExtraStyle( cellStyle, addedStyle ) );
-		System.out.println( "Color after = " + palette.getColor(workbook.getFontAt( cell.getCellStyle().getFontIndex() ).getColor()).getHexString() );
-		
 	}
 	
 }

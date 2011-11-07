@@ -38,6 +38,7 @@ import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
+import org.w3c.dom.css.CSSValue;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
@@ -108,13 +109,17 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 	}
 
 	@Override
-	public void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, String colour, String borderStyle, String width) {
-		if( ( colour != null ) && ( borderStyle != null ) && ( width != null ) ) {
+	public void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, CSSValue colour, CSSValue borderStyle, CSSValue width) {
+		if( ( colour == null ) || ( borderStyle != null ) || ( width != null ) ) {
+			String colourString = colour == null ? "rgb(0,0,0)" : colour.getCssText();
+			String borderStyleString = borderStyle == null ? "solid" : borderStyle.getCssText();
+			String widthString = width == null ? "medium" : width.getCssText();
+			
 			if( style instanceof XSSFCellStyle ) {
 				XSSFCellStyle xStyle = (XSSFCellStyle)style;
 				
-				BorderStyle xBorderStyle = poiBorderStyleFromBirt(borderStyle, width);
-				XSSFColor xBorderColour = getXColour(colour);
+				BorderStyle xBorderStyle = poiBorderStyleFromBirt(borderStyleString, widthString);
+				XSSFColor xBorderColour = getXColour(colourString);
 				if(xBorderStyle != BorderStyle.NONE) {
 					switch( side ) {
 					case TOP:
@@ -125,7 +130,7 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 					case LEFT:
 						xStyle.setBorderLeft(xBorderStyle);
 						xStyle.setLeftBorderColor(xBorderColour);
-						// log.debug( "Left border: " + xStyle.getBorderLeft() + " / " + xStyle.getLeftBorderXSSFColor().getARGBHex() );
+						log.debug( "Left border: " + xStyle.getBorderLeft() + " / " + xStyle.getLeftBorderXSSFColor().getARGBHex() );
 						break;
 					case RIGHT:
 						xStyle.setBorderRight(xBorderStyle);

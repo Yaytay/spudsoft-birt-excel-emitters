@@ -29,8 +29,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.content.IStyledElement;
+import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
+import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.w3c.dom.css.CSSValue;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -106,23 +108,45 @@ public class StyleManager {
 	public IStyle mergeStyles(IStyle style) {
 
 		for( int elemIndex = styleStack.stack.size() - 1; elemIndex >= 0; --elemIndex ) {
-			IStyledElement element = styleStack.stack.get( elemIndex );
-			IStyle sourceStyle = element.getStyle();
+			IStyledElement stackElement = styleStack.stack.get( elemIndex );
+			IStyle stackStyle = stackElement.getStyle();
 			
 			for(int propIndex = 0; propIndex < IStyle.NUMBER_OF_STYLE; ++propIndex ) {
 				if( ( style.getProperty(propIndex) == null ) 
 						|| ( ( propIndex == IStyle.STYLE_BACKGROUND_COLOR )
 							&& ( IStyle.TRANSPARENT_VALUE.equals( style.getProperty(propIndex) ) ) ) ) {
-					CSSValue value = sourceStyle.getProperty( propIndex );
+					CSSValue value = stackStyle.getProperty( propIndex );
 					if( value != null ) {
 						style.setProperty( propIndex , value );
 					}
 				}
-			}			
+			}	
+			if( stackElement instanceof CellContent ) {
+				return style;
+			}
 		}
 	
 		return style;
 	}
+
+	
+	private static int COMPARE_CSS_PROPERTIES[] = {
+		StyleConstants.STYLE_TEXT_ALIGN,
+		StyleConstants.STYLE_BACKGROUND_COLOR,
+		StyleConstants.STYLE_BORDER_TOP_STYLE,
+		StyleConstants.STYLE_BORDER_TOP_WIDTH,
+		StyleConstants.STYLE_BORDER_TOP_COLOR,
+		StyleConstants.STYLE_BORDER_LEFT_STYLE,
+		StyleConstants.STYLE_BORDER_LEFT_WIDTH,
+		StyleConstants.STYLE_BORDER_LEFT_COLOR,
+		StyleConstants.STYLE_BORDER_RIGHT_STYLE,
+		StyleConstants.STYLE_BORDER_RIGHT_WIDTH,
+		StyleConstants.STYLE_BORDER_RIGHT_COLOR,
+		StyleConstants.STYLE_BORDER_BOTTOM_STYLE,
+		StyleConstants.STYLE_BORDER_BOTTOM_WIDTH,
+		StyleConstants.STYLE_BORDER_BOTTOM_COLOR,
+		StyleConstants.STYLE_DATA_FORMAT,
+	};
 	
 	/**
 	 * Test whether two BIRT styles are equivalent, as far as the attributes understood by POI are concerned.
@@ -136,51 +160,17 @@ public class StyleManager {
 	 * true if style1 and style2 would produce identical CellStyles if passed to createStyle.
 	 */
 	private boolean stylesEquivalent(IStyle style1, IStyle style2) {
-		// Alignment
-		if(!StyleManagerUtils.objectsEqual(style1.getTextAlign(), style2.getTextAlign())) {
-			return false;
+		for( int prop : COMPARE_CSS_PROPERTIES ) {
+			CSSValue value1 = style1.getProperty( prop );
+			CSSValue value2 = style2.getProperty( prop );
+			if( ! StyleManagerUtils.objectsEqual( value1, value2 ) ) {
+				return false;
+			}
 		}
 		// Font
 		if(!FontManager.fontsEquivalent(style1, style2)) {
 			return false;
 		}
-		// Background colour
-		if(!StyleManagerUtils.objectsEqual(style1.getBackgroundColor(), style2.getBackgroundColor())) {
-			return false;
-		}
-		// Top border
-		if( !StyleManagerUtils.objectsEqual(style1.getBorderTopStyle(), style2.getBorderTopStyle())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderTopWidth(), style2.getBorderTopWidth())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderTopColor(), style2.getBorderTopColor())) {
-			return false;
-		}
-		// Left border
-		if( !StyleManagerUtils.objectsEqual(style1.getBorderLeftStyle(), style2.getBorderLeftStyle())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderLeftWidth(), style2.getBorderLeftWidth())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderLeftColor(), style2.getBorderLeftColor())) {
-			return false;
-		}
-		// Right border
-		if( !StyleManagerUtils.objectsEqual(style1.getBorderRightStyle(), style2.getBorderRightStyle())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderRightWidth(), style2.getBorderRightWidth())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderRightColor(), style2.getBorderRightColor())) {
-			return false;
-		}
-		// Bottom border
-		if( !StyleManagerUtils.objectsEqual(style1.getBorderBottomStyle(), style2.getBorderBottomStyle())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderBottomWidth(), style2.getBorderBottomWidth())
-			|| !StyleManagerUtils.objectsEqual(style1.getBorderBottomColor(), style2.getBorderBottomColor())) {
-			return false;
-		}
-		// Number format
-		log.debug( "Number formats: \"" + style1.getNumberFormat() + "\" and \"" + style2.getNumberFormat() + "\"" );
-		if( !StyleManagerUtils.objectsEqual(style1.getNumberFormat(), style2.getNumberFormat())
-			|| !StyleManagerUtils.objectsEqual(style1.getDateFormat(), style2.getDateFormat())
-			|| !StyleManagerUtils.objectsEqual(style1.getDateTimeFormat(), style2.getDateTimeFormat())
-			|| !StyleManagerUtils.objectsEqual(style1.getTimeFormat(), style2.getTimeFormat()) ) {
-			return false;
-		}
-		
 		return true;
 	}
 	
@@ -205,13 +195,13 @@ public class StyleManager {
 		// Background colour
 		smu.addBackgroundColourToStyle(workbook, poiStyle, birtStyle.getBackgroundColor());
 		// Top border 
-		smu.applyBorderStyle(workbook, poiStyle, BorderSide.TOP, birtStyle.getBorderTopColor(), birtStyle.getBorderTopStyle(), birtStyle.getBorderTopWidth());
+		smu.applyBorderStyle(workbook, poiStyle, BorderSide.TOP, birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_WIDTH));
 		// Left border 
-		smu.applyBorderStyle(workbook, poiStyle, BorderSide.LEFT, birtStyle.getBorderLeftColor(), birtStyle.getBorderLeftStyle(), birtStyle.getBorderLeftWidth());
+		smu.applyBorderStyle(workbook, poiStyle, BorderSide.LEFT, birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_LEFT_WIDTH));
 		// Right border 
-		smu.applyBorderStyle(workbook, poiStyle, BorderSide.RIGHT, birtStyle.getBorderRightColor(), birtStyle.getBorderRightStyle(), birtStyle.getBorderRightWidth());
+		smu.applyBorderStyle(workbook, poiStyle, BorderSide.RIGHT, birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_RIGHT_WIDTH));
 		// Bottom border 
-		smu.applyBorderStyle(workbook, poiStyle, BorderSide.BOTTOM, birtStyle.getBorderBottomColor(), birtStyle.getBorderBottomStyle(), birtStyle.getBorderBottomWidth());
+		smu.applyBorderStyle(workbook, poiStyle, BorderSide.BOTTOM, birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_WIDTH));
 		// Number format
 		smu.applyNumberFormat(workbook, birtStyle, poiStyle);
 
@@ -237,6 +227,7 @@ public class StyleManager {
 		}
 		
 		birtStyle = mergeStyles(birtStyle);
+
 		for(StylePair stylePair : styles) {
 			if(stylesEquivalent(birtStyle, stylePair.birtStyle)) {
 				return stylePair.poiStyle;

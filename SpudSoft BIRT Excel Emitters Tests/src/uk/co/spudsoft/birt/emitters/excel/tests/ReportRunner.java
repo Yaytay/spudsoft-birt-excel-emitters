@@ -58,6 +58,7 @@ import uk.co.spudsoft.birt.emitters.excel.tests.framework.Activator;
 public class ReportRunner {
 	
 	protected boolean debug;
+	protected boolean removeEmptyRows = true;
 	
 	private static byte[] getBytesFromFile(File file) throws IOException {
 	    InputStream is = new FileInputStream(file);
@@ -388,6 +389,9 @@ public class ReportRunner {
 		}
 		if( debug ) {
 			renderOptions.setOption( "ExcelEmitter.DEBUG", Boolean.TRUE);
+		}
+		if( ! removeEmptyRows ) {
+			renderOptions.setOption( "ExcelEmitter.RemoveBlankRows", Boolean.FALSE );
 		}
 		return renderOptions;
 	}
