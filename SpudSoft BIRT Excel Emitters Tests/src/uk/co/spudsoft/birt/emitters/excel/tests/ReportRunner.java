@@ -41,6 +41,7 @@ import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.EngineConfig;
 import org.eclipse.birt.report.engine.api.EngineException;
+import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 import org.eclipse.birt.report.engine.api.IEngineTask;
 import org.eclipse.birt.report.engine.api.IRenderTask;
 import org.eclipse.birt.report.engine.api.IReportDocument;
@@ -59,6 +60,7 @@ public class ReportRunner {
 	
 	protected boolean debug;
 	protected boolean removeEmptyRows = true;
+	protected boolean htmlPagination;
 	
 	private static byte[] getBytesFromFile(File file) throws IOException {
 	    InputStream is = new FileInputStream(file);
@@ -392,6 +394,9 @@ public class ReportRunner {
 		}
 		if( ! removeEmptyRows ) {
 			renderOptions.setOption( "ExcelEmitter.RemoveBlankRows", Boolean.FALSE );
+		}
+		if( htmlPagination ) {
+			renderOptions.setOption( HTMLRenderOption.HTML_PAGINATION, Boolean.TRUE );
 		}
 		return renderOptions;
 	}
