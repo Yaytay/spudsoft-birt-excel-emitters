@@ -28,11 +28,9 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IStyle;
-import org.eclipse.birt.report.engine.content.IStyledElement;
-import org.eclipse.birt.report.engine.content.impl.CellContent;
-import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
+import org.eclipse.birt.report.engine.css.engine.value.DataFormatValue;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
@@ -51,10 +49,10 @@ public class StyleManager {
 	 *
 	 */
 	private class StylePair {
-		public IStyle birtStyle;
+		public BirtStyle birtStyle;
 		public CellStyle poiStyle;
 		
-		public StylePair(IStyle birtStyle, CellStyle poiStyle) {
+		public StylePair(BirtStyle birtStyle, CellStyle poiStyle) {
 			this.birtStyle = birtStyle;
 			this.poiStyle = poiStyle;
 		}
@@ -63,7 +61,7 @@ public class StyleManager {
 	private Workbook workbook;
 	private FontManager fm;
 	private List<StylePair> styles = new ArrayList<StylePair>();
-	private StyleStack styleStack;
+	// private StyleStack styleStack;
 	private StyleManagerUtils smu;
 	private CSSEngine cssEngine;
 	private Logger log;
@@ -80,10 +78,9 @@ public class StyleManager {
 	 * @param cssEngine
 	 * BIRT CSS Engine for creating BIRT styles. 
 	 */
-	public StyleManager(Workbook workbook, StyleStack styleStack, Logger log, StyleManagerUtils smu, CSSEngine cssEngine) {
+	public StyleManager(Workbook workbook, Logger log, StyleManagerUtils smu, CSSEngine cssEngine) {
 		this.workbook = workbook;
 		this.fm = new FontManager(cssEngine, workbook, smu);
-		this.styleStack = styleStack;
 		this.log = log;
 		this.smu = smu;
 		this.cssEngine = cssEngine;
@@ -106,6 +103,7 @@ public class StyleManager {
 	 * @return
 	 * The style after merging (this is not a new instance).
 	 */
+	/*
 	public IStyle mergeStyles(IStyle style) {
 
 		for( int elemIndex = styleStack.stack.size() - 1; elemIndex >= 0; --elemIndex ) {
@@ -128,7 +126,7 @@ public class StyleManager {
 		}
 	
 		return style;
-	}
+	}*/
 
 	
 	private static int COMPARE_CSS_PROPERTIES[] = {
@@ -161,25 +159,30 @@ public class StyleManager {
 	 * @return
 	 * true if style1 and style2 would produce identical CellStyles if passed to createStyle.
 	 */
-	private boolean stylesEquivalent(IStyle style1, IStyle style2) {
+	private boolean stylesEquivalent( BirtStyle style1, BirtStyle style2) {
+		
+		//System.out.println( "style1: " + StyleManagerUtils.birtStyleToString(style1) );
+		//System.out.println( "style2: " + StyleManagerUtils.birtStyleToString(style2) );
+		
 		for( int i = 0; i < COMPARE_CSS_PROPERTIES.length; ++i ) {
 			int prop = COMPARE_CSS_PROPERTIES[ i ];
 			CSSValue value1 = style1.getProperty( prop );
 			CSSValue value2 = style2.getProperty( prop );
 			if( ! StyleManagerUtils.objectsEqual( value1, value2 ) ) {
+				//System.out.println( "Differ on " + i + " because " + value1 + " != " + value2 );
 				return false;
 			}
 		}
 		// Number format
-        if( !StyleManagerUtils.objectsEqual(style1.getNumberFormat(), style2.getNumberFormat())
-                || !StyleManagerUtils.objectsEqual(style1.getDateFormat(), style2.getDateFormat())
-                || !StyleManagerUtils.objectsEqual(style1.getDateTimeFormat(), style2.getDateTimeFormat())
-                || !StyleManagerUtils.objectsEqual(style1.getTimeFormat(), style2.getTimeFormat()) ) {
-                return false;
-        }
+		if( ! StyleManagerUtils.dataFormatsEquivalent( (DataFormatValue)style1.getProperty( StyleConstants.STYLE_DATA_FORMAT )
+				, (DataFormatValue)style2.getProperty( StyleConstants.STYLE_DATA_FORMAT ) ) ) {
+			//System.out.println( "Differ on DataFormat" );
+			return false;
+		}		
         
 		// Font
 		if( !FontManager.fontsEquivalent( style1, style2 ) ) {
+			//System.out.println( "Differ on font" );
 			return false;
 		}
 		return true;
@@ -192,20 +195,17 @@ public class StyleManager {
 	 * @return
 	 * The CellStyle whose attributes are described by the BIRT style. 
 	 */
-	private CellStyle createStyle(IStyle birtStyle) {
-		log.debug( "Creating style " + smu.birtStyleToString( birtStyle ) );
-		System.out.println( "Creating style " + smu.birtStyleToString( birtStyle ) );
-		
+	private CellStyle createStyle( BirtStyle birtStyle ) {
 		CellStyle poiStyle = workbook.createCellStyle();
-		// Alignment
-		poiStyle.setAlignment(smu.poiAlignmentFromBirtAlignment(birtStyle.getTextAlign()));
 		// Font
 		Font font = fm.getFont(birtStyle);
 		if( font != null ) {
 			poiStyle.setFont(font);
 		}
+		// Alignment
+		poiStyle.setAlignment(smu.poiAlignmentFromBirtAlignment(birtStyle.getString( StyleConstants.STYLE_TEXT_ALIGN )));
 		// Background colour
-		smu.addBackgroundColourToStyle(workbook, poiStyle, birtStyle.getBackgroundColor());
+		smu.addBackgroundColourToStyle(workbook, poiStyle, birtStyle.getString( StyleConstants.STYLE_BACKGROUND_COLOR ));
 		// Top border 
 		smu.applyBorderStyle(workbook, poiStyle, BorderSide.TOP, birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_TOP_WIDTH));
 		// Left border 
@@ -217,19 +217,19 @@ public class StyleManager {
 		// Number format
 		smu.applyNumberFormat(workbook, birtStyle, poiStyle);
 		// Whitespace/wrap
-		if( CSSConstants.CSS_PRE_VALUE.equals( birtStyle.getWhiteSpace() ) ) {
+		if( CSSConstants.CSS_PRE_VALUE.equals( birtStyle.getString( StyleConstants.STYLE_WHITE_SPACE ) ) ) {
 			poiStyle.setWrapText( true );
 		}
 		// Vertical alignment
-		if( CSSConstants.CSS_TOP_VALUE.equals( birtStyle.getVerticalAlign() ) ) {
+		if( CSSConstants.CSS_TOP_VALUE.equals( birtStyle.getString( StyleConstants.STYLE_VERTICAL_ALIGN ) ) ) {
 			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_TOP );
-		} else if ( CSSConstants.CSS_MIDDLE_VALUE.equals( birtStyle.getVerticalAlign() ) ) {
+		} else if ( CSSConstants.CSS_MIDDLE_VALUE.equals( birtStyle.getString( StyleConstants.STYLE_VERTICAL_ALIGN ) ) ) {
 			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_CENTER );
-		} else if ( CSSConstants.CSS_BOTTOM_VALUE.equals( birtStyle.getVerticalAlign() ) ) {
+		} else if ( CSSConstants.CSS_BOTTOM_VALUE.equals( birtStyle.getString( StyleConstants.STYLE_VERTICAL_ALIGN ) ) ) {
 			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_BOTTOM );
 		} 
 
-		styles.add(new StylePair( smu.copyBirtStyle( birtStyle ), poiStyle));
+		styles.add(new StylePair( birtStyle.clone(), poiStyle ) );
 		return poiStyle;
 	}
 
@@ -239,19 +239,13 @@ public class StyleManager {
 	 * The BIRT element that has a style to be copied.
 	 * @return
 	 * A POI CellStyle containing attributes defined by the BIRT element.
-	 */
+	 *//*
 	public CellStyle getStyle( IStyledElement element ) {
-		IStyle birtStyle = element.getComputedStyle();
+		BirtStyle birtStyle = new BirtStyle( element );
 		return getStyle( birtStyle );
-	}
+	}*/
 	
-	private CellStyle getStyle( IStyle birtStyle ) {
-		if( birtStyle == null ) {
-			return null;
-		}
-		
-		birtStyle = mergeStyles(birtStyle);
-
+	public CellStyle getStyle( BirtStyle birtStyle ) {
 		for(StylePair stylePair : styles) {
 			if(stylesEquivalent(birtStyle, stylePair.birtStyle)) {
 				return stylePair.poiStyle;
@@ -261,14 +255,14 @@ public class StyleManager {
 		return createStyle(birtStyle);		
 	}
 	
-	private IStyle birtStyleFromCellStyle( CellStyle source ) {
+	private BirtStyle birtStyleFromCellStyle( CellStyle source ) {
 		for(StylePair stylePair : styles) {
 			if( source.equals(stylePair.poiStyle) ) {
-				return smu.copyBirtStyle( stylePair.birtStyle );
+				return stylePair.birtStyle.clone();
 			}
 		}
 		
-		return new AreaStyle( cssEngine );
+		return new BirtStyle(cssEngine);
 	}
 
 	/**
@@ -309,43 +303,28 @@ public class StyleManager {
 			, String borderStyleTop, String borderWidthTop, String borderColourTop 
 			) {
 
-		IStyle birtStyle = birtStyleFromCellStyle( source );
-		if( borderStyleBottom != null ) {
-			birtStyle.setBorderBottomStyle( borderStyleBottom );
+		BirtStyle birtStyle = birtStyleFromCellStyle( source );
+		if( ( borderStyleBottom != null ) && ( borderWidthBottom != null ) && ( borderColourBottom != null ) ){
+			birtStyle.setString( StyleConstants.STYLE_BORDER_BOTTOM_STYLE, borderStyleBottom );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, borderWidthBottom );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_BOTTOM_COLOR, borderColourBottom );			
 		}
-		if( borderWidthBottom != null ) {
-			birtStyle.setBorderBottomWidth( borderWidthBottom );
+		if( ( borderStyleLeft != null ) && ( borderWidthLeft != null ) && ( borderColourLeft != null ) ){
+			birtStyle.setString( StyleConstants.STYLE_BORDER_LEFT_STYLE, borderStyleLeft );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_LEFT_WIDTH, borderWidthLeft );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_LEFT_COLOR, borderColourLeft );			
 		}
-		if( borderColourBottom != null ) {
-			birtStyle.setBorderBottomColor( borderColourBottom );			
+		if( ( borderStyleRight != null ) && ( borderWidthRight != null ) && ( borderColourRight != null ) ){
+			birtStyle.setString( StyleConstants.STYLE_BORDER_RIGHT_STYLE, borderStyleRight );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_RIGHT_WIDTH, borderWidthRight );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_RIGHT_COLOR, borderColourRight );			
 		}
-		if( borderStyleLeft != null ) {
-			birtStyle.setBorderLeftStyle( borderStyleLeft );
+		if( ( borderStyleTop != null ) && ( borderWidthTop != null ) && ( borderColourTop != null ) ){
+			birtStyle.setString( StyleConstants.STYLE_BORDER_TOP_STYLE, borderStyleTop );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_TOP_WIDTH, borderWidthTop );
+			birtStyle.setString( StyleConstants.STYLE_BORDER_TOP_COLOR, borderColourTop );			
 		}
-		if( borderWidthLeft != null ) {
-			birtStyle.setBorderLeftWidth( borderWidthLeft );
-		}
-		if( borderColourLeft != null ) {
-			birtStyle.setBorderLeftColor( borderColourLeft );			
-		}
-		if( borderStyleRight != null ) {
-			birtStyle.setBorderRightStyle( borderStyleRight );
-		}
-		if( borderWidthRight != null ) {
-			birtStyle.setBorderRightWidth( borderWidthRight );
-		}
-		if( borderColourRight != null ) {
-			birtStyle.setBorderRightColor( borderColourRight );			
-		}
-		if( borderStyleTop != null ) {
-			birtStyle.setBorderTopStyle( borderStyleTop );
-		}
-		if( borderWidthTop != null ) {
-			birtStyle.setBorderTopWidth( borderWidthTop );
-		}
-		if( borderColourTop != null ) {
-			birtStyle.setBorderTopColor( borderColourTop );			
-		}
+		
 		CellStyle newStyle = getStyle( birtStyle );
 		return newStyle;
 	}
@@ -361,7 +340,7 @@ public class StyleManager {
 	 */
 	public CellStyle getStyleWithExtraStyle( CellStyle source, IStyle birtExtraStyle ) {
 
-		IStyle birtStyle = birtStyleFromCellStyle( source );
+		BirtStyle birtStyle = birtStyleFromCellStyle( source );
 		
 		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
 			CSSValue value = birtExtraStyle.getProperty( i );

@@ -42,6 +42,14 @@ public class BackgroundFormatsTests extends ReportRunner {
 			assertEquals( "false",                 formatter.formatCellValue(sheet.getRow(1).getCell(5)));
 			assertEquals( "Fri, 11 Oct 2019",      formatter.formatCellValue(sheet.getRow(1).getCell(6)));
 			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(1).getCell(7)));
+
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(0).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(1).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(2).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(3).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(4).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(5).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(6).getCellStyle().getFillForegroundColorColor()).getARGBHex());
 			
 			assertEquals( "FFFF0000",              ((XSSFColor)sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColorColor()).getARGBHex());
 			assertEquals( "FFFFA500",              ((XSSFColor)sheet.getRow(1).getCell(2).getCellStyle().getFillForegroundColorColor()).getARGBHex());

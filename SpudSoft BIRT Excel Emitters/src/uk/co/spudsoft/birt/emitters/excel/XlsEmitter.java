@@ -21,10 +21,7 @@
 package uk.co.spudsoft.birt.emitters.excel;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.eclipse.birt.report.engine.content.IPageContent;
-import org.eclipse.birt.report.engine.ir.DimensionType;
 
 /**
  * XlsEmitter is the leaf class for implementing the ExcelEmitter with HSSFWorkbook.
@@ -36,8 +33,7 @@ public class XlsEmitter extends ExcelEmitter {
 	/**
 	 */
 	public XlsEmitter() {
-		super();
-		setStyleManagerUtils(new StyleManagerHUtils(super.log));
+		super(StyleManagerHUtils.getFactory());
 		log.debug("Constructed XlsEmitter");
 	}
 	
@@ -49,32 +45,6 @@ public class XlsEmitter extends ExcelEmitter {
 	@Override
 	protected Workbook createWorkbook() {
 		return new HSSFWorkbook();
-	}
-	
-	@Override
-	protected int anchorDxFromMM( double widthMM, double colWidthMM ) {
-        return (int)( 1023.0 * widthMM / colWidthMM );
-	}
-	
-	@Override
-	protected int anchorDyFromPoints( float height, float rowHeight ) {
-        return (int)( 255.0 * height / rowHeight );
-	}
-
-	@Override
-	protected void prepareMarginDimensions(IPageContent page) {
-		if( page.getMarginBottom() != null ) {
-			currentSheet.setMargin(Sheet.BottomMargin, page.getMarginBottom().convertTo(DimensionType.UNITS_IN));
-		}
-		if( page.getMarginLeft() != null ) {
-			currentSheet.setMargin(Sheet.LeftMargin, page.getMarginLeft().convertTo(DimensionType.UNITS_IN));
-		}
-		if( page.getMarginRight() != null ) {
-			currentSheet.setMargin(Sheet.RightMargin, page.getMarginRight().convertTo(DimensionType.UNITS_IN));
-		}
-		if( page.getMarginTop() != null ) {
-			currentSheet.setMargin(Sheet.TopMargin, page.getMarginTop().convertTo(DimensionType.UNITS_IN));
-		}
 	}
 	
 }

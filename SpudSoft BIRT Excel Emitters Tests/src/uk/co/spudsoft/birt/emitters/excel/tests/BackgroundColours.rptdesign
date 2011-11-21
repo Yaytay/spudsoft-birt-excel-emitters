@@ -298,7 +298,7 @@ if( rowCount < 2 ) {
                 <property name="width">0.8125in</property>
             </column>
             <column id="91">
-                <property name="width">1in</property>
+                <property name="width">1.2in</property>
             </column>
             <column id="92">
                 <property name="width">0.8229166666666666in</property>

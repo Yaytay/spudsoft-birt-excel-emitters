@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -34,7 +35,8 @@ public class GridsTests extends ReportRunner {
 			DataFormatter formatter = new DataFormatter();
 			
 			assertEquals( "This is a label\nHeading 1\nThis is text\nHeading 2\nStyles\nBold, Italic, Bold and italic and finally Underline.\n• Oh\n• Dear\nIsle of Mann\nPlain text.\nAnd this is a label",                     formatter.formatCellValue(sheet.getRow(0).getCell(1)));
-			assertEquals( 22,                        sheet.getRow(0).getCell(1).getRichStringCellValue().numFormattingRuns() );			
+			assertEquals( CellStyle.ALIGN_LEFT,      sheet.getRow(0).getCell(1).getCellStyle().getAlignment() );			
+			assertEquals( 14,                        sheet.getRow(0).getCell(1).getRichStringCellValue().numFormattingRuns() );			
 			assertEquals( "Hello",                   formatter.formatCellValue(sheet.getRow(1).getCell(0)));
 			assertEquals( "End",                     formatter.formatCellValue(sheet.getRow(2).getCell(0)));
 			
@@ -62,7 +64,8 @@ public class GridsTests extends ReportRunner {
 			DataFormatter formatter = new DataFormatter();
 			
 			assertEquals( "This is a label\nHeading 1\nThis is text\nHeading 2\nStyles\nBold, Italic, Bold and italic and finally Underline.\n• Oh\n• Dear\nIsle of Mann\nPlain text.\nAnd this is a label",                     formatter.formatCellValue(sheet.getRow(0).getCell(1)));
-			assertEquals( 21,                        sheet.getRow(0).getCell(1).getRichStringCellValue().numFormattingRuns() );			
+			assertEquals( CellStyle.ALIGN_LEFT,      sheet.getRow(0).getCell(1).getCellStyle().getAlignment() );			
+			assertEquals( 13,                        sheet.getRow(0).getCell(1).getRichStringCellValue().numFormattingRuns() );			
 			assertEquals( "Hello",                   formatter.formatCellValue(sheet.getRow(1).getCell(0)));
 			assertEquals( "End",                     formatter.formatCellValue(sheet.getRow(2).getCell(0)));
 			

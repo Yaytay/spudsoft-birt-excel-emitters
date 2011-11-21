@@ -121,6 +121,16 @@ Voluptate nostrud aute ut sed nulla proident ut laboris adipisicing eu nulla in 
                     </text>
                 </cell>
             </row>
+            <row id="47">
+                <cell id="48">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <text id="50">
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[a<SUB>1</SUB><SUP>2</SUP>]]></text-property>
+                    </text>
+                </cell>
+            </row>
             <row id="43">
                 <cell id="44">
                     <property name="colSpan">2</property>

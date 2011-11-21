@@ -26,14 +26,16 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.eclipse.birt.report.engine.content.IPageContent;
 import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
+import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
 import org.w3c.dom.css.CSSValue;
@@ -47,6 +49,18 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
  */
 public class StyleManagerHUtils extends StyleManagerUtils {
 
+	private static Factory factory = new StyleManagerUtils.Factory() {
+		@Override
+		public StyleManagerUtils create(Logger log) {
+			return new StyleManagerHUtils(log);
+		}
+	};
+	
+	public static Factory getFactory() {
+		return factory;
+	}
+
+	
 	/**
 	 * @param log
 	 * Logger used by StyleManagerHUtils to record anything of interest.
@@ -209,62 +223,57 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 	}
 
 	@Override
-	public Font correctFontColorIfBackground(FontManager fm, Cell cell, Font font) {
-		CellStyle cellStyle = cell.getCellStyle();
-		Workbook workbook = cell.getSheet().getWorkbook();
-		HSSFPalette palette = ((HSSFWorkbook)workbook).getCustomPalette();
+	public Font correctFontColorIfBackground(FontManager fm, Workbook wb, BirtStyle birtStyle, Font font) {
+		HSSFPalette palette = ((HSSFWorkbook)wb).getCustomPalette();		
 		
-		String bgColour = HSSFColor.WHITE.hexString;
-		if( ( cellStyle.getFillForegroundColor() != HSSFColor.AUTOMATIC.index ) && ( cellStyle.getFillForegroundColor() != Short.MAX_VALUE ) ) {
-			bgColour = palette.getColor(cellStyle.getFillForegroundColor()).getHexString();
-		} 
-		String fontColour = HSSFColor.BLACK.hexString;
-		if( font.getColor() != Short.MAX_VALUE ) {
-			fontColour = palette.getColor(font.getColor()).getHexString();
+		CSSValue bgColour = birtStyle.getProperty( StyleConstants.STYLE_BACKGROUND_COLOR );
+		int bgRgb[] = parseColour( bgColour == null ? null : bgColour.getCssText(), "white" );
+
+		short fgRgb[] = HSSFColor.BLACK.triplet;
+		if( ( font != null ) && ( font.getColor() != Short.MAX_VALUE ) ) {
+			fgRgb = palette.getColor(font.getColor()).getTriplet();
 		}
-		
-		if( ! bgColour.equals(fontColour) ) {
-			return font; 
+		if( ( fgRgb[0] == 255 ) && ( fgRgb[1] == 255 ) && ( fgRgb[2] == 255 ) ) {
+			fgRgb[0]=fgRgb[1]=fgRgb[2]=0;
+		} else if( ( fgRgb[0] == 0 ) && ( fgRgb[1] == 0 ) && ( fgRgb[2] == 0 ) ) {
+			fgRgb[0]=fgRgb[1]=fgRgb[2]=255;
 		}
-		
-		IStyle addedStyle = new AreaStyle( fm.getCssEngine() );
-		if( HSSFColor.BLACK.hexString.equals( fontColour ) )  {
-			addedStyle.setColor("rgb(255, 255, 255)");
+
+		if( ( bgRgb[ 0 ] == fgRgb[ 0 ] ) && ( bgRgb[ 1 ] == fgRgb[ 1 ] ) && ( bgRgb[ 2 ] == fgRgb[ 2 ] ) ) {
+			
+			IStyle addedStyle = new AreaStyle( fm.getCssEngine() );
+			addedStyle.setColor( contrastColour( bgRgb ) );
+			
+			return fm.getFontWithExtraStyle( font, addedStyle );
 		} else {
-			addedStyle.setColor("rgb(0, 0, 0)");
+			return font;
 		}
-		
-		return fm.getFontWithExtraStyle( font, addedStyle );
 	}
 
 	@Override
-	public void correctFontColorIfBackground(StyleManager sm, Cell cell) {
-		CellStyle cellStyle = cell.getCellStyle();
-		Workbook workbook = cell.getSheet().getWorkbook();
-		Font font = workbook.getFontAt( cellStyle.getFontIndex() );
-		HSSFPalette palette = ((HSSFWorkbook)workbook).getCustomPalette();
-		
-		String bgColour = HSSFColor.WHITE.hexString;
-		if( ( cellStyle.getFillForegroundColor() != HSSFColor.AUTOMATIC.index ) && ( cellStyle.getFillForegroundColor() != Short.MAX_VALUE ) ) {
-			bgColour = palette.getColor(cellStyle.getFillForegroundColor()).getHexString();
+	public int anchorDxFromMM( double widthMM, double colWidthMM ) {
+        return (int)( 1023.0 * widthMM / colWidthMM );
+	}
+	
+	@Override
+	public int anchorDyFromPoints( float height, float rowHeight ) {
+        return (int)( 255.0 * height / rowHeight );
+	}
+
+	@Override
+	public void prepareMarginDimensions(Sheet sheet, IPageContent page) {
+		if( page.getMarginBottom() != null ) {
+			sheet.setMargin(Sheet.BottomMargin, page.getMarginBottom().convertTo(DimensionType.UNITS_IN));
 		}
-		String fontColour = HSSFColor.BLACK.hexString;
-		if( font.getColor() != Short.MAX_VALUE ) {
-			fontColour = palette.getColor(font.getColor()).getHexString();
+		if( page.getMarginLeft() != null ) {
+			sheet.setMargin(Sheet.LeftMargin, page.getMarginLeft().convertTo(DimensionType.UNITS_IN));
 		}
-		
-		if( ! bgColour.equals(fontColour) ) {
-			return ; 
-		}		
-		
-		IStyle addedStyle = new AreaStyle( sm.getCssEngine() );
-		if( HSSFColor.BLACK.hexString.equals( fontColour ) )  {
-			addedStyle.setColor("rgb(255, 255, 255)");
-		} else {
-			addedStyle.setColor("rgb(0, 0, 0)");
+		if( page.getMarginRight() != null ) {
+			sheet.setMargin(Sheet.RightMargin, page.getMarginRight().convertTo(DimensionType.UNITS_IN));
 		}
-		
-		cell.setCellStyle( sm.getStyleWithExtraStyle( cellStyle, addedStyle ) );
+		if( page.getMarginTop() != null ) {
+			sheet.setMargin(Sheet.TopMargin, page.getMarginTop().convertTo(DimensionType.UNITS_IN));
+		}
 	}
 	
 }

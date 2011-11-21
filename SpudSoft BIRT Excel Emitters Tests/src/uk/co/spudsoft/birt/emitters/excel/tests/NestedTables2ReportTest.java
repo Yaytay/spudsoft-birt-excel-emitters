@@ -22,7 +22,6 @@ package uk.co.spudsoft.birt.emitters.excel.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +42,6 @@ public class NestedTables2ReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
-		debug = true;
 		InputStream inputStream = runAndRenderReport("NestedTables2.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
@@ -57,43 +55,17 @@ public class NestedTables2ReportTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(6, firstNullRow(sheet));
 			
-			assertEquals( "1\n2\n3 \n1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "1\n2\n3\n1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
 			
 			XSSFColor bgColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillForegroundColorColor();
-			// assertEquals( "FFFFFFFF", bgColour.getARGBHex() );
-			assertEquals( null, bgColour );
+			assertEquals( "FFFFFFFF", bgColour.getARGBHex() );
+			// assertEquals( null, bgColour );
 			XSSFColor baseColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFont().getXSSFColor();
 			assertEquals( "FFFFFFFF", baseColour.getARGBHex() );
 			// assertTrue( !bgColour.equals( baseColour ) );
 			XSSFRichTextString rich = (XSSFRichTextString)sheet.getRow(0).getCell(0).getRichStringCellValue();
-			assertEquals( 4, rich.numFormattingRuns() );
-			assertEquals( 12, rich.getString().length() );
-			try {
-				assertEquals( baseColour, rich.getFontAtIndex(0).getXSSFColor() );
-				fail( "Expected NPE" );
-			} catch( NullPointerException ex ) {
-			}
-			for( int i = 1; i < 7; ++i) {
-				assertEquals( null, rich.getFontAtIndex(i).getXSSFColor() );
-			}
-			assertEquals( baseColour, rich.getFontAtIndex(7).getXSSFColor() );
-			for( int i = 8; i < 12; ++i) {
-				assertEquals( null, rich.getFontAtIndex(i).getXSSFColor() );
-			}
-/*			for( int i = 0; i <= rich.getString().length(); ++i ) {
-				System.out.print( "i=" + i );
-				try {
-					XSSFColor colour = rich.getFontAtIndex(i).getXSSFColor();
-					if( colour == null) {
-						System.out.println( " = null");
-					} else {
-						System.out.println( " = " + colour.getARGBHex());
-					}
-				} catch( NullPointerException ex ) {
-					System.out.println( " = NPE");
-				}
-			}
-*/			
+			assertEquals( 2, rich.numFormattingRuns() );
+			assertEquals( 11, rich.getString().length() );
 		} finally {
 			inputStream.close();
 		}
@@ -115,7 +87,7 @@ public class NestedTables2ReportTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(6, firstNullRow(sheet));
 			
-			assertEquals( "1\n2\n3 \n1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "1\n2\n3\n1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
 			
 			short bgColour = ((HSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillBackgroundColor();
 			assertEquals( "0:0:0", workbook.getCustomPalette().getColor(bgColour).getHexString() );
@@ -125,30 +97,7 @@ public class NestedTables2ReportTest extends ReportRunner {
 			assertEquals( workbook.getCustomPalette().getColor(bgColour).getHexString(), workbook.getCustomPalette().getColor(baseColour).getHexString() );
 			HSSFRichTextString rich = (HSSFRichTextString)sheet.getRow(0).getCell(0).getRichStringCellValue();
 			assertEquals( 3, rich.numFormattingRuns() );
-			assertEquals( 12, rich.getString().length() );
-/*			try {
-				assertEquals( baseColour, workbook.getFontAt(rich.getFontAtIndex(0)).getColor() );
-				fail( "Expected NPE" );
-			} catch( NullPointerException ex ) {
-			}
-			for( int i = 1; i < 7; ++i) {
-				assertEquals( null, workbook.getFontAt(rich.getFontAtIndex(0)).getColor() );
-			}
-			assertEquals( baseColour, workbook.getFontAt(rich.getFontAtIndex(0)).getColor() );
-			for( int i = 8; i < 12; ++i) {
-				assertEquals( null, workbook.getFontAt(rich.getFontAtIndex(0)).getColor() );
-			}
-*/			for( int i = 0; i <= rich.getString().length(); ++i ) {
-				System.out.print( "i=" + i );
-				try {
-					int font = rich.getFontAtIndex(i);
-					// short colour = workbook.getFontAt(rich.getFontAtIndex(i)).getColor();
-					System.out.println( " = " + font ); // workbook.getCustomPalette().getColor(colour).getHexString() );
-				} catch( NullPointerException ex ) {
-					System.out.println( " = NPE");
-				}
-			}
-			
+			assertEquals( 11, rich.getString().length() );
 		} finally {
 			inputStream.close();
 		}

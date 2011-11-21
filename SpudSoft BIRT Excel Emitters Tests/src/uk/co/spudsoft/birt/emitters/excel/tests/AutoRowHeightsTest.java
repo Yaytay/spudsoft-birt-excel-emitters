@@ -17,7 +17,6 @@ public class AutoRowHeightsTest extends ReportRunner {
 	@Test
 	public void testRunReportXlsx() throws BirtException, IOException {
 
-		// debug = true;
 		InputStream inputStream = runAndRenderReport("AutoRowHeight.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
@@ -28,14 +27,15 @@ public class AutoRowHeightsTest extends ReportRunner {
 			assertEquals( "Auto RowHeight Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 6, this.firstNullRow(sheet));
+			assertEquals( 7, this.firstNullRow(sheet));
 			
 			assertEquals( 300, sheet.getRow(0).getHeight() );
-			assertEquals( 847, sheet.getRow(1).getHeight() );
-			assertEquals( 749, sheet.getRow(2).getHeight() );
-			assertEquals( 1394, sheet.getRow(3).getHeight() );
-			assertEquals( 2859, sheet.getRow(4).getHeight() );
-			assertEquals( 4652, sheet.getRow(5).getHeight() );
+			assertEquals( 992, sheet.getRow(1).getHeight() );
+			assertEquals( 826, sheet.getRow(2).getHeight() );
+			assertEquals( 1405, sheet.getRow(3).getHeight() );
+			assertEquals( 2988, sheet.getRow(4).getHeight() );
+			assertEquals( 300, sheet.getRow(5).getHeight() );
+			assertEquals( 4000, sheet.getRow(6).getHeight() );
 			
 		} finally {
 			inputStream.close();
@@ -56,14 +56,16 @@ public class AutoRowHeightsTest extends ReportRunner {
 			assertEquals( "Auto RowHeight Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 6, this.firstNullRow(sheet));
+			assertEquals( 7, this.firstNullRow(sheet));
 			
-			assertEquals( 255, sheet.getRow(0).getHeight() );
-			assertEquals( 847, sheet.getRow(1).getHeight() );
-			assertEquals( 749, sheet.getRow(2).getHeight() );
-			assertEquals( 1394, sheet.getRow(3).getHeight() );
-			assertEquals( 2859, sheet.getRow(4).getHeight() );
-			assertEquals( 4652, sheet.getRow(5).getHeight() );
+			assertEquals( 275, sheet.getRow(0).getHeight() );
+			assertEquals( 992, sheet.getRow(1).getHeight() );
+			assertEquals( 826, sheet.getRow(2).getHeight() );
+			assertEquals( 1405, sheet.getRow(3).getHeight() );
+			assertEquals( 2988, sheet.getRow(4).getHeight() );
+			assertEquals( 275, sheet.getRow(5).getHeight() );
+			assertEquals( 4000, sheet.getRow(6).getHeight() );
+			
 
 		} finally {
 			inputStream.close();

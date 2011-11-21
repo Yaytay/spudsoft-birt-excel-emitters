@@ -23,7 +23,7 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( 15, workbook.getNumCellStyles() );
+			assertEquals( 11, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
@@ -37,7 +37,7 @@ public class BigCrosstabTest extends ReportRunner {
 	}
 
 	@Test
-	public void testXslx() throws Exception {
+	public void testXls() throws Exception {
 
 		InputStream inputStream = runAndRenderReport("BigCrosstab.rptdesign", "xls");
 		assertNotNull(inputStream);
@@ -47,7 +47,7 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( 35, workbook.getNumCellStyles() );
+			assertEquals( 31, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);

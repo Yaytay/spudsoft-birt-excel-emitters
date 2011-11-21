@@ -27,8 +27,8 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.report.engine.content.IStyle;
-import org.eclipse.birt.report.engine.css.dom.AreaStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
+import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
@@ -45,10 +45,10 @@ public class FontManager {
 	 *
 	 */
 	private class FontPair {
-		public IStyle birtStyle;
+		public BirtStyle birtStyle;
 		public Font poiFont;
 		
-		public FontPair(IStyle birtStyle, Font poiFont) {
+		public FontPair(BirtStyle birtStyle, Font poiFont) {
 			this.birtStyle = birtStyle;
 			this.poiFont = poiFont;
 		}
@@ -86,17 +86,31 @@ public class FontManager {
 	 * @return
 	 * family, without any surrounding double quotes.
 	 */
-	private static String cleanupQuotes( String family ) {
-		if( ( family == null ) || family.isEmpty() ) {
-			return family;
+	private static String cleanupQuotes( CSSValue value ) {
+		if( value == null ) {
+			return null;
+		} else {
+			String stringValue = value.getCssText();
+			if( ( stringValue == null ) || stringValue.isEmpty() ) {
+				return stringValue;
+			}
+			if( stringValue.startsWith( "\"" ) && stringValue.endsWith( "\"" ) ) {
+				String newFamily = stringValue.substring(1, stringValue.length()-1);
+				return newFamily;
+			}
+			return stringValue;
 		}
-		if( family.startsWith( "\"" ) && family.endsWith( "\"" ) ) {
-			String newFamily = family.substring(1, family.length()-1);
-			return newFamily;
-		}
-		return family;
 	}
 	
+	private static int COMPARE_CSS_PROPERTIES[] = {
+		StyleConstants.STYLE_FONT_FAMILY,
+		StyleConstants.STYLE_FONT_SIZE,
+		StyleConstants.STYLE_FONT_WEIGHT,
+		StyleConstants.STYLE_FONT_STYLE,
+		StyleConstants.STYLE_TEXT_UNDERLINE,
+		StyleConstants.STYLE_COLOR,
+	};
+
 	/**
 	 * Test whether two BIRT styles are equivalent, as far as their font definitions are concerned.
 	 * <br/>
@@ -108,30 +122,14 @@ public class FontManager {
 	 * @return
 	 * true if style1 and style2 would produce identical Fonts if passed to createFont.
 	 */
-	public static boolean fontsEquivalent(IStyle style1, IStyle style2) {
-		// Family
-		if(!StyleManagerUtils.objectsEqual(cleanupQuotes(style1.getFontFamily()), cleanupQuotes(style2.getFontFamily()))) {
-			return false;
-		}
-		// Size
-		if(!StyleManagerUtils.objectsEqual(cleanupQuotes(style1.getFontSize()), cleanupQuotes(style2.getFontSize()))) {
-			return false;
-		}
-		// Weight
-		if(!StyleManagerUtils.objectsEqual(style1.getFontWeight(), style2.getFontWeight())) {
-			return false;
-		}
-		// Italic
-		if(!StyleManagerUtils.objectsEqual(style1.getFontStyle(), style2.getFontStyle())) {
-			return false;
-		}
-		// Underline
-		if(!StyleManagerUtils.objectsEqual(style1.getProperty(IStyle.STYLE_TEXT_UNDERLINE), style2.getProperty(IStyle.STYLE_TEXT_UNDERLINE))) {
-			return false;
-		}
-		// Colour
-		if(!StyleManagerUtils.objectsEqual(style1.getColor(), style2.getColor())) {
-			return false;
+	public static boolean fontsEquivalent(BirtStyle style1, BirtStyle style2) {
+		for( int i = 0; i < COMPARE_CSS_PROPERTIES.length; ++i ) {
+			int prop = COMPARE_CSS_PROPERTIES[ i ];
+			CSSValue value1 = style1.getProperty( prop );
+			CSSValue value2 = style2.getProperty( prop );
+			if( ! StyleManagerUtils.objectsEqual( cleanupQuotes( value1 ), cleanupQuotes( value2 ) ) ) {
+				return false;
+			}
 		}
 		
 		return true;
@@ -144,37 +142,38 @@ public class FontManager {
 	 * @return
 	 * The Font whose attributes are described by the BIRT style. 
 	 */
-	private Font createFont(IStyle birtStyle) {
+	private Font createFont(BirtStyle birtStyle) {
 		Font font = workbook.createFont();
 		
 		// Family
-		String fontName = smu.poiFontNameFromBirt(cleanupQuotes(birtStyle.getFontFamily()));
+		String fontName = smu.poiFontNameFromBirt(cleanupQuotes(birtStyle.getProperty( StyleConstants.STYLE_FONT_FAMILY )));
 		if( fontName == null ) {
 			fontName = "Calibri";
 		}
 		font.setFontName(fontName);
 		// Size
-		short fontSize = smu.fontSizeInPoints(cleanupQuotes(birtStyle.getFontSize()));
+		short fontSize = smu.fontSizeInPoints(cleanupQuotes(birtStyle.getProperty( StyleConstants.STYLE_FONT_SIZE )));
 		if(fontSize > 0) {
 			font.setFontHeightInPoints(fontSize);
 		}
 		// Weight
-		short fontWeight = smu.poiFontWeightFromBirt(birtStyle.getFontWeight());
+		short fontWeight = smu.poiFontWeightFromBirt(cleanupQuotes(birtStyle.getProperty( StyleConstants.STYLE_FONT_WEIGHT )));
 		if(fontWeight > 0) {
 			font.setBoldweight(fontWeight);
 		}
 		// Style
-		if("italic".equals(birtStyle.getFontStyle()) || "oblique".equals(birtStyle.getFontStyle())) {
+		String fontStyle = cleanupQuotes(birtStyle.getProperty( StyleConstants.STYLE_FONT_STYLE ) );
+		if( CSSConstants.CSS_ITALIC_VALUE.equals(fontStyle) || CSSConstants.CSS_OBLIQUE_VALUE.equals(fontStyle)) {
 			font.setItalic(true);
 		}
 		// Underline
-		if( ( birtStyle.getProperty(IStyle.STYLE_TEXT_UNDERLINE) != null )
-			&& CSSConstants.CSS_UNDERLINE_VALUE.equals(birtStyle.getProperty(IStyle.STYLE_TEXT_UNDERLINE).getCssText())) {
+		String fontUnderline = cleanupQuotes(birtStyle.getProperty( StyleConstants.STYLE_TEXT_UNDERLINE ) );
+		if( CSSConstants.CSS_UNDERLINE_VALUE.equals(fontUnderline) ) {
 			font.setUnderline(FontUnderline.SINGLE.getByteValue());
 		}
 		// Colour
-		smu.addColourToFont(workbook, font, birtStyle.getColor());
-				
+		smu.addColourToFont( workbook, font, cleanupQuotes( birtStyle.getProperty( StyleConstants.STYLE_COLOR ) ) );
+						
 		fonts.add(new FontPair(birtStyle, font));
 		return font;
 	}
@@ -204,16 +203,17 @@ public class FontManager {
 	 * @return
 	 * A Font whose attributes are described by the BIRT style. 
 	 */
-	Font getFont( IStyle birtStyle ) {
+	public Font getFont( BirtStyle birtStyle ) {
 		if( birtStyle == null ) {
 			return getDefaultFont();
 		}
 		
-		if( ( birtStyle.getFontFamily() == null )
-				&& ( birtStyle.getFontSize() == null )
-				&& ( birtStyle.getFontWeight() == null )
-				&& ( birtStyle.getFontStyle() == null )
-				&& ( birtStyle.getColor() == null )
+		if( ( birtStyle.getProperty( StyleConstants.STYLE_FONT_FAMILY ) == null )
+				&& ( birtStyle.getProperty( StyleConstants.STYLE_FONT_SIZE ) == null )
+				&& ( birtStyle.getProperty( StyleConstants.STYLE_FONT_WEIGHT ) == null )
+				&& ( birtStyle.getProperty( StyleConstants.STYLE_FONT_STYLE ) == null )
+				&& ( birtStyle.getProperty( StyleConstants.STYLE_TEXT_UNDERLINE ) == null )
+				&& ( birtStyle.getProperty( StyleConstants.STYLE_COLOR ) == null )
 				) {
 			return getDefaultFont();
 		}
@@ -227,14 +227,14 @@ public class FontManager {
 		return createFont(birtStyle);
 	}
 	
-	private IStyle birtStyleFromFont( Font source ) {
+	private BirtStyle birtStyleFromFont( Font source ) {
 		for(FontPair fontPair : fonts) {
 			if( source.equals(fontPair.poiFont) ) {
-				return smu.copyBirtStyle( fontPair.birtStyle );
+				return fontPair.birtStyle.clone();
 			}
 		}
 		
-		return new AreaStyle( cssEngine );
+		return new BirtStyle(cssEngine);
 	}
 	
 	/**
@@ -248,7 +248,7 @@ public class FontManager {
 	 */
 	public Font getFontWithExtraStyle( Font source, IStyle birtExtraStyle ) {
 
-		IStyle birtStyle = birtStyleFromFont( source );
+		BirtStyle birtStyle = birtStyleFromFont( source );
 		
 		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
 			CSSValue value = birtExtraStyle.getProperty( i );

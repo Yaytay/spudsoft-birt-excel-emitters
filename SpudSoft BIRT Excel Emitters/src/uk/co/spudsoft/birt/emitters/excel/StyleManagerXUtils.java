@@ -21,21 +21,23 @@
 package uk.co.spudsoft.birt.emitters.excel;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.eclipse.birt.report.engine.content.IPageContent;
 import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.css.dom.AreaStyle;
-import org.eclipse.birt.report.engine.css.engine.CSSEngine;
+import org.eclipse.birt.report.engine.css.engine.StyleConstants;
+import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
 import org.w3c.dom.css.CSSValue;
@@ -48,6 +50,17 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
  *
  */
 public class StyleManagerXUtils extends StyleManagerUtils {
+
+	private static Factory factory = new StyleManagerUtils.Factory() {
+		@Override
+		public StyleManagerUtils create(Logger log) {
+			return new StyleManagerXUtils(log);
+		}
+	};
+	
+	public static Factory getFactory() {
+		return factory;
+	}
 
 	/**
 	 * @param log
@@ -76,14 +89,21 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 		if( "none".equals(birtBorder) ) {
 			return BorderStyle.NONE;
 		}
-		DimensionType dim = DimensionType.parserUnit( width );
 		double pxWidth = 3.0;
-		if( dim != null ) {
-			if( "px".equals(dim.getUnits()) ) {
-				pxWidth = dim.getMeasure();
-			}
-		} 
-		log.debug( "Border width (" + birtBorder + "/" + width + "): " + dim + " == " + pxWidth + "px." );
+		if( CSSConstants.CSS_THIN_VALUE.equals( width ) ) {
+			pxWidth = 1.0;
+		} else if( CSSConstants.CSS_MEDIUM_VALUE.equals( width ) ) {
+			pxWidth = 3.0;
+		} else if( CSSConstants.CSS_THICK_VALUE.equals( width ) ) {
+			pxWidth = 4.0;
+		} else {
+			DimensionType dim = DimensionType.parserUnit( width );
+			if( dim != null ) {
+				if( "px".equals(dim.getUnits()) ) {
+					pxWidth = dim.getMeasure();
+				}
+			} 
+		}
 		if( "solid".equals(birtBorder) ) {
 			if( pxWidth < 2.9 ) {
 				return BorderStyle.THIN;
@@ -110,7 +130,7 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 
 	@Override
 	public void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, CSSValue colour, CSSValue borderStyle, CSSValue width) {
-		if( ( colour == null ) || ( borderStyle != null ) || ( width != null ) ) {
+		if( ( colour != null ) || ( borderStyle != null ) || ( width != null ) ) {
 			String colourString = colour == null ? "rgb(0,0,0)" : colour.getCssText();
 			String borderStyleString = borderStyle == null ? "solid" : borderStyle.getCssText();
 			String widthString = width == null ? "medium" : width.getCssText();
@@ -125,7 +145,7 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 					case TOP:
 						xStyle.setBorderTop(xBorderStyle);
 						xStyle.setTopBorderColor(xBorderColour);
-						// log.debug( "Top border: " + xStyle.getBorderTop() + " / " + xStyle.getTopBorderXSSFColor().getARGBHex() );
+						log.debug( "Top border: " + xStyle.getBorderTop() + " / " + xStyle.getTopBorderXSSFColor().getARGBHex() );
 						break;
 					case LEFT:
 						xStyle.setBorderLeft(xBorderStyle);
@@ -135,12 +155,12 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 					case RIGHT:
 						xStyle.setBorderRight(xBorderStyle);
 						xStyle.setRightBorderColor(xBorderColour);
-						// log.debug( "Right border: " + xStyle.getBorderRight() + " / " + xStyle.getRightBorderXSSFColor().getARGBHex() );
+						log.debug( "Right border: " + xStyle.getBorderRight() + " / " + xStyle.getRightBorderXSSFColor().getARGBHex() );
 						break;
 					case BOTTOM:
 						xStyle.setBorderBottom(xBorderStyle);
 						xStyle.setBottomBorderColor(xBorderColour);
-						// log.debug( "Bottom border: " + xStyle.getBorderBottom() + " / " + xStyle.getBottomBorderXSSFColor().getARGBHex() );
+						log.debug( "Bottom border: " + xStyle.getBorderBottom() + " / " + xStyle.getBottomBorderXSSFColor().getARGBHex() );
 						break;
 					}
 				}
@@ -196,61 +216,61 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 			}
 		}
 	}
-			
-	private boolean fontColorOk( CellStyle cellStyle, XSSFColor fontColour ) {
-		if( cellStyle.getFillForegroundColorColor() == null ) {
-			if( fontColour == null ) {
-				return true;
-			}
-			byte[] argb = fontColour.getARgb();
-			// Note that this handling is explicitly wrong, because POI is trying to compensate for Excel handling colours back to front
-			if( ( argb[1] != 0 ) && ( argb[2] != 0 ) && ( argb[3] != 0 ) ) {
-				return true; 
-			}
-		} else if( ! cellStyle.getFillForegroundColorColor().equals(fontColour) ) {
-			return true; 
-		}
-		
-		return false;
-	}
-	
-	private IStyle prepareBirtStyleWithSafeColour(CSSEngine cssEngine, XSSFColor colour) {
-		byte[] argb = colour.getARgb();
-		IStyle addedStyle = new AreaStyle( cssEngine );
-		// Note that this handling is explicitly wrong, because POI is trying to compensate for Excel handling colours back to front
-		if( ( argb[0] == 0 ) && ( argb[1] == 0 ) && ( argb[2] == 0 ) && ( argb[3] == 0 ) ) {
-			addedStyle.setColor("rgb(255, 255, 255)");
-		} else {
-			addedStyle.setColor("rgb(0, 0, 0)");
-		}
-		return addedStyle;
-	}
 	
 	@Override
-	public Font correctFontColorIfBackground( FontManager fm, Cell cell, Font font ) {
-		XSSFColor colour = ((XSSFFont)font).getXSSFColor();
+	public Font correctFontColorIfBackground( FontManager fm, Workbook wb, BirtStyle birtStyle, Font font ) {
+		CSSValue bgColour = birtStyle.getProperty( StyleConstants.STYLE_BACKGROUND_COLOR );
+		int bgRgb[] = parseColour( bgColour == null ? null : bgColour.getCssText(), "white" );
 
-		if( fontColorOk(cell.getCellStyle(), colour)) {
+		XSSFColor colour = ((XSSFFont)font).getXSSFColor();
+		int fgRgb[] = rgbOnly( colour.getARgb() );
+		if( ( fgRgb[0] == 255 ) && ( fgRgb[1] == 255 ) && ( fgRgb[2] == 255 ) ) {
+			fgRgb[0]=fgRgb[1]=fgRgb[2]=0;
+		} else if( ( fgRgb[0] == 0 ) && ( fgRgb[1] == 0 ) && ( fgRgb[2] == 0 ) ) {
+			fgRgb[0]=fgRgb[1]=fgRgb[2]=255;
+		}
+
+		if( ( bgRgb[ 0 ] == fgRgb[ 0 ] ) && ( bgRgb[ 1 ] == fgRgb[ 1 ] ) && ( bgRgb[ 2 ] == fgRgb[ 2 ] ) ) {
+			
+			IStyle addedStyle = new AreaStyle( fm.getCssEngine() );
+			addedStyle.setColor( contrastColour( bgRgb ) );
+			
+			return fm.getFontWithExtraStyle( font, addedStyle );
+		} else {
 			return font;
 		}
-		
-		IStyle addedStyle = prepareBirtStyleWithSafeColour(fm.getCssEngine(), colour);
-		
-		return fm.getFontWithExtraStyle( font, addedStyle );
 	}
 
 	@Override
-	public void correctFontColorIfBackground(StyleManager sm, Cell cell) {
-		XSSFColor colour = ((XSSFCell)cell).getCellStyle().getFont().getXSSFColor();
-
-		if( fontColorOk(cell.getCellStyle(), colour)) {
-			return ;
-		}
-		
-		IStyle addedStyle = prepareBirtStyleWithSafeColour(sm.getCssEngine(), colour);
-		
-		cell.setCellStyle( sm.getStyleWithExtraStyle( cell.getCellStyle(), addedStyle ) );
+	public int anchorDxFromMM( double widthMM, double colWidthMM ) {
+        return (int)(widthMM * 36000); 
 	}
 	
+	@Override
+	public int anchorDyFromPoints( float height, float rowHeight ) {
+		return (int)( height * XSSFShape.EMU_PER_POINT );
+	}
+
+	@Override
+	public void prepareMarginDimensions(Sheet sheet, IPageContent page) {
+		if( page.getHeaderHeight() != null ) {
+			sheet.setMargin(Sheet.HeaderMargin, page.getHeaderHeight().convertTo(DimensionType.UNITS_IN));
+		}
+		if( page.getFooterHeight() != null ) {
+			sheet.setMargin(Sheet.FooterMargin, page.getFooterHeight().convertTo(DimensionType.UNITS_IN));
+		}
+		if( page.getMarginBottom() != null ) {
+			sheet.setMargin(Sheet.BottomMargin, page.getMarginBottom().convertTo(DimensionType.UNITS_IN));
+		}
+		if( page.getMarginLeft() != null ) {
+			sheet.setMargin(Sheet.LeftMargin, page.getMarginLeft().convertTo(DimensionType.UNITS_IN));
+		}
+		if( page.getMarginRight() != null ) {
+			sheet.setMargin(Sheet.RightMargin, page.getMarginRight().convertTo(DimensionType.UNITS_IN));
+		}
+		if( page.getMarginTop() != null ) {
+			sheet.setMargin(Sheet.TopMargin, page.getMarginTop().convertTo(DimensionType.UNITS_IN));
+		}
+	}
 	
 }
