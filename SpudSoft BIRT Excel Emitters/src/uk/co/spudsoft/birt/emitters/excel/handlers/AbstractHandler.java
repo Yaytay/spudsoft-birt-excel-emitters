@@ -28,21 +28,38 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
 public class AbstractHandler implements IHandler {
 
-	Logger log;
-	IHandler parent;
-	IStyledElement element;
+	protected Logger log;
+	protected IStyledElement element;
+	protected IHandler parent;
 	
-	public AbstractHandler(Logger log,IHandler parent,IStyledElement element) {
+	public AbstractHandler(Logger log, IHandler parent, IStyledElement element) {
 		this.log = log;
 		this.parent = parent;
 		this.element = element;
 	}
 	
 	@Override
+	public void notifyHandler(HandlerState state) {
+	}
+
+	@Override
 	public IHandler getParent() {
 		return parent;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IHandler> T getAncestor(Class<T> clazz) {
+		if( parent != null ) {
+			if( clazz.isInstance(parent) ) {
+				return (T)parent;
+			} else {
+				return parent.getAncestor(clazz);
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String getBackgroundColour() {
 		if( element != null ) {

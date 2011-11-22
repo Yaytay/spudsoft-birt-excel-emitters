@@ -31,7 +31,7 @@ public class HandlerState {
 	 * The current handler to pass on the processing to.
 	 * Effectively this is the state machine for the emitter.
 	 */
-	public IHandler handler;
+	private IHandler handler;
 	
 	/**
 	 * The workbook being generated.
@@ -79,6 +79,8 @@ public class HandlerState {
 	 * The minimum row height required for this top level row
 	 */
 	public float requiredRowHeightInPoints;
+	public int rowOffset;
+	public int colOffset;
 	
 	
 	/**
@@ -127,7 +129,14 @@ public class HandlerState {
 	public ReportEngine getReportEngine() {
 		return reportEngine;
 	}
-		
-	
+
+	public IHandler getHandler() {
+		return handler;
+	}
+
+	public void setHandler(IHandler handler) {
+		this.handler = handler;
+		this.handler.notifyHandler(this);
+	}
 	
 }

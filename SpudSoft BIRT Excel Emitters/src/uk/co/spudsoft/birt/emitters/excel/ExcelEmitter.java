@@ -135,7 +135,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	    StyleManager sm = new StyleManager( wb, log, smu, cssEngine );
 	    
 		handlerState = new HandlerState(this, log, smu, wb, sm, renderOptions);
-		handlerState.handler = new PageHandler(log, null);
+		handlerState.setHandler( new PageHandler(log, null) );
 	}
 
 	public void end( IReportContent report ) throws BirtException {
@@ -202,161 +202,161 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	
 	public void startPage( IPageContent page ) throws BirtException {
 		log.addPrefix( 'P' );
-		log.debug( "startPage: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startPage(handlerState,page);
+		log.debug( "startPage: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startPage(handlerState,page);
 	}
 	public void endPage( IPageContent page ) throws BirtException {
-		log.debug( "endPage: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endPage(handlerState,page);
+		log.debug( "endPage: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endPage(handlerState,page);
 		log.removePrefix( 'P' );
 	}
 
 	public void startTable( ITableContent table ) throws BirtException {
 		log.addPrefix( 'T' );
-		log.debug( "startTable: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startTable(handlerState,table);
+		log.debug( "startTable: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startTable(handlerState,table);
 	}
 	public void endTable( ITableContent table ) throws BirtException {
-		log.debug( "endTable: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endTable(handlerState,table);
+		log.debug( "endTable: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endTable(handlerState,table);
 		log.removePrefix( 'T' );
 	}
 
 	public void startTableBand( ITableBandContent band ) throws BirtException {
 		log.addPrefix( 'B' );
-		log.debug( "startTableBand: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startTableBand(handlerState,band);
+		log.debug( "startTableBand: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startTableBand(handlerState,band);
 	}
 	public void endTableBand( ITableBandContent band ) throws BirtException {
-		log.debug( "endTableBand: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endTableBand(handlerState,band);
+		log.debug( "endTableBand: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endTableBand(handlerState,band);
 		log.removePrefix( 'B' );
 	}
 
 	public void startRow( IRowContent row ) throws BirtException {
 		log.addPrefix( 'R' );
-		log.debug( "startRow: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startRow(handlerState,row);
+		log.debug( "startRow: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startRow(handlerState,row);
 	}
 	public void endRow( IRowContent row ) throws BirtException {
-		log.debug( "endRow: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endRow(handlerState,row);
+		log.debug( "endRow: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endRow(handlerState,row);
 		log.removePrefix( 'R' );
 	}
 
 	public void startCell( ICellContent cell ) throws BirtException {
 		log.addPrefix( 'C' );
-		log.debug( "startCell: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startCell(handlerState,cell);
+		log.debug( "startCell: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startCell(handlerState,cell);
 	}
 	public void endCell( ICellContent cell ) throws BirtException {
-		log.debug( "endCell: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endCell(handlerState,cell);
+		log.debug( "endCell: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endCell(handlerState,cell);
 		log.removePrefix( 'C' );
 	}
 	
 	public void startList( IListContent list ) throws BirtException {
 		log.addPrefix( 'L' );
-		log.debug( "startList: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startList(handlerState,list);
+		log.debug( "startList: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startList(handlerState,list);
 	}
 	public void endList( IListContent list ) throws BirtException {
-		log.debug( "endList: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endList(handlerState,list);
+		log.debug( "endList: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endList(handlerState,list);
 		log.removePrefix( 'L' );
 	}
 
 	public void startListBand( IListBandContent listBand ) throws BirtException {
 		log.addPrefix( 'B' );
-		log.debug( "startListBand: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startListBand(handlerState,listBand);
+		log.debug( "startListBand: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startListBand(handlerState,listBand);
 	}
 	public void endListBand( IListBandContent listBand ) throws BirtException {
-		log.debug( "endListBand: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endListBand(handlerState,listBand);
+		log.debug( "endListBand: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endListBand(handlerState,listBand);
 		log.removePrefix( 'B' );
 	}
 
 	public void startContainer( IContainerContent container ) throws BirtException {
 		log.addPrefix( 'O' );
-		log.debug( "startContainer: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startContainer(handlerState,container);
+		log.debug( "startContainer: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startContainer(handlerState,container);
 	}
 	public void endContainer( IContainerContent container ) throws BirtException {
-		log.debug( "endContainer: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endContainer(handlerState,container);
+		log.debug( "endContainer: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endContainer(handlerState,container);
 		log.removePrefix( 'O' );
 	}
 
 	public void startText( ITextContent text ) throws BirtException {
-		log.debug( "startText: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.emitText(handlerState,text);
+		log.debug( "startText: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().emitText(handlerState,text);
 	}
 
 	public void startData( IDataContent data ) throws BirtException {
-		log.debug( "startData: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.emitData(handlerState,data);
+		log.debug( "startData: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().emitData(handlerState,data);
 	}
 
 	public void startLabel( ILabelContent label ) throws BirtException {
-		log.debug( "startLabel: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.emitLabel(handlerState,label);
+		log.debug( "startLabel: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().emitLabel(handlerState,label);
 	}
 	
 	public void startAutoText ( IAutoTextContent autoText ) throws BirtException {
-		log.debug( "startAutoText: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.emitAutoText(handlerState,autoText);
+		log.debug( "startAutoText: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().emitAutoText(handlerState,autoText);
 	}
 
 	public void startForeign( IForeignContent foreign ) throws BirtException {
-		log.debug( "startForeign: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.emitForeign(handlerState,foreign);
+		log.debug( "startForeign: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().emitForeign(handlerState,foreign);
 	}
 
 	public void startImage( IImageContent image ) throws BirtException {
-		log.debug( "startImage: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.emitImage(handlerState,image);
+		log.debug( "startImage: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().emitImage(handlerState,image);
 	}
 
 	public void startContent( IContent content ) throws BirtException {
 		log.addPrefix( 'N' );
-		log.debug( "startContent: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startContent(handlerState,content);
+		log.debug( "startContent: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startContent(handlerState,content);
 	}
 	public void endContent( IContent content) throws BirtException {
-		log.debug( "endContent: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endContent(handlerState,content);
+		log.debug( "endContent: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endContent(handlerState,content);
 		log.removePrefix( 'N' );
 	}
 	
 	public void startGroup( IGroupContent group ) throws BirtException {
-		log.debug( "startGroup: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startGroup(handlerState,group);
+		log.debug( "startGroup: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startGroup(handlerState,group);
 	}
 	public void endGroup( IGroupContent group ) throws BirtException {
-		log.debug( "endGroup: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endGroup(handlerState,group);
+		log.debug( "endGroup: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endGroup(handlerState,group);
 	}
 
 	public void startTableGroup( ITableGroupContent group ) throws BirtException {
 		log.addPrefix( 'G' );
-		log.debug( "startTableGroup: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startTableGroup(handlerState,group);
+		log.debug( "startTableGroup: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startTableGroup(handlerState,group);
 	}
 	public void endTableGroup( ITableGroupContent group ) throws BirtException {
-		log.debug( "endTableGroup: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endTableGroup(handlerState,group);
+		log.debug( "endTableGroup: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endTableGroup(handlerState,group);
 		log.removePrefix( 'G' );
 	}
 
 	public void startListGroup( IListGroupContent group ) throws BirtException {
 		log.addPrefix( 'G' );
-		log.debug( "startListGroup: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.startListGroup(handlerState,group);
+		log.debug( "startListGroup: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().startListGroup(handlerState,group);
 	}
 	public void endListGroup( IListGroupContent group ) throws BirtException {
-		log.debug( "endListGroup: " + handlerStack( handlerState.handler ) );
-		handlerState.handler.endListGroup(handlerState,group);
+		log.debug( "endListGroup: " + handlerStack( handlerState.getHandler() ) );
+		handlerState.getHandler().endListGroup(handlerState,group);
 		log.removePrefix( 'G' );
 	}
 	

@@ -55,7 +55,8 @@ public class NestedTables2ReportTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(6, firstNullRow(sheet));
 			
-			assertEquals( "1\n2\n3\n1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(1).getStringCellValue());
 			
 			XSSFColor bgColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillForegroundColorColor();
 			assertEquals( "FFFFFFFF", bgColour.getARGBHex() );
@@ -65,7 +66,7 @@ public class NestedTables2ReportTest extends ReportRunner {
 			// assertTrue( !bgColour.equals( baseColour ) );
 			XSSFRichTextString rich = (XSSFRichTextString)sheet.getRow(0).getCell(0).getRichStringCellValue();
 			assertEquals( 2, rich.numFormattingRuns() );
-			assertEquals( 11, rich.getString().length() );
+			assertEquals( 5, rich.getString().length() );
 		} finally {
 			inputStream.close();
 		}
@@ -87,7 +88,8 @@ public class NestedTables2ReportTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(6, firstNullRow(sheet));
 			
-			assertEquals( "1\n2\n3\n1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
+			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(1).getStringCellValue());
 			
 			short bgColour = ((HSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillBackgroundColor();
 			assertEquals( "0:0:0", workbook.getCustomPalette().getColor(bgColour).getHexString() );
@@ -96,8 +98,8 @@ public class NestedTables2ReportTest extends ReportRunner {
 			// Someone else can explain how it makes sense for these two to need to be the same, given that the result is them being different!
 			assertEquals( workbook.getCustomPalette().getColor(bgColour).getHexString(), workbook.getCustomPalette().getColor(baseColour).getHexString() );
 			HSSFRichTextString rich = (HSSFRichTextString)sheet.getRow(0).getCell(0).getRichStringCellValue();
-			assertEquals( 3, rich.numFormattingRuns() );
-			assertEquals( 11, rich.getString().length() );
+			assertEquals( 1, rich.numFormattingRuns() );
+			assertEquals( 5, rich.getString().length() );
 		} finally {
 			inputStream.close();
 		}

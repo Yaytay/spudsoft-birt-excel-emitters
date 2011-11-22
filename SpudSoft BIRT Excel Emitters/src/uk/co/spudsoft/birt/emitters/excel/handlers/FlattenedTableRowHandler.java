@@ -24,13 +24,13 @@ public class FlattenedTableRowHandler extends AbstractHandler {
 	@Override
 	public void endRow(HandlerState state, IRowContent row) throws BirtException {
 		contentHandler.lastCellContentsWasBlock = true;
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 
 	@Override
 	public void startCell(HandlerState state, ICellContent cell) throws BirtException {
-		state.handler = new FlattenedTableCellHandler(contentHandler, log, this, cell);
-		state.handler.startCell(state, cell);
+		state.setHandler(new FlattenedTableCellHandler(contentHandler, log, this, cell));
+		state.getHandler().startCell(state, cell);
 	}
 	
 	

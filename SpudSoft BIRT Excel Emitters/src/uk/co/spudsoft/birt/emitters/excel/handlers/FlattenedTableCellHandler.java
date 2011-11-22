@@ -30,13 +30,13 @@ public class FlattenedTableCellHandler extends AbstractHandler {
 	public void endCell(HandlerState state, ICellContent cell) throws BirtException {
 		contentHandler.lastCellContentsWasBlock = false;
 		contentHandler.lastCellContentsRequiresSpace = true;
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
-		state.handler = new FlattenedTableHandler(contentHandler, log, this, table);
-		state.handler.startTable(state, table);
+		state.setHandler(new FlattenedTableHandler(contentHandler, log, this, table));
+		state.getHandler().startTable(state, table);
 	}
 
 	@Override

@@ -104,10 +104,6 @@ public class MultiSheetsReportTest extends ReportRunner {
 	@Test
 	public void testBreakInSubTable() throws BirtException, IOException {
 
-		/*
-		 * This report doesn't 'work', it just has to not crash
-		 * This emitter does not 'support' sub-tables
-		 */
 		InputStream inputStream = runAndRenderReportCustomTask("MultiSheetsBreakInSubTable.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {			
@@ -119,9 +115,9 @@ public class MultiSheetsReportTest extends ReportRunner {
 			assertEquals( "Number Formats 2", workbook.getSheetAt(1).getSheetName());
 			assertEquals( "Number Formats 3", workbook.getSheetAt(2).getSheetName());
 			
-			assertEquals(1, firstNullRow(workbook.getSheetAt(0)));
-			assertEquals(1, firstNullRow(workbook.getSheetAt(1)));
-			assertEquals(1, firstNullRow(workbook.getSheetAt(2)));
+			assertEquals(4, firstNullRow(workbook.getSheetAt(0)));
+			assertEquals(4, firstNullRow(workbook.getSheetAt(1)));
+			assertEquals(3, firstNullRow(workbook.getSheetAt(2)));
 			
 		} finally {
 			inputStream.close();

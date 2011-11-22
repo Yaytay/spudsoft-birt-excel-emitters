@@ -25,7 +25,10 @@ import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 public interface IHandler {
 	
 	public IHandler getParent();
+	public <T extends IHandler> T getAncestor(Class<T> clazz);
 	public String getBackgroundColour();
+	
+	public void notifyHandler(HandlerState state);
 	
 	public void startPage(HandlerState state, IPageContent page) throws BirtException;
 	public void endPage(HandlerState state, IPageContent page) throws BirtException;

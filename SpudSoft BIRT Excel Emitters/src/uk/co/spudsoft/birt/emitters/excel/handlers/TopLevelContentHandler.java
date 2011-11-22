@@ -34,7 +34,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 		endCellContent(state, null, text, currentCell);
 
 		++state.rowNum;
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 		endCellContent(state, null, data, currentCell);
 
 		++state.rowNum;
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 		endCellContent(state, null, label, currentCell);
 
 		++state.rowNum;
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 			contentVisitor.visitChildren( foreign, null );			
 		}
 		
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 		endCellContent(state, null, image, currentCell);
 
 		++state.rowNum;
-		state.handler = this.parent;
+		state.setHandler(parent);
 	}
 	
 

@@ -427,6 +427,9 @@ public class ReportRunner {
 		assertNotNull(archiveWriter);
 
 		reportRunTask.run( archiveWriter );
+		for( Object errorObject : reportRunTask.getErrors() ) {
+			System.err.println( "Error: " + errorObject );
+		}
 		assertEquals( 0, reportRunTask.getErrors().size() );
 		
 		reportRunTask.close();
@@ -444,6 +447,7 @@ public class ReportRunner {
 		}
 		if( debug ) {
 			renderOptions.setOption( "ExcelEmitter.DEBUG", Boolean.TRUE);
+			debug = false;
 		}
 		if( ! removeEmptyRows ) {
 			renderOptions.setOption( "ExcelEmitter.RemoveBlankRows", Boolean.FALSE );

@@ -1,29 +1,34 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
 import org.eclipse.birt.core.exception.BirtException;
-import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.content.ITableBandContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITableGroupContent;
 
+import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
-public class FlattenedTableHandler extends AbstractHandler {
-	
-	private CellContentHandler contentHandler;
+public class AbstractRealTableHandler extends AbstractHandler implements ITableHandler {
 
-	public FlattenedTableHandler(CellContentHandler contentHandler, Logger log, IHandler parent, ITableContent table) {
+	protected int startRow;
+
+	public AbstractRealTableHandler(Logger log, IHandler parent, ITableContent table) {
 		super(log, parent, table);
-		this.contentHandler = contentHandler;
+	}
+
+	@Override
+	public int getColumnCount() {
+		return ((ITableContent)this.element).getColumnCount();
 	}
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
-		if( ( state.sheetName == null ) || state.sheetName.isEmpty() ) {
-			String name = table.getName();
-			if( ( name != null ) && ! name.isEmpty() ) {
-				state.sheetName = name;
+		startRow =  state.rowNum;
+		for( int col = 0; col < table.getColumnCount(); ++col ) {
+			log.debug( "BIRT table column width: " + col + " = " + table.getColumn(col).getWidth());
+			if( table.getColumn(col).getWidth() != null ) {
+				state.currentSheet.setColumnWidth(col, state.getSmu().poiColumnWidthFromDimension(table.getColumn(col).getWidth()));
 			}
 		}
 	}
@@ -31,14 +36,10 @@ public class FlattenedTableHandler extends AbstractHandler {
 	@Override
 	public void endTable(HandlerState state, ITableContent table) throws BirtException {
 		state.setHandler(parent);
-	}
 
-	@Override
-	public void startRow(HandlerState state, IRowContent row) throws BirtException {
-		state.setHandler(new FlattenedTableRowHandler(contentHandler, log, this, row));
-		state.getHandler().startRow(state, row);
+		state.getSmu().applyBordersToArea( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, startRow, state.rowNum - 1, new BirtStyle( table ) );
 	}
-
+	
 	@Override
 	public void startTableBand(HandlerState state, ITableBandContent band) throws BirtException {
 	}
@@ -54,7 +55,5 @@ public class FlattenedTableHandler extends AbstractHandler {
 	@Override
 	public void endTableGroup(HandlerState state, ITableGroupContent group) throws BirtException {
 	}
-	
-	
-	
+
 }

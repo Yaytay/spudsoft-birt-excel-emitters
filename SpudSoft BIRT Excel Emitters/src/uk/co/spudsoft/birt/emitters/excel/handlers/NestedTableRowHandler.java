@@ -7,23 +7,22 @@ import org.eclipse.birt.report.engine.content.IRowContent;
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
-public class TopLevelTableRowHandler extends AbstractRealTableRowHandler {
+public class NestedTableRowHandler extends AbstractRealTableRowHandler {
 
-	public TopLevelTableRowHandler(Logger log, IHandler parent, IRowContent row) {
+	public NestedTableRowHandler(Logger log, IHandler parent, IRowContent row) {
 		super(log, parent, row);
 	}
 
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
 		super.startRow(state, row);
+		++state.rowOffset;
 		state.colNum = 0;
-		state.rowOffset = 0;
 	}
 
 	@Override
 	public void startCell(HandlerState state, ICellContent cell) throws BirtException {
-		state.setHandler(new TopLevelTableCellHandler(state.getEmitter(), log, this, cell));
+		state.setHandler(new NestedTableCellHandler(state.getEmitter(), log, this, cell));
 		state.getHandler().startCell(state, cell);
 	}
-	
 }

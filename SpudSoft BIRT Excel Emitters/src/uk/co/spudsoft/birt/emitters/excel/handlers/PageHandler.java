@@ -156,44 +156,44 @@ public class PageHandler extends AbstractHandler {
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
-		state.handler = new TopLevelTableHandler(log,this,table);
-		state.handler.startTable(state, table);
+		state.setHandler(new TopLevelTableHandler(log,this,table));
+		state.getHandler().startTable(state, table);
 	}
 
 	@Override
 	public void emitText(HandlerState state, ITextContent text) throws BirtException {
-		state.handler = new TopLevelContentHandler(state.getEmitter(), log, this);
-		state.handler.emitText(state, text);
+		state.setHandler(new TopLevelContentHandler(state.getEmitter(), log, this));
+		state.getHandler().emitText(state, text);
 	}
 
 	@Override
 	public void emitData(HandlerState state, IDataContent data) throws BirtException {
-		state.handler = new TopLevelContentHandler(state.getEmitter(), log, this);
-		state.handler.emitData(state, data);
+		state.setHandler(new TopLevelContentHandler(state.getEmitter(), log, this));
+		state.getHandler().emitData(state, data);
 	}
 
 	@Override
 	public void emitLabel(HandlerState state, ILabelContent label) throws BirtException {
-		state.handler = new TopLevelContentHandler(state.getEmitter(), log, this);
-		state.handler.emitLabel(state, label);
+		state.setHandler(new TopLevelContentHandler(state.getEmitter(), log, this));
+		state.getHandler().emitLabel(state, label);
 	}
 
 	@Override
 	public void emitAutoText(HandlerState state, IAutoTextContent autoText) throws BirtException {
-		state.handler = new TopLevelContentHandler(state.getEmitter(), log, this);
-		state.handler.emitAutoText(state, autoText);
+		state.setHandler(new TopLevelContentHandler(state.getEmitter(), log, this));
+		state.getHandler().emitAutoText(state, autoText);
 	}
 
 	@Override
 	public void emitForeign(HandlerState state, IForeignContent foreign) throws BirtException {
-		state.handler = new TopLevelContentHandler(state.getEmitter(), log, this);
-		state.handler.emitForeign(state, foreign);
+		state.setHandler(new TopLevelContentHandler(state.getEmitter(), log, this));
+		state.getHandler().emitForeign(state, foreign);
 	}
 
 	@Override
 	public void emitImage(HandlerState state, IImageContent image) throws BirtException {
-		state.handler = new TopLevelContentHandler(state.getEmitter(), log, this);
-		state.handler.emitImage(state, image);
+		state.setHandler(new TopLevelContentHandler(state.getEmitter(), log, this));
+		state.getHandler().emitImage(state, image);
 	}
 	
 	

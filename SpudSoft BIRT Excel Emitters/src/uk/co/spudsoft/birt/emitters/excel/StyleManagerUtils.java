@@ -985,56 +985,31 @@ public abstract class StyleManagerUtils {
 				borderStyleBottom = null;
 				borderWidthBottom = null;
 				borderColourBottom = null;
-			}
-	/*		if( ( borderStyleBottom != null ) && ( borderWidthBottom == null ) ) {
-				borderWidthBottom = "3pt";
-			}
-			if( ( borderStyleBottom != null ) && ( borderColourBottom == null ) ) {
-				borderColourBottom = "rgb(0,0,0)";
-			}
-	*/		
+		}
+
 		if( ( borderStyleLeft == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleLeft ) )
 				|| ( borderWidthLeft == null ) || ( "0".equals(borderWidthLeft) )
 				|| ( borderColourLeft == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourLeft) ) ) {
 				borderStyleLeft = null;
 				borderWidthLeft = null;
 				borderColourLeft = null;
-			}
-	/*		if( ( borderStyleLeft != null ) && ( borderWidthLeft == null ) ) {
-				borderWidthLeft = "3pt";
-			}
-			if( ( borderStyleLeft != null ) && ( borderColourLeft == null ) ) {
-				borderColourLeft = "rgb(0,0,0)";
-			}
-	*/		
-		if( ( borderStyleRight == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleRight ) )
+		}
+
+        if( ( borderStyleRight == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleRight ) )
 				|| ( borderWidthRight == null ) || ( "0".equals(borderWidthRight) )
 				|| ( borderColourRight == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourRight) ) ) {
 				borderStyleRight = null;
 				borderWidthRight = null;
 				borderColourRight = null;
-			}
-	/*		if( ( borderStyleRight != null ) && ( borderWidthRight == null ) ) {
-				borderWidthRight = "3pt";
-			}
-			if( ( borderStyleRight != null ) && ( borderColourRight == null ) ) {
-				borderColourRight = "rgb(0,0,0)";
-			}
-	*/
+		}
+
 		if( ( borderStyleTop == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleTop ) )
 				|| ( borderWidthTop == null ) || ( "0".equals(borderWidthTop) )
 				|| ( borderColourTop == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourTop) ) ) {
 				borderStyleTop = null;
 				borderWidthTop = null;
 				borderColourTop = null;
-			}
-	/*		if( ( borderStyleTop != null ) && ( borderWidthTop == null ) ) {
-				borderWidthTop = "3pt";
-			}
-			if( ( borderStyleTop != null ) && ( borderColourTop == null ) ) {
-				borderColourTop = "rgb(0,0,0)";
-			}
-	*/		
+		}
 		
 		if( ( borderStyleBottom != null ) || ( borderWidthBottom != null ) || ( borderColourBottom != null ) 
 				|| ( borderStyleLeft != null ) || ( borderWidthLeft != null ) || ( borderColourLeft != null )
@@ -1051,7 +1026,7 @@ public abstract class StyleManagerUtils {
 								styleCell = styleRow.createCell(col);
 							}
 							if( styleCell != null ) {
-								log.debug( "Applying border to cell [R" + styleCell.getRowIndex() + "C" + styleCell.getColumnIndex() + "]");
+								// log.debug( "Applying border to cell [R" + styleCell.getRowIndex() + "C" + styleCell.getColumnIndex() + "]");
 								CellStyle newStyle = sm.getStyleWithBorders( styleCell.getCellStyle()
 										, ( (row == rowEnd) ? borderStyleBottom : null ), ( (row == rowEnd) ? borderWidthBottom : null ), ( (row == rowEnd) ? borderColourBottom : null )
 										, ( (col == colStart) ? borderStyleLeft: null ), ( (col == colStart) ? borderWidthLeft: null ), ( (col == colStart) ? borderColourLeft: null )
