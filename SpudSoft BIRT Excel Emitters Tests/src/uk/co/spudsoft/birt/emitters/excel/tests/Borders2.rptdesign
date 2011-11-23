@@ -169,7 +169,7 @@ if( rowCount < 2 ) {
             <property name="borderTopWidth">thin</property>
         </style>
         <style name="table-header-cell" id="94">
-            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomStyle">none</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderRightStyle">solid</property>
             <property name="borderTopStyle">solid</property>

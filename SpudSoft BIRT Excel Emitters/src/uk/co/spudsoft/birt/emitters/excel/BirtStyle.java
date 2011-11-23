@@ -197,9 +197,9 @@ public class BirtStyle {
 		result.set( StyleConstants.STYLE_BORDER_RIGHT_STYLE );
 		result.set( StyleConstants.STYLE_BORDER_RIGHT_WIDTH );
 		result.set( StyleConstants.STYLE_BORDER_RIGHT_COLOR );
-		result.set( StyleConstants.STYLE_BORDER_BOTTOM_STYLE );
-		result.set( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH );
-		result.set( StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
+		result.set( StyleConstants.STYLE_BORDER_TOP_STYLE );
+		result.set( StyleConstants.STYLE_BORDER_TOP_WIDTH );
+		result.set( StyleConstants.STYLE_BORDER_TOP_COLOR );
 		result.set( StyleConstants.STYLE_DATA_FORMAT );		
 		return result;
 	}
@@ -246,7 +246,7 @@ public class BirtStyle {
 		overlayBorder( style, StyleConstants.STYLE_BORDER_BOTTOM_STYLE, StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
 		overlayBorder( style, StyleConstants.STYLE_BORDER_LEFT_STYLE, StyleConstants.STYLE_BORDER_LEFT_WIDTH, StyleConstants.STYLE_BORDER_LEFT_COLOR );
 		overlayBorder( style, StyleConstants.STYLE_BORDER_RIGHT_STYLE, StyleConstants.STYLE_BORDER_RIGHT_WIDTH, StyleConstants.STYLE_BORDER_RIGHT_COLOR );
-		overlayBorder( style, StyleConstants.STYLE_BORDER_BOTTOM_STYLE, StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
+		overlayBorder( style, StyleConstants.STYLE_BORDER_TOP_STYLE, StyleConstants.STYLE_BORDER_TOP_WIDTH, StyleConstants.STYLE_BORDER_TOP_COLOR );
 		
 		// Data format
 		CSSValue overlayDataFormat = style.getProperty( StyleConstants.STYLE_DATA_FORMAT );
