@@ -30,6 +30,16 @@ public class NumberFormatsTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(18, this.firstNullRow(sheet));
 			
+			assertEquals( 3035,                    sheet.getColumnWidth( 0 ) );
+			assertEquals( 3913,                    sheet.getColumnWidth( 1 ) );
+			assertEquals( 7021,                    sheet.getColumnWidth( 2 ) );
+			assertEquals( 4205,                    sheet.getColumnWidth( 3 ) );
+			assertEquals( 3474,                    sheet.getColumnWidth( 4 ) );
+			assertEquals( 2852,                    sheet.getColumnWidth( 5 ) );
+			assertEquals( 3510,                    sheet.getColumnWidth( 6 ) );
+			assertEquals( 2889,                    sheet.getColumnWidth( 7 ) );
+			assertEquals( 2048,                    sheet.getColumnWidth( 8 ) );
+						
 			DataFormatter formatter = new DataFormatter();
 			
 			assertEquals( "1",                     formatter.formatCellValue(sheet.getRow(1).getCell(1)));
