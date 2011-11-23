@@ -17,8 +17,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.ICellContent;
+import org.eclipse.birt.report.engine.content.IContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
-import org.eclipse.birt.report.engine.content.IStyledElement;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.emitter.IContentEmitter;
@@ -50,7 +50,7 @@ public class CellContentHandler extends AbstractHandler {
 	/**
 	 * The BIRT element that provided the lastValue
 	 */
-	protected IStyledElement lastElement;
+	protected IContent lastElement;
 	/**
 	 * List of font changes for a single cell.
 	 */
@@ -93,7 +93,7 @@ public class CellContentHandler extends AbstractHandler {
 	 * The element that signifies the end of the cell (this may not be an ICellContent object if the 
 	 * cell is created for a label or text outside of a table). 
 	 */
-	protected void endCellContent(HandlerState state, ICellContent birtCell, IStyledElement element, Cell cell ) {
+	protected void endCellContent(HandlerState state, ICellContent birtCell, IContent element, Cell cell ) {
 		StyleManager sm = state.getSm();
 		StyleManagerUtils smu = state.getSmu();
 		
@@ -101,7 +101,7 @@ public class CellContentHandler extends AbstractHandler {
 		if( birtCell != null ) {
 			birtCellStyle = new BirtStyle( birtCell );
 			if( element != null ) {
-				birtCellStyle.overlay( element.getComputedStyle() );
+				birtCellStyle.overlay( element );
 			}
 		} else if( element != null ) {
 			birtCellStyle = new BirtStyle( element );			
@@ -307,7 +307,7 @@ public class CellContentHandler extends AbstractHandler {
 	 * @param value
 	 * The value to put into the current cell.
 	 */ 
-	protected void emitContent(HandlerState state, IStyledElement element, Object value, boolean asBlock) {
+	protected void emitContent(HandlerState state, IContent element, Object value, boolean asBlock) {
 		if( value == null ) {
 			return ;
 		}

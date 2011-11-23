@@ -61,7 +61,6 @@ public class StyleManager {
 	private Workbook workbook;
 	private FontManager fm;
 	private List<StylePair> styles = new ArrayList<StylePair>();
-	// private StyleStack styleStack;
 	private StyleManagerUtils smu;
 	private CSSEngine cssEngine;
 	private Logger log;
@@ -94,40 +93,6 @@ public class StyleManager {
 		return cssEngine;
 	}
 	
-	/**
-	 * Merge appropriate styles from the styleStack with the current style.
-	 * <BR>
-	 * At this time the only property that is merged is background colour. 
-	 * @param style
-	 * The style to be merged with the styleStack.
-	 * @return
-	 * The style after merging (this is not a new instance).
-	 */
-	/*
-	public IStyle mergeStyles(IStyle style) {
-
-		for( int elemIndex = styleStack.stack.size() - 1; elemIndex >= 0; --elemIndex ) {
-			IStyledElement stackElement = styleStack.stack.get( elemIndex );
-			IStyle stackStyle = stackElement.getStyle();
-			
-			for(int propIndex = 0; propIndex < IStyle.NUMBER_OF_STYLE; ++propIndex ) {
-				if( ( style.getProperty(propIndex) == null ) 
-						|| ( ( propIndex == IStyle.STYLE_BACKGROUND_COLOR )
-							&& ( IStyle.TRANSPARENT_VALUE.equals( style.getProperty(propIndex) ) ) ) ) {
-					CSSValue value = stackStyle.getProperty( propIndex );
-					if( value != null ) {
-						style.setProperty( propIndex , value );
-					}
-				}
-			}	
-			if( stackElement instanceof CellContent ) {
-				return style;
-			}
-		}
-	
-		return style;
-	}*/
-
 	
 	private static int COMPARE_CSS_PROPERTIES[] = {
 		StyleConstants.STYLE_TEXT_ALIGN,
@@ -146,6 +111,7 @@ public class StyleManager {
 		StyleConstants.STYLE_BORDER_BOTTOM_COLOR,
 		StyleConstants.STYLE_WHITE_SPACE,
 		StyleConstants.STYLE_VERTICAL_ALIGN,
+		BirtStyle.TEXT_ROTATION,
 	};
 	
 	/**
@@ -161,28 +127,28 @@ public class StyleManager {
 	 */
 	private boolean stylesEquivalent( BirtStyle style1, BirtStyle style2) {
 		
-		//System.out.println( "style1: " + StyleManagerUtils.birtStyleToString(style1) );
-		//System.out.println( "style2: " + StyleManagerUtils.birtStyleToString(style2) );
+		// System.out.println( "style1: " + style1 );
+		// System.out.println( "style2: " + style2 );
 		
 		for( int i = 0; i < COMPARE_CSS_PROPERTIES.length; ++i ) {
 			int prop = COMPARE_CSS_PROPERTIES[ i ];
 			CSSValue value1 = style1.getProperty( prop );
 			CSSValue value2 = style2.getProperty( prop );
 			if( ! StyleManagerUtils.objectsEqual( value1, value2 ) ) {
-				//System.out.println( "Differ on " + i + " because " + value1 + " != " + value2 );
+				// System.out.println( "Differ on " + i + " because " + value1 + " != " + value2 );
 				return false;
 			}
 		}
 		// Number format
 		if( ! StyleManagerUtils.dataFormatsEquivalent( (DataFormatValue)style1.getProperty( StyleConstants.STYLE_DATA_FORMAT )
 				, (DataFormatValue)style2.getProperty( StyleConstants.STYLE_DATA_FORMAT ) ) ) {
-			//System.out.println( "Differ on DataFormat" );
+			// System.out.println( "Differ on DataFormat" );
 			return false;
 		}		
         
 		// Font
 		if( !FontManager.fontsEquivalent( style1, style2 ) ) {
-			//System.out.println( "Differ on font" );
+			// System.out.println( "Differ on font" );
 			return false;
 		}
 		return true;
@@ -228,26 +194,27 @@ public class StyleManager {
 		} else if ( CSSConstants.CSS_BOTTOM_VALUE.equals( birtStyle.getString( StyleConstants.STYLE_VERTICAL_ALIGN ) ) ) {
 			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_BOTTOM );
 		} 
+		// Rotation
+		String rotationString = birtStyle.getString( BirtStyle.TEXT_ROTATION );
+		if( rotationString != null ) {
+			try {
+				short rotation = Short.parseShort(rotationString);
+				if( rotation > 0 ) {
+					poiStyle.setRotation(rotation);
+				}
+			} catch(NumberFormatException ex){
+				log.warn(0, "Could not parse \"" + rotationString + "\" as a valid short for rotation", ex);
+			}
+		}
 
 		styles.add(new StylePair( birtStyle.clone(), poiStyle ) );
 		return poiStyle;
 	}
 
-	/**
-	 * Get a CellStyle matching the BIRT style, either from the cache or creating a new one.
-	 * @param element
-	 * The BIRT element that has a style to be copied.
-	 * @return
-	 * A POI CellStyle containing attributes defined by the BIRT element.
-	 *//*
-	public CellStyle getStyle( IStyledElement element ) {
-		BirtStyle birtStyle = new BirtStyle( element );
-		return getStyle( birtStyle );
-	}*/
-	
 	public CellStyle getStyle( BirtStyle birtStyle ) {
 		for(StylePair stylePair : styles) {
 			if(stylesEquivalent(birtStyle, stylePair.birtStyle)) {
+				// System.err.println( "Equivalent :\n\t" + birtStyle + "\n\t" + stylePair.birtStyle );
 				return stylePair.poiStyle;
 			}
 		}
@@ -342,7 +309,7 @@ public class StyleManager {
 
 		BirtStyle birtStyle = birtStyleFromCellStyle( source );
 		
-		for(int i = 0; i < IStyle.NUMBER_OF_STYLE; ++i ) {
+		for(int i = 0; i < BirtStyle.NUMBER_OF_STYLES; ++i ) {
 			CSSValue value = birtExtraStyle.getProperty( i );
 			if( value != null ) {
 				birtStyle.setProperty( i , value );

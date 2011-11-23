@@ -63,67 +63,6 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
  */
 public abstract class StyleManagerUtils {
 	
-	   protected static String cssProperties[] = {
-		     "margin-left"
-		   , "margin-right"
-		   , "margin-top"
-		   , "DATA_FORMAT"
-		   , "border-right-color"
-		   , "direction"
-		   , "border-top-width"
-		   , "padding-left"
-		   , "border-right-width"
-		   , "padding-bottom"
-		   , "padding-top"
-		   , "NUMBER_ALIGN"
-		   , "padding-right"
-		   , "CAN_SHRINK"
-		   , "border-top-color"
-		   , "background-repeat"
-		   , "margin-bottom"
-		   , "background-width"
-		   , "background-height"
-		   , "border-right-style"
-		   , "border-bottom-color"
-		   , "text-indent"
-		   , "line-height"
-		   , "border-bottom-width"
-		   , "text-align"
-		   , "background-color"
-		   , "color"
-		   , "overflow"
-		   , "TEXT_LINETHROUGH"
-		   , "border-left-color"
-		   , "widows"
-		   , "border-left-width"
-		   , "border-bottom-style"
-		   , "font-weight"
-		   , "font-variant"
-		   , "text-transform"
-		   , "white-space"
-		   , "TEXT_OVERLINE"
-		   , "vertical-align"
-		   , "BACKGROUND_POSITION_X"
-		   , "border-left-style"
-		   , "VISIBLE_FORMAT"
-		   , "MASTER_PAGE"
-		   , "orphans"
-		   , "font-size"
-		   , "font-style"
-		   , "border-top-style"
-		   , "page-break-before"
-		   , "SHOW_IF_BLANK"
-		   , "background-image"
-		   , "BACKGROUND_POSITION_Y"
-		   , "word-spacing"
-		   , "background-attachment"
-		   , "TEXT_UNDERLINE"
-		   , "display"
-		   , "font-family"
-		   , "letter-spacing"
-		   , "page-break-inside"
-		   , "page-break-after"
-	   };		
 
 	protected Logger log;	
 	
@@ -245,7 +184,7 @@ public abstract class StyleManagerUtils {
 			return (short)(12 * dim.getMeasure());
 		} else if(DimensionType.UNITS_PERCENTAGE.equals(dim.getUnits())) {
 			return (short)(12 * dim.getMeasure() / 100.0);
-		} else {			
+		} else {
 			double points = dim.convertTo(DimensionType.UNITS_PT);
 			return (short)points;
 		}
@@ -342,31 +281,6 @@ public abstract class StyleManagerUtils {
 	 * The colour to add.
 	 */
 	public abstract void addBackgroundColourToStyle(Workbook workbook, CellStyle style, String colour);
-	
-	/**
-	 * Convert a BIRT style to a string for debug purposes.
-	 * @param style
-	 * The BIRT style.
-	 * @return
-	 * A string representing all the configured values in the BIRT style.
-	 */
-	public static String birtStyleToString(BirtStyle style) {
-		if( style == null ) {
-			return "<null>";
-		}
-		StringBuilder result = new StringBuilder();
-		for( int i = 0; i < StyleConstants.NUMBER_OF_STYLE; ++i ) {				
-			CSSValue val = style.getProperty( i );
-			if( val != null ) {
-				try {
-					result.append(cssProperties[i]).append(':').append(val.getCssText()).append("; ");
-				} catch(Exception ex) {
-					result.append(cssProperties[i]).append(":{").append(ex.getMessage()).append("}; ");						
-				}
-			}
-		}
-		return result.toString();
-	}
 	
 	/**
 	 * Check whether a cell is empty and unformatted.

@@ -318,4 +318,34 @@ public class SampleReportsTest extends ReportRunner {
 		}
 	}
 
+	@Test
+	public void xmlDataSource() throws BirtException, IOException {
+		
+		InputStream inputStream = null;
+		parameters.put( "customer", 103);
+		parameters.put( "order", 10123);
+		if( ( inputStream = runAndRenderSampleReport( "samplereports/Reporting Feature Examples/XML Data Source/XMLDS_After.rptdesign", "xlsx") ) != null ) {
+			try {
+				assertNotNull(inputStream);
+			} finally {
+				inputStream.close();
+			}
+		}
+	}
+
+	@Test
+	public void salesInvoice() throws BirtException, IOException {
+		
+		InputStream inputStream = null;
+		parameters.put( "customer", 103);
+		parameters.put( "order", 10123);
+		if( ( inputStream = runAndRenderSampleReport( "samplereports/Solution Reports/Business Forms/SalesInvoice.rptdesign", "xlsx") ) != null ) {
+			try {
+				assertNotNull(inputStream);
+			} finally {
+				inputStream.close();
+			}
+		}
+	}
+
 }

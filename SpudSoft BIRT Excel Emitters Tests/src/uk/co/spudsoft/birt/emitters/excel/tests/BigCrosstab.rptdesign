@@ -460,6 +460,12 @@ this.getDataSource( "Mission Data Source" ).setPrivateDriverProperty( "HOME", pa
     </page-setup>
     <body>
         <label id="5">
+            <list-property name="userProperties">
+                <structure>
+                    <property name="name">ExcelEmitter.Rotation</property>
+                    <property name="type">string</property>
+                </structure>
+            </list-property>
             <text-property name="text">Reporting for duty!</text-property>
         </label>
         <extended-item extensionName="Crosstab" extensionVersion="2.5.0" name="LaunchCrosstab"
@@ -485,6 +491,13 @@ this.getDataSource( "Mission Data Source" ).setPrivateDriverProperty( "HOME", pa
                         <extended-item extensionName="CrosstabCell" id="56">
                             <property name="content">
                                 <label id="57">
+                                    <list-property name="userProperties">
+                                        <structure>
+                                            <property name="name">ExcelEmitter.Rotation</property>
+                                            <property name="type">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="ExcelEmitter.Rotation">60</property>
                                     <property name="textAlign">right</property>
                                     <text-property name="text">Flights</text-property>
                                 </label>
@@ -511,6 +524,13 @@ this.getDataSource( "Mission Data Source" ).setPrivateDriverProperty( "HOME", pa
                         <extended-item extensionName="CrosstabCell" id="61">
                             <property name="content">
                                 <label id="62">
+                                    <list-property name="userProperties">
+                                        <structure>
+                                            <property name="name">ExcelEmitter.Rotation</property>
+                                            <property name="type">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="ExcelEmitter.Rotation">60</property>
                                     <property name="textAlign">right</property>
                                     <text-property name="text">Total time</text-property>
                                 </label>
@@ -570,6 +590,13 @@ this.getDataSource( "Mission Data Source" ).setPrivateDriverProperty( "HOME", pa
                                         <extended-item extensionName="CrosstabCell" id="44">
                                             <property name="content">
                                                 <data name="Header0" id="45">
+                                                    <list-property name="userProperties">
+                                                        <structure>
+                                                            <property name="name">ExcelEmitter.Rotation</property>
+                                                            <property name="type">string</property>
+                                                        </structure>
+                                                    </list-property>
+                                                    <property name="ExcelEmitter.Rotation">60</property>
                                                     <property name="resultSetColumn">LaunchVehicle_LaunchVehicle</property>
                                                 </data>
                                             </property>
