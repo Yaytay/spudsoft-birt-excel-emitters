@@ -2,7 +2,6 @@ package uk.co.spudsoft.birt.emitters.excel.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +24,12 @@ public class Groupings extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 3, workbook.getNumberOfSheets() );
-			assertEquals( "HeaderAndFooter", workbook.getSheetAt(0).getSheetName());
-			
+
 			Sheet sheet1 = workbook.getSheetAt(0);
+			assertEquals( "HeaderAndFooter", sheet1.getSheetName());
+			
+			// No way to access groups in POI :(
+
 		} finally {
 			inputStream.close();
 		}

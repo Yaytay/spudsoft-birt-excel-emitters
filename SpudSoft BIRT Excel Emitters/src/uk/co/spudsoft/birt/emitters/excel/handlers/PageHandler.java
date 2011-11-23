@@ -1,8 +1,11 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
+import java.util.Collection;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IAutoTextContent;
@@ -11,8 +14,10 @@ import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.content.ILabelContent;
 import org.eclipse.birt.report.engine.content.IPageContent;
+import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
+import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
@@ -39,6 +44,55 @@ public class PageHandler extends AbstractHandler {
 		}
 	}
 	
+	private String contentAsString( HandlerState state, Object obj ) throws BirtException {
+		
+		StringCellHandler stringCellHandler = new StringCellHandler( state.getEmitter(), log, this, 
+				obj instanceof CellContent ? (CellContent)obj : null );
+		
+		state.setHandler(stringCellHandler);
+		
+		stringCellHandler.visit(obj);
+		
+		state.setHandler(this);
+		
+		return stringCellHandler.getString();
+	}
+	
+	@SuppressWarnings("rawtypes") 
+	private void processHeaderFooter( HandlerState state, Collection birtHeaderFooter, HeaderFooter poiHeaderFooter ) throws BirtException {
+		boolean handledAsGrid = false;
+		for( Object ftrObject : birtHeaderFooter ) {
+			if( ftrObject instanceof ITableContent ) {
+				ITableContent ftrTable = (ITableContent)ftrObject;
+				if( ftrTable.getChildren().size() == 1 ) {
+					Object child = ftrTable.getChildren().toArray()[ 0 ];
+					if( child instanceof IRowContent ) {
+						IRowContent row = (IRowContent)child;
+						if( ftrTable.getColumnCount() <= 3 ) {
+							Object[] cellObjects = row.getChildren().toArray();
+							if( ftrTable.getColumnCount() == 1 ) {
+								poiHeaderFooter.setLeft( contentAsString( state, cellObjects[ 0 ] ) );
+								handledAsGrid = true;
+							} else if( ftrTable.getColumnCount() == 2 ) {
+								poiHeaderFooter.setLeft( contentAsString( state, cellObjects[ 0 ] ) );
+								poiHeaderFooter.setRight( contentAsString( state, cellObjects[ 1 ] ) );
+								handledAsGrid = true;
+							} else if( ftrTable.getColumnCount() == 3 ) {
+								poiHeaderFooter.setLeft( contentAsString( state, cellObjects[ 0 ] ) );
+								poiHeaderFooter.setCenter( contentAsString( state, cellObjects[ 1 ] ) );
+								poiHeaderFooter.setRight( contentAsString( state, cellObjects[ 2 ] ) );
+								handledAsGrid = true;
+							}
+						}
+					}
+				}
+			}
+			if( ! handledAsGrid ) {
+				poiHeaderFooter.setLeft( contentAsString( state, ftrObject ) );
+			}
+		}
+	}
+	
 	@Override
 	public void startPage(HandlerState state, IPageContent page) throws BirtException {
 	    state.currentSheet = state.getWb().createSheet();
@@ -47,6 +101,9 @@ public class PageHandler extends AbstractHandler {
 		if( page.getPageType() != null ) {
 			setupPageSize(state, page);
 		}
+		
+		processHeaderFooter(state, page.getHeader(), state.currentSheet.getHeader() );
+		processHeaderFooter(state, page.getFooter(), state.currentSheet.getFooter() );
 		
 		state.getSmu().prepareMarginDimensions(state.currentSheet, page);
 	}

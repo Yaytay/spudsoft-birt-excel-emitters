@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="author">The Writer</property>
     <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
     <text-property name="title">Simple Table Report</text-property>
     <property name="units">in</property>
@@ -52,11 +53,44 @@
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="2">
-            <page-footer>
-                <text id="3">
+            <property name="headerHeight">1in</property>
+            <page-header>
+                <text id="94">
                     <property name="contentType">html</property>
-                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                    <text-property name="content"><![CDATA[<H1>
+Title
+</H1>
+<H4>
+Subtitle
+</H4>]]></text-property>
                 </text>
+            </page-header>
+            <page-footer>
+                <grid id="83">
+                    <column id="84"/>
+                    <column id="85"/>
+                    <column id="86"/>
+                    <row id="87">
+                        <cell id="88">
+                            <text id="95">
+                                <method name="onPrepare"><![CDATA[this.content = reportContext.getDesignHandle().author]]></method>
+                                <property name="contentType">auto</property>
+                                <text-property name="content"><![CDATA[Created by: ]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="90">
+                            <auto-text id="91">
+                                <property name="type">page-number</property>
+                            </auto-text>
+                        </cell>
+                        <cell id="92">
+                            <text id="93">
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                            </text>
+                        </cell>
+                    </row>
+                </grid>
             </page-footer>
         </simple-master-page>
     </page-setup>

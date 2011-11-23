@@ -315,7 +315,12 @@ public class CellContentHandler extends AbstractHandler {
 			lastValue = value;
 			lastElement = element;
 			lastCellContentsWasBlock = asBlock;
+			log.debug( "value == " + value );
+			log.debug( "lastCellContentsWasBlock == " + lastCellContentsWasBlock );
 			return ;
+		} else {
+			log.debug( "value == " + value );
+			log.debug( "lastCellContentsWasBlock == " + lastCellContentsWasBlock );
 		}
 		
 		StyleManager sm = state.getSm();

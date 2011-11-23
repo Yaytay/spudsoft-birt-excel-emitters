@@ -37,6 +37,7 @@ public class SimpleTableReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
+		debug = true;
 		InputStream inputStream = runAndRenderReport("SimpleTable.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
@@ -54,6 +55,10 @@ public class SimpleTableReportTest extends ReportRunner {
 			assertEquals( "2", sheet.getRow(1).getCell(0).getStringCellValue() );
 			assertEquals( 3.0, sheet.getRow(0).getCell(1).getNumericCellValue(), 0.001 );
 			assertEquals( Cell.CELL_TYPE_BLANK, sheet.getRow(1).getCell(1).getCellType() );
+			
+			assertEquals( "Title\nSubtitle", 	sheet.getHeader().getLeft() );
+			assertEquals( "The Writer", 		sheet.getFooter().getLeft() );
+			assertEquals( "1", 					sheet.getFooter().getCenter() );
 		} finally {
 			inputStream.close();
 		}
