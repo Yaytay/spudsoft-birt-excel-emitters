@@ -253,14 +253,18 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 
 	@Override
 	public void prepareMarginDimensions(Sheet sheet, IPageContent page) {
+		double headerHeight = 0.0;
+		double footerHeight = 0.0;
 		if( page.getHeaderHeight() != null ) {
-			sheet.setMargin(Sheet.HeaderMargin, page.getHeaderHeight().convertTo(DimensionType.UNITS_IN));
+			headerHeight = page.getHeaderHeight().convertTo(DimensionType.UNITS_IN);
+			sheet.setMargin(Sheet.HeaderMargin, headerHeight);
 		}
 		if( page.getFooterHeight() != null ) {
-			sheet.setMargin(Sheet.FooterMargin, page.getFooterHeight().convertTo(DimensionType.UNITS_IN));
+			footerHeight = page.getFooterHeight().convertTo(DimensionType.UNITS_IN);
+			sheet.setMargin(Sheet.FooterMargin, footerHeight);
 		}
 		if( page.getMarginBottom() != null ) {
-			sheet.setMargin(Sheet.BottomMargin, page.getMarginBottom().convertTo(DimensionType.UNITS_IN));
+			sheet.setMargin(Sheet.BottomMargin, footerHeight + page.getMarginBottom().convertTo(DimensionType.UNITS_IN));
 		}
 		if( page.getMarginLeft() != null ) {
 			sheet.setMargin(Sheet.LeftMargin, page.getMarginLeft().convertTo(DimensionType.UNITS_IN));
@@ -269,7 +273,7 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 			sheet.setMargin(Sheet.RightMargin, page.getMarginRight().convertTo(DimensionType.UNITS_IN));
 		}
 		if( page.getMarginTop() != null ) {
-			sheet.setMargin(Sheet.TopMargin, page.getMarginTop().convertTo(DimensionType.UNITS_IN));
+			sheet.setMargin(Sheet.TopMargin, headerHeight + page.getMarginTop().convertTo(DimensionType.UNITS_IN));
 		}
 	}
 	
