@@ -30,11 +30,11 @@ public class AutoColWidthsTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals(23, this.firstNullRow(sheet));
 			
-			assertEquals( 5843,                    sheet.getColumnWidth( 0 ) );
+			assertEquals( 6127,                    sheet.getColumnWidth( 0 ) );
 			assertEquals( 2048,                    sheet.getColumnWidth( 1 ) );
 			assertEquals( 4999,                    sheet.getColumnWidth( 2 ) );
-			assertEquals( 3763,                    sheet.getColumnWidth( 3 ) );
-			assertEquals( 3763,                    sheet.getColumnWidth( 4 ) );
+			assertEquals( 3812,                    sheet.getColumnWidth( 3 ) );
+			assertEquals( 3812,                    sheet.getColumnWidth( 4 ) );
 			assertEquals( 2048,                    sheet.getColumnWidth( 5 ) );
 			assertEquals( 3888,                    sheet.getColumnWidth( 6 ) );
 			assertEquals( 2048,                    sheet.getColumnWidth( 7 ) );

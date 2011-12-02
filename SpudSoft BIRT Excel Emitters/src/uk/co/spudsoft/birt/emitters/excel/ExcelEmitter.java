@@ -40,6 +40,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	public static final String DEBUG = "ExcelEmitter.DEBUG";
 	public static final String REMOVE_BLANK_ROWS = "ExcelEmitter.RemoveBlankRows";
 	public static final String ROTATION_PROP = "ExcelEmitter.Rotation";
+	public static final String FORCEAUTOCOLWIDTHS_PROP = "ExcelEmitter.ForceAutoColWidths";
 	
 	/**
 	 * Logger.
