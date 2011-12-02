@@ -81,7 +81,6 @@ public class Borders2ReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
-		debug = true;
 		removeEmptyRows = false;
 		InputStream inputStream = runAndRenderReport("Borders2.rptdesign", "xlsx");
 		assertNotNull(inputStream);

@@ -37,7 +37,6 @@ public class SimpleTableReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
-		debug = true;
 		InputStream inputStream = runAndRenderReport("SimpleTable.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
