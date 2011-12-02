@@ -320,10 +320,14 @@ public class ReportRunner {
 			
 			try {
 				IRunTask reportRunTask = reportEngine.createRunTask( reportRunnable );
+
+				// reportRunTask.enableProgressiveViewing(true);
+				
 				assertNotNull(reportRunTask);
 				try {
 					addParameters( reportRunTask );
 					addFilepathToAppContext(filepath, reportRunTask);
+					addToAppContext(reportRunTask, "org.eclipse.birt.data.query.ResultBufferSize", 256 );
 					
 					IReportDocument reportDocument = runReport(reportEngine,
 							reportRunTask, tempDoc);
@@ -410,14 +414,18 @@ public class ReportRunner {
 
 	protected void addFilepathToAppContext(String filepath, IEngineTask task) {
 		if( filepath != null ) {
-			@SuppressWarnings("unchecked")
-			Map<String,Object> appContext = (Map<String,Object>)task.getAppContext();
-			if( appContext == null ) {
-				appContext = new HashMap<String,Object>();
-				task.setAppContext(appContext);
-			}
-			appContext.put("__report", filepath);					
+			addToAppContext(task, "__report", filepath);
 		}
+	}
+	
+	private void addToAppContext( IEngineTask task, String key, Object value ) {
+		@SuppressWarnings("unchecked")
+		Map<String,Object> appContext = (Map<String,Object>)task.getAppContext();
+		if( appContext == null ) {
+			appContext = new HashMap<String,Object>();
+			task.setAppContext(appContext);
+		}
+		appContext.put(key, value);					
 	}
 
 	protected IReportDocument runReport(IReportEngine reportEngine,
