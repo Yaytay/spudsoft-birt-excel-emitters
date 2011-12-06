@@ -145,22 +145,22 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 					case TOP:
 						xStyle.setBorderTop(xBorderStyle);
 						xStyle.setTopBorderColor(xBorderColour);
-						log.debug( "Top border: " + xStyle.getBorderTop() + " / " + xStyle.getTopBorderXSSFColor().getARGBHex() );
+						// log.debug( "Top border: " + xStyle.getBorderTop() + " / " + xStyle.getTopBorderXSSFColor().getARGBHex() );
 						break;
 					case LEFT:
 						xStyle.setBorderLeft(xBorderStyle);
 						xStyle.setLeftBorderColor(xBorderColour);
-						log.debug( "Left border: " + xStyle.getBorderLeft() + " / " + xStyle.getLeftBorderXSSFColor().getARGBHex() );
+						// log.debug( "Left border: " + xStyle.getBorderLeft() + " / " + xStyle.getLeftBorderXSSFColor().getARGBHex() );
 						break;
 					case RIGHT:
 						xStyle.setBorderRight(xBorderStyle);
 						xStyle.setRightBorderColor(xBorderColour);
-						log.debug( "Right border: " + xStyle.getBorderRight() + " / " + xStyle.getRightBorderXSSFColor().getARGBHex() );
+						// log.debug( "Right border: " + xStyle.getBorderRight() + " / " + xStyle.getRightBorderXSSFColor().getARGBHex() );
 						break;
 					case BOTTOM:
 						xStyle.setBorderBottom(xBorderStyle);
 						xStyle.setBottomBorderColor(xBorderColour);
-						log.debug( "Bottom border: " + xStyle.getBorderBottom() + " / " + xStyle.getBottomBorderXSSFColor().getARGBHex() );
+						// log.debug( "Bottom border: " + xStyle.getBorderBottom() + " / " + xStyle.getBottomBorderXSSFColor().getARGBHex() );
 						break;
 					}
 				}

@@ -33,8 +33,8 @@ public class BigCrosstabTest extends ReportRunner {
 			assertEquals( 60, workbook.getSheetAt(0).getRow(2).getCell(3).getCellStyle().getRotation());
 			assertEquals(  0, workbook.getSheetAt(0).getRow(3).getCell(2).getCellStyle().getRotation());
 			
-			assertThat( runTime - startTime, lessThan(1000L) );
-			assertThat( renderTime - runTime, lessThan(1000L) );
+			assertThat( runTime - startTime, lessThan(4000L) );
+			assertThat( renderTime - runTime, lessThan(4000L) );
 			
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 236, firstNullRow(sheet));
@@ -65,8 +65,8 @@ public class BigCrosstabTest extends ReportRunner {
 			assertEquals( 60, workbook.getSheetAt(0).getRow(2).getCell(3).getCellStyle().getRotation());
 			assertEquals(  0, workbook.getSheetAt(0).getRow(3).getCell(2).getCellStyle().getRotation());
 
-			assertThat( runTime - startTime, lessThan(1000L) );
-			assertThat( renderTime - runTime, lessThan(1000L) );
+			assertThat( runTime - startTime, lessThan(4000L) );
+			assertThat( renderTime - runTime, lessThan(4000L) );
 			
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 236, firstNullRow(sheet));

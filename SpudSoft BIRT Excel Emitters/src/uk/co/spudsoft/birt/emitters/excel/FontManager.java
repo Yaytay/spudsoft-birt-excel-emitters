@@ -29,6 +29,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
+import org.eclipse.birt.report.engine.css.engine.value.ListValue;
+import org.eclipse.birt.report.engine.css.engine.value.StringValue;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
@@ -89,17 +91,24 @@ public class FontManager {
 	private static String cleanupQuotes( CSSValue value ) {
 		if( value == null ) {
 			return null;
-		} else {
-			String stringValue = value.getCssText();
-			if( ( stringValue == null ) || stringValue.isEmpty() ) {
-				return stringValue;
+		} 
+
+		if( value instanceof ListValue ){
+			ListValue listValue = (ListValue)value;
+			if( listValue.getLength() > 0 ) {
+				value = listValue.item(0);
 			}
-			if( stringValue.startsWith( "\"" ) && stringValue.endsWith( "\"" ) ) {
-				String newFamily = stringValue.substring(1, stringValue.length()-1);
-				return newFamily;
-			}
+		}
+		
+		String stringValue = ( value instanceof StringValue ? ((StringValue)value).getStringValue() : value.getCssText() );
+		if( ( stringValue == null ) || stringValue.isEmpty() ) {
 			return stringValue;
 		}
+		if( stringValue.startsWith( "\"" ) && stringValue.endsWith( "\"" ) ) {
+			String newFamily = stringValue.substring(1, stringValue.length()-1);
+			return newFamily;
+		}
+		return stringValue;
 	}
 	
 	private static int COMPARE_CSS_PROPERTIES[] = {
@@ -127,7 +136,7 @@ public class FontManager {
 			int prop = COMPARE_CSS_PROPERTIES[ i ];
 			CSSValue value1 = style1.getProperty( prop );
 			CSSValue value2 = style2.getProperty( prop );
-			if( ! StyleManagerUtils.objectsEqual( cleanupQuotes( value1 ), cleanupQuotes( value2 ) ) ) {
+			if( ! StyleManagerUtils.objectsEqual( value1, value2 ) ) {
 				return false;
 			}
 		}
