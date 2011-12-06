@@ -66,6 +66,9 @@ public class ReportRunner {
 	protected boolean removeEmptyRows = true;
 	protected boolean htmlPagination;
 	protected Map<String,Object> parameters = new HashMap<String, Object>();
+	protected long startTime;
+	protected long runTime;
+	protected long renderTime;
 	
 	private static byte[] getBytesFromFile(File file) throws IOException {
 	    InputStream is = new FileInputStream(file);
@@ -158,8 +161,10 @@ public class ReportRunner {
 					addParameters( reportRunTask );
 					addFilepathToAppContext(filepath, reportRunTask);
 					
+					startTime = System.currentTimeMillis();
 					IReportDocument reportDocument = runReport(reportEngine,
 							reportRunTask, tempDoc);
+			        runTime = System.currentTimeMillis();
 			        
 			        IRenderTask renderTask = reportEngine.createRenderTask( reportDocument );
 			        assertNotNull(renderTask);
@@ -173,6 +178,7 @@ public class ReportRunner {
 					        renderTask.setRenderOption(prepareRenderOptions( outputFormat, outputStream ));
 					        
 					        renderTask.render();
+					        renderTime = System.currentTimeMillis();
 					        assertEquals(0, renderTask.getErrors().size());					        
 				        } finally {
 				        	outputStream.close();
@@ -329,8 +335,10 @@ public class ReportRunner {
 					addFilepathToAppContext(filepath, reportRunTask);
 					addToAppContext(reportRunTask, "org.eclipse.birt.data.query.ResultBufferSize", 256 );
 					
+					startTime = System.currentTimeMillis();
 					IReportDocument reportDocument = runReport(reportEngine,
 							reportRunTask, tempDoc);
+					runTime = System.currentTimeMillis();
 			        
 			        // IRenderTask renderTask = reportEngine.createRenderTask( reportDocument );
 			        IRenderTask renderTask = new FixedRenderTask( (ReportEngine)reportEngine, reportRunnable, reportDocument );
@@ -346,10 +354,14 @@ public class ReportRunner {
 					        renderTask.setRenderOption(prepareRenderOptions( outputFormat, outputStream ));
 					        
 					        renderTask.render();
+							renderTime = System.currentTimeMillis();
 					        assertEquals(0, renderTask.getErrors().size());					        
 				        } finally {
 				        	outputStream.close();
 				        }
+				        
+				        System.err.println( "Run " + baseFilename( filename ) + " : " + ((runTime - startTime) / 1000.0) + "s");
+				        System.err.println( "Render " + baseFilename( filename ) + " : " + ((renderTime - runTime) / 1000.0) + "s");
 
 				        return new ByteArrayInputStream(getBytesFromFile(tempOutput));
 			        } finally {

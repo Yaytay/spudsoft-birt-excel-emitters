@@ -20,6 +20,7 @@ import org.eclipse.birt.report.engine.content.ITableBandContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITableGroupContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
+import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
@@ -31,6 +32,7 @@ public class AbstractHandler implements IHandler {
 	protected Logger log;
 	protected IStyledElement element;
 	protected IHandler parent;
+	private CSSValue backgroundColour;
 	
 	public AbstractHandler(Logger log, IHandler parent, IStyledElement element) {
 		this.log = log;
@@ -61,17 +63,20 @@ public class AbstractHandler implements IHandler {
 	}
 
 	@Override
-	public String getBackgroundColour() {
+	public CSSValue getBackgroundColour() {
+		if( backgroundColour != null ) {
+			return backgroundColour;
+		}
 		if( element != null ) {
-			String elemColour = element.getComputedStyle().getBackgroundColor();
-			if( ( elemColour != null ) && ! CSSConstants.CSS_TRANSPARENT_VALUE.equals( elemColour ) ) {
-				return elemColour;
+			CSSValue elemColour = element.getComputedStyle().getProperty( StyleConstants.STYLE_BACKGROUND_COLOR );
+			if( ( elemColour != null ) && ! CSSConstants.CSS_TRANSPARENT_VALUE.equals( elemColour.getCssText() ) ) {
+				backgroundColour = elemColour;
 			}
 		}
 		if( parent != null ) {
-			return parent.getBackgroundColour();
+			backgroundColour = parent.getBackgroundColour();
 		}
-		return CSSConstants.CSS_TRANSPARENT_VALUE;
+		return backgroundColour;
 	}
 	
 	protected static String getStyleProperty( IStyledElement element, int property, String defaultValue ) {

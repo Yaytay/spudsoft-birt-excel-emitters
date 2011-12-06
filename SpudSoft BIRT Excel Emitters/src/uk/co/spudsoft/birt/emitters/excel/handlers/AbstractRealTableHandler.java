@@ -7,9 +7,11 @@ import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.ITableBandContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITableGroupContent;
+import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.engine.ir.Expression;
 import org.eclipse.birt.report.engine.ir.ReportElementDesign;
 
+import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
 import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.EmitterServices;
 import uk.co.spudsoft.birt.emitters.excel.ExcelEmitter;
@@ -22,6 +24,12 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 	protected int startRow;
 	protected int startDetailsRow = -1;
 	protected int endDetailsRow;
+	
+	private ITableGroupContent currentGroup;
+	private ITableBandContent currentBand;
+	
+	private BirtStyle tableStyle;
+	private AreaBorders borderDefn;
 
 	public AbstractRealTableHandler(Logger log, IHandler parent, ITableContent table) {
 		super(log, parent, table);
@@ -37,14 +45,21 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 		startRow =  state.rowNum;
 
 		for( int col = 0; col < table.getColumnCount(); ++col ) {
-			log.debug( "BIRT table column width: " + col + " = " + table.getColumn(col).getWidth());
-			if( table.getColumn(col).getWidth() != null ) {
-				int newWidth = state.getSmu().poiColumnWidthFromDimension(table.getColumn(col).getWidth());
+			DimensionType width = table.getColumn(col).getWidth();
+			log.debug( "BIRT table column width: " + col + " = " + width);
+			if( width != null ) {
+				int newWidth = state.getSmu().poiColumnWidthFromDimension(width);
 				int oldWidth = state.currentSheet.getColumnWidth(col);
 				if( ( oldWidth == 256 * state.currentSheet.getDefaultColumnWidth() ) || ( newWidth > oldWidth ) ) {
 					state.currentSheet.setColumnWidth(col, newWidth);
 				}
 			}
+		}
+		
+		tableStyle = new BirtStyle( table );
+		borderDefn = AreaBorders.create( -1, 0, table.getColumnCount() - 1, startRow, tableStyle );
+		if( borderDefn != null ) {
+			state.insertBorderOverload(borderDefn);
 		}
 	}
 	
@@ -68,7 +83,13 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 	public void endTable(HandlerState state, ITableContent table) throws BirtException {
 		state.setHandler(parent);
 
-		state.getSmu().applyBordersToArea( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, startRow, state.rowNum - 1, new BirtStyle( table ) );
+		state.getSmu().applyBottomBorderToRow( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, state.rowNum - 1, new BirtStyle( table ) );
+		
+		if( borderDefn != null ) {
+			state.removeBorderOverload(borderDefn);
+		}
+		
+		// state.getSmu().applyBordersToArea( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, startRow, state.rowNum - 1, new BirtStyle( table ) );
 
 		log.debug( "Details rows from " + startDetailsRow + " to " + endDetailsRow );
 		
@@ -100,6 +121,7 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 		if( ( band.getBandType() == ITableBandContent.BAND_DETAIL ) && ( startDetailsRow < 0 ) ) {
 			startDetailsRow = state.rowNum;
 		}
+		currentBand = band;
 	}
 
 	@Override
@@ -107,14 +129,17 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 		if( band.getBandType() == ITableBandContent.BAND_DETAIL ) {
 			endDetailsRow = state.rowNum - 1;
 		}
+		currentBand = null;
 	}
 
 	@Override
 	public void startTableGroup(HandlerState state, ITableGroupContent group) throws BirtException {
+		currentGroup = group;
 	}
 
 	@Override
 	public void endTableGroup(HandlerState state, ITableGroupContent group) throws BirtException {
+		currentGroup = null;
 	}
 
 }

@@ -9,10 +9,12 @@ import org.eclipse.birt.report.engine.css.dom.AbstractStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.DataFormatValue;
+import org.eclipse.birt.report.engine.css.engine.value.FloatValue;
 import org.eclipse.birt.report.engine.css.engine.value.StringValue;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.ir.Expression;
 import org.eclipse.birt.report.engine.ir.ReportElementDesign;
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class BirtStyle {
@@ -102,13 +104,13 @@ public class BirtStyle {
 			throw new IllegalStateException( "Unable to obtain CSSEngine from elemStyle: " + elemStyle );
 		}
 		
-		String rotation = extractRotation(element);
+		Float rotation = extractRotation(element);
 		if( rotation != null ) {
-			setString(TEXT_ROTATION, rotation);
+			setFloat(TEXT_ROTATION, CSSPrimitiveValue.CSS_DEG, rotation);
 		}
 	}
 	
-	private static String extractRotation(IContent element) {
+	private static Float extractRotation(IContent element) {
 		Object generatorObject = element.getGenerateBy();
 		if( generatorObject instanceof ReportElementDesign ) {
 			ReportElementDesign generatorDesign = (ReportElementDesign)generatorObject;
@@ -116,7 +118,10 @@ public class BirtStyle {
 			if( userProps != null ) {
 				Expression rotationExpression = userProps.get( ExcelEmitter.ROTATION_PROP );
 				if( rotationExpression != null ) {
-					return rotationExpression.getScriptText();
+					try {
+						return Float.valueOf( rotationExpression.getScriptText() );
+					} catch( Exception ex ) {
+					}
 				}
 			}
 		}
@@ -142,7 +147,14 @@ public class BirtStyle {
 		}
 	}
 	
-	public void setString( int propIndex, String newValue ) {
+	public void setFloat( int propIndex, short units, float newValue ) {
+		if( propertyOverride == null ) {
+			propertyOverride = new CSSValue[ BirtStyle.NUMBER_OF_STYLES ];
+		}
+		propertyOverride[ propIndex ] = new FloatValue( units, newValue );
+	}
+	
+	public void parseString( int propIndex, String newValue ) {
 		if( propertyOverride == null ) {
 			propertyOverride = new CSSValue[ BirtStyle.NUMBER_OF_STYLES ];
 		}
@@ -256,9 +268,9 @@ public class BirtStyle {
 		}
 		
 		// Rotation
-		String rotation = extractRotation(element);
+		Float rotation = extractRotation(element);
 		if( rotation != null ) {
-			setString(TEXT_ROTATION, rotation);
+			setFloat(TEXT_ROTATION, CSSPrimitiveValue.CSS_DEG, rotation);
 		}
 		
 		// System.out.println( "overlay: After - " + StyleManagerUtils.birtStyleToString( this ) );

@@ -2,6 +2,8 @@ package uk.co.spudsoft.birt.emitters.excel.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import java.io.InputStream;
 
@@ -23,13 +25,16 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( 11, workbook.getNumCellStyles() );
+			assertEquals( 8, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			assertEquals( 60, workbook.getSheetAt(0).getRow(1).getCell(2).getCellStyle().getRotation());
 			assertEquals( 60, workbook.getSheetAt(0).getRow(2).getCell(2).getCellStyle().getRotation());
 			assertEquals( 60, workbook.getSheetAt(0).getRow(2).getCell(3).getCellStyle().getRotation());
 			assertEquals(  0, workbook.getSheetAt(0).getRow(3).getCell(2).getCellStyle().getRotation());
+			
+			assertThat( runTime - startTime, lessThan(1000L) );
+			assertThat( renderTime - runTime, lessThan(1000L) );
 			
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 236, firstNullRow(sheet));
@@ -52,7 +57,7 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( 31, workbook.getNumCellStyles() );
+			assertEquals( 28, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			assertEquals( 60, workbook.getSheetAt(0).getRow(1).getCell(2).getCellStyle().getRotation());
@@ -60,6 +65,9 @@ public class BigCrosstabTest extends ReportRunner {
 			assertEquals( 60, workbook.getSheetAt(0).getRow(2).getCell(3).getCellStyle().getRotation());
 			assertEquals(  0, workbook.getSheetAt(0).getRow(3).getCell(2).getCellStyle().getRotation());
 
+			assertThat( runTime - startTime, lessThan(1000L) );
+			assertThat( renderTime - runTime, lessThan(1000L) );
+			
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 236, firstNullRow(sheet));
 			

@@ -12,7 +12,7 @@ public class TopLevelTableRowHandler extends AbstractRealTableRowHandler {
 	public TopLevelTableRowHandler(Logger log, IHandler parent, IRowContent row) {
 		super(log, parent, row);
 	}
-
+	
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
 		super.startRow(state, row);

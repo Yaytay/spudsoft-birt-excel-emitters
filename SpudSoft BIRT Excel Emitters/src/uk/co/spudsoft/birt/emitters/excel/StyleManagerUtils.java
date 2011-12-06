@@ -45,6 +45,7 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IPageContent;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.DataFormatValue;
+import org.eclipse.birt.report.engine.css.engine.value.StringValue;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.ColorUtil;
@@ -822,7 +823,8 @@ public abstract class StyleManagerUtils {
 		int fgRgb[] = parseColour( fgColour == null ? null : fgColour.getCssText(), "black" );
 
 		if( ( bgRgb[ 0 ] == fgRgb[ 0 ] ) && ( bgRgb[ 1 ] == fgRgb[ 1 ] ) && ( bgRgb[ 2 ] == fgRgb[ 2 ] ) ) {
-			birtStyle.setString( StyleConstants.STYLE_COLOR, contrastColour(bgRgb));
+			CSSValue newColour = new StringValue( StringValue.CSS_STRING, contrastColour(bgRgb) );
+			birtStyle.setProperty( StyleConstants.STYLE_COLOR, newColour);
 		}
 	}
 	
@@ -873,25 +875,25 @@ public abstract class StyleManagerUtils {
 		StringBuilder borderMsg = new StringBuilder();
 		borderMsg.append( "applyBordersToArea [" ).append( colStart ).append( "," ).append( rowStart ).append( "]-[" ).append( colEnd ).append( "," ).append( rowEnd ).append( "]");
 		
-		String borderStyleBottom = borderStyle.getString( StyleConstants.STYLE_BORDER_BOTTOM_STYLE );
-		String borderWidthBottom = borderStyle.getString( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH );
-		String borderColourBottom = borderStyle.getString( StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
-		String borderStyleLeft = borderStyle.getString( StyleConstants.STYLE_BORDER_LEFT_STYLE );
-		String borderWidthLeft = borderStyle.getString( StyleConstants.STYLE_BORDER_LEFT_WIDTH );
-		String borderColourLeft = borderStyle.getString( StyleConstants.STYLE_BORDER_LEFT_COLOR );
-		String borderStyleRight = borderStyle.getString( StyleConstants.STYLE_BORDER_RIGHT_STYLE );
-		String borderWidthRight = borderStyle.getString( StyleConstants.STYLE_BORDER_RIGHT_WIDTH );
-		String borderColourRight = borderStyle.getString( StyleConstants.STYLE_BORDER_RIGHT_COLOR );
-		String borderStyleTop = borderStyle.getString( StyleConstants.STYLE_BORDER_TOP_STYLE );
-		String borderWidthTop = borderStyle.getString( StyleConstants.STYLE_BORDER_TOP_WIDTH );
-		String borderColourTop = borderStyle.getString( StyleConstants.STYLE_BORDER_TOP_COLOR );
+		CSSValue borderStyleBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE );
+		CSSValue borderWidthBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH );
+		CSSValue borderColourBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
+		CSSValue borderStyleLeft = borderStyle.getProperty( StyleConstants.STYLE_BORDER_LEFT_STYLE );
+		CSSValue borderWidthLeft = borderStyle.getProperty( StyleConstants.STYLE_BORDER_LEFT_WIDTH );
+		CSSValue borderColourLeft = borderStyle.getProperty( StyleConstants.STYLE_BORDER_LEFT_COLOR );
+		CSSValue borderStyleRight = borderStyle.getProperty( StyleConstants.STYLE_BORDER_RIGHT_STYLE );
+		CSSValue borderWidthRight = borderStyle.getProperty( StyleConstants.STYLE_BORDER_RIGHT_WIDTH );
+		CSSValue borderColourRight = borderStyle.getProperty( StyleConstants.STYLE_BORDER_RIGHT_COLOR );
+		CSSValue borderStyleTop = borderStyle.getProperty( StyleConstants.STYLE_BORDER_TOP_STYLE );
+		CSSValue borderWidthTop = borderStyle.getProperty( StyleConstants.STYLE_BORDER_TOP_WIDTH );
+		CSSValue borderColourTop = borderStyle.getProperty( StyleConstants.STYLE_BORDER_TOP_COLOR );
 				
-		borderMsg.append( ", Bottom:" ).append( borderStyleBottom ).append( "/" ).append( borderWidthBottom ).append( "/" + borderColourBottom );
+/*		borderMsg.append( ", Bottom:" ).append( borderStyleBottom ).append( "/" ).append( borderWidthBottom ).append( "/" + borderColourBottom );
 		borderMsg.append( ", Left:" ).append( borderStyleLeft ).append( "/" ).append( borderWidthLeft ).append( "/" + borderColourLeft );
 		borderMsg.append( ", Right:" ).append( borderStyleRight ).append( "/" ).append( borderWidthRight ).append( "/" ).append( borderColourRight );
 		borderMsg.append( ", Top:" ).append( borderStyleTop ).append( "/" ).append( borderWidthTop ).append( "/" ).append( borderColourTop );
 		log.debug( borderMsg.toString() );
-
+*/
 		if( ( borderStyleBottom == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleBottom ) )
 				|| ( borderWidthBottom == null ) || ( "0".equals(borderWidthBottom) )
 				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom) ) ) {
@@ -949,6 +951,55 @@ public abstract class StyleManagerUtils {
 								styleCell.setCellStyle(newStyle);
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Place a border around a region on the current sheet.
+	 * This is used to apply borders to entire rows or entire tables.
+	 * @param colStart
+	 * The column marking the left-side boundary of the region.
+	 * @param colEnd
+	 * The column marking the right-side boundary of the region.
+	 * @param row
+	 * The row to get a bottom border.
+	 * @param borderStyle
+	 * The BIRT border style to apply to the region.
+	 */
+	public void applyBottomBorderToRow( StyleManager sm, Sheet sheet, int colStart, int colEnd, int row, BirtStyle borderStyle ) {	
+		CSSValue borderStyleBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE );
+		CSSValue borderWidthBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH );
+		CSSValue borderColourBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
+				
+		if( ( borderStyleBottom == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleBottom ) )
+				|| ( borderWidthBottom == null ) || ( "0".equals(borderWidthBottom) )
+				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom) ) ) {
+				borderStyleBottom = null;
+				borderWidthBottom = null;
+				borderColourBottom = null;
+		}
+
+		if( ( borderStyleBottom != null ) || ( borderWidthBottom != null ) || ( borderColourBottom != null ) ) {
+			Row styleRow = sheet.getRow(row);
+			if( styleRow != null ) {
+				for( int col = colStart; col <= colEnd; ++col ) {
+					Cell styleCell = styleRow.getCell(col);
+					if( styleCell == null ) {
+						styleCell = styleRow.createCell(col);
+					}
+					if( styleCell != null ) {
+						// log.debug( "Applying border to cell [R" + styleCell.getRowIndex() + "C" + styleCell.getColumnIndex() + "]");
+						CellStyle newStyle = sm.getStyleWithBorders( styleCell.getCellStyle()
+								, borderStyleBottom, borderWidthBottom, borderColourBottom 
+								, null, null, null
+								, null, null, null
+								, null, null, null
+								);
+						styleCell.setCellStyle(newStyle);
 					}
 				}
 			}

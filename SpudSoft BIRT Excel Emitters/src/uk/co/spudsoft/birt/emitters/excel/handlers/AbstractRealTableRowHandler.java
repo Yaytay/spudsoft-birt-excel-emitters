@@ -9,6 +9,7 @@ import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.DimensionUtil;
 
+import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
 import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
 import uk.co.spudsoft.birt.emitters.excel.EmitterServices;
@@ -21,6 +22,9 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 
 	protected Row currentRow;
 	protected int myRow;
+
+	private BirtStyle rowStyle;
+	private AreaBorders borderDefn;
 
 	public AbstractRealTableRowHandler(Logger log, IHandler parent, IRowContent row) {
 		super(log, parent, row);
@@ -39,9 +43,16 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 
 	public void resumeRow(HandlerState state) {
 		log.debug( "Resume row at " + state.rowNum );
+
 		myRow = state.rowNum;
 		currentRow = state.currentSheet.createRow( state.rowNum );
 		state.requiredRowHeightInPoints = 0;		
+		
+		rowStyle = new BirtStyle( (IRowContent)element );
+		borderDefn = AreaBorders.create( myRow, 0, ((IRowContent)element).getTable().getColumnCount() - 1, myRow, rowStyle );
+		if( borderDefn != null ) {
+			state.insertBorderOverload(borderDefn);
+		}
 	}
 	
 	public void interruptRow(HandlerState state) throws BirtException {
@@ -80,15 +91,20 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 				currentRow.setHeightInPoints( state.requiredRowHeightInPoints );
 			}
 			
-			state.getSmu().applyBordersToArea( state.getSm()
+/*			state.getSmu().applyBordersToArea( state.getSm()
 					, state.currentSheet
 					, 0
 					, ((IRowContent)element).getTable().getColumnCount() - 1
 					, state.rowNum
 					, state.rowNum
 					, new BirtStyle( (IRowContent)element ) );
-			
+*/			
 			state.rowNum += 1;
+		}
+		
+		if( borderDefn != null ) {
+			state.removeBorderOverload(borderDefn);
+			borderDefn = null;
 		}
 	}
 	

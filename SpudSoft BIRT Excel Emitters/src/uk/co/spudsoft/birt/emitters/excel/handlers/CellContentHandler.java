@@ -20,12 +20,15 @@ import org.eclipse.birt.report.engine.content.ICellContent;
 import org.eclipse.birt.report.engine.content.IContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
+import org.eclipse.birt.report.engine.css.engine.value.StringValue;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.eclipse.birt.report.engine.emitter.IContentEmitter;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.engine.layout.emitter.Image;
 import org.eclipse.birt.report.engine.presentation.ContentEmitterVisitor;
+import org.w3c.dom.css.CSSValue;
 
+import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
 import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
 import uk.co.spudsoft.birt.emitters.excel.ClientAnchorConversions;
@@ -74,7 +77,7 @@ public class CellContentHandler extends AbstractHandler {
 	/** 
 	 * Override the cell alignment to this instead, unless zero
 	 */
-	protected String preferredAlignment;
+	protected CSSValue preferredAlignment;
 	
 
 	public CellContentHandler(IContentEmitter emitter, Logger log, IHandler parent, ICellContent cell) {
@@ -107,11 +110,11 @@ public class CellContentHandler extends AbstractHandler {
 			birtCellStyle = new BirtStyle( element );			
 		}
 		if( preferredAlignment != null ) {
-			birtCellStyle.setString( StyleConstants.STYLE_TEXT_ALIGN, preferredAlignment );
+			birtCellStyle.setProperty( StyleConstants.STYLE_TEXT_ALIGN, preferredAlignment );
 		}
 		if( CSSConstants.CSS_TRANSPARENT_VALUE.equals(birtCellStyle.getString(StyleConstants.STYLE_BACKGROUND_COLOR))) {
 			if( parent != null ) {
-				birtCellStyle.setString( StyleConstants.STYLE_BACKGROUND_COLOR, parent.getBackgroundColour() );
+				birtCellStyle.setProperty( StyleConstants.STYLE_BACKGROUND_COLOR, parent.getBackgroundColour() );
 			}
 		}
 			
@@ -149,19 +152,49 @@ public class CellContentHandler extends AbstractHandler {
 
 				if( lastString.contains("\n") ) {
 					if( ! CSSConstants.CSS_NOWRAP_VALUE.equals( lastElement.getStyle().getWhiteSpace() ) ) {
-						birtCellStyle.setString( StyleConstants.STYLE_WHITE_SPACE, CSSConstants.CSS_PRE_VALUE );
+						birtCellStyle.setProperty( StyleConstants.STYLE_WHITE_SPACE, new StringValue( StringValue.CSS_STRING, CSSConstants.CSS_PRE_VALUE ) );
 					}
 				}					
 				if( ! richTextRuns.isEmpty() ) {
-					birtCellStyle.setString( StyleConstants.STYLE_VERTICAL_ALIGN, CSSConstants.CSS_TOP_VALUE );
+					birtCellStyle.setProperty( StyleConstants.STYLE_VERTICAL_ALIGN, new StringValue( StringValue.CSS_STRING, CSSConstants.CSS_TOP_VALUE ) );
 				}
 				if( preferredAlignment != null ) {
-					log.debug( "preferredAlignment = " + preferredAlignment );
-					birtCellStyle.setString( StyleConstants.STYLE_TEXT_ALIGN, preferredAlignment );
+					birtCellStyle.setProperty( StyleConstants.STYLE_TEXT_ALIGN, preferredAlignment );
 				}
 				
 			} else {
 				setCellContents( cell, lastValue );
+			}
+		}
+		
+		for( AreaBorders areaBorders : state.areaBorders ) {
+			if( areaBorders.bottom == state.rowNum ) {
+				if( ( areaBorders.cssStyle[ 0 ] != null ) && ( areaBorders.cssWidth[ 0 ] != null ) && ( areaBorders.cssColour[ 0 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE, areaBorders.cssStyle[0] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, areaBorders.cssWidth[0] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR, areaBorders.cssColour[0] );
+				}
+			}
+			if( areaBorders.left == state.colNum ) {
+				if( ( areaBorders.cssStyle[ 1 ] != null ) && ( areaBorders.cssWidth[ 1 ] != null ) && ( areaBorders.cssColour[ 1 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_STYLE, areaBorders.cssStyle[1] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_WIDTH, areaBorders.cssWidth[1] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_COLOR, areaBorders.cssColour[1] );
+				}
+			}
+			if( areaBorders.right == state.colNum ) {
+				if( ( areaBorders.cssStyle[ 2 ] != null ) && ( areaBorders.cssWidth[ 2 ] != null ) && ( areaBorders.cssColour[ 2 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_STYLE, areaBorders.cssStyle[2] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_WIDTH, areaBorders.cssWidth[2] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_COLOR, areaBorders.cssColour[2] );
+				}
+			}
+			if( areaBorders.top == state.rowNum ) {
+				if( ( areaBorders.cssStyle[ 3 ] != null ) && ( areaBorders.cssWidth[ 3 ] != null ) && ( areaBorders.cssColour[ 3 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_STYLE, areaBorders.cssStyle[3] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_WIDTH, areaBorders.cssWidth[3] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_COLOR, areaBorders.cssColour[3] );
+				}
 			}
 		}
 		
@@ -279,17 +312,17 @@ public class CellContentHandler extends AbstractHandler {
 		cell.setCellStyle(cellStyle);
 	}
 	
-	private String preferredAlignment( BirtStyle elementStyle ) {
-		String newAlign = elementStyle.getString(StyleConstants.STYLE_TEXT_ALIGN);
+	private CSSValue preferredAlignment( BirtStyle elementStyle ) {
+		CSSValue newAlign = elementStyle.getProperty(StyleConstants.STYLE_TEXT_ALIGN);
 		if( newAlign == null ) {
-			newAlign = CSSConstants.CSS_LEFT_VALUE;
+			newAlign = new StringValue(StringValue.CSS_STRING, CSSConstants.CSS_LEFT_VALUE);
 		} 
 		if( preferredAlignment == null ) {
 			return newAlign;
 		}
-		if( CSSConstants.CSS_LEFT_VALUE.equals(newAlign) ) {
+		if( CSSConstants.CSS_LEFT_VALUE.equals(newAlign.getCssText()) ) {
 			return newAlign;
-		} else if( CSSConstants.CSS_RIGHT_VALUE.equals(newAlign) ) {
+		} else if( CSSConstants.CSS_RIGHT_VALUE.equals(newAlign.getCssText()) ) {
 			if( CSSConstants.CSS_CENTER_VALUE.equals(preferredAlignment) ) {
 				return newAlign;
 			} else {
@@ -350,9 +383,7 @@ public class CellContentHandler extends AbstractHandler {
 			Font newFont = sm.getFontManager().getFont( elementStyle );
 			richTextRuns.add(new RichTextRun(oldValue.length(), newFont));
 
-			String newAlignment = preferredAlignment(elementStyle);
-			log.debug( "preferredAlignment changing from " + preferredAlignment + " to " + newAlignment );
-			preferredAlignment = newAlignment;
+			preferredAlignment = preferredAlignment(elementStyle);
 		}
 		
 		lastCellContentsWasBlock = asBlock;

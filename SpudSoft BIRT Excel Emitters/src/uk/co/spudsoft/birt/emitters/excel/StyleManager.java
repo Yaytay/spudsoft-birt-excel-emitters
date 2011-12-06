@@ -31,6 +31,7 @@ import org.eclipse.birt.report.engine.content.IStyle;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.DataFormatValue;
+import org.eclipse.birt.report.engine.css.engine.value.FloatValue;
 import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
@@ -195,16 +196,9 @@ public class StyleManager {
 			poiStyle.setVerticalAlignment( CellStyle.VERTICAL_BOTTOM );
 		} 
 		// Rotation
-		String rotationString = birtStyle.getString( BirtStyle.TEXT_ROTATION );
-		if( rotationString != null ) {
-			try {
-				short rotation = Short.parseShort(rotationString);
-				if( rotation > 0 ) {
-					poiStyle.setRotation(rotation);
-				}
-			} catch(NumberFormatException ex){
-				log.warn(0, "Could not parse \"" + rotationString + "\" as a valid short for rotation", ex);
-			}
+		CSSValue rotation = birtStyle.getProperty( BirtStyle.TEXT_ROTATION );
+		if( rotation instanceof FloatValue ) {
+			poiStyle.setRotation( (short) ((FloatValue)rotation).getFloatValue() );
 		}
 
 		styles.add(new StylePair( birtStyle.clone(), poiStyle ) );
@@ -264,32 +258,32 @@ public class StyleManager {
 	 * A POI CellStyle equivalent to the source CellStyle with all the defined borders added to it.
 	 */
 	public CellStyle getStyleWithBorders( CellStyle source
-			, String borderStyleBottom, String borderWidthBottom, String borderColourBottom 
-			, String borderStyleLeft, String borderWidthLeft, String borderColourLeft 
-			, String borderStyleRight, String borderWidthRight, String borderColourRight 
-			, String borderStyleTop, String borderWidthTop, String borderColourTop 
+			, CSSValue borderStyleBottom, CSSValue borderWidthBottom, CSSValue borderColourBottom 
+			, CSSValue borderStyleLeft, CSSValue borderWidthLeft, CSSValue borderColourLeft 
+			, CSSValue borderStyleRight, CSSValue borderWidthRight, CSSValue borderColourRight 
+			, CSSValue borderStyleTop, CSSValue borderWidthTop, CSSValue borderColourTop 
 			) {
 
 		BirtStyle birtStyle = birtStyleFromCellStyle( source );
 		if( ( borderStyleBottom != null ) && ( borderWidthBottom != null ) && ( borderColourBottom != null ) ){
-			birtStyle.setString( StyleConstants.STYLE_BORDER_BOTTOM_STYLE, borderStyleBottom );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, borderWidthBottom );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_BOTTOM_COLOR, borderColourBottom );			
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE, borderStyleBottom );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, borderWidthBottom );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR, borderColourBottom );			
 		}
 		if( ( borderStyleLeft != null ) && ( borderWidthLeft != null ) && ( borderColourLeft != null ) ){
-			birtStyle.setString( StyleConstants.STYLE_BORDER_LEFT_STYLE, borderStyleLeft );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_LEFT_WIDTH, borderWidthLeft );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_LEFT_COLOR, borderColourLeft );			
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_STYLE, borderStyleLeft );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_WIDTH, borderWidthLeft );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_COLOR, borderColourLeft );			
 		}
 		if( ( borderStyleRight != null ) && ( borderWidthRight != null ) && ( borderColourRight != null ) ){
-			birtStyle.setString( StyleConstants.STYLE_BORDER_RIGHT_STYLE, borderStyleRight );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_RIGHT_WIDTH, borderWidthRight );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_RIGHT_COLOR, borderColourRight );			
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_STYLE, borderStyleRight );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_WIDTH, borderWidthRight );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_COLOR, borderColourRight );			
 		}
 		if( ( borderStyleTop != null ) && ( borderWidthTop != null ) && ( borderColourTop != null ) ){
-			birtStyle.setString( StyleConstants.STYLE_BORDER_TOP_STYLE, borderStyleTop );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_TOP_WIDTH, borderWidthTop );
-			birtStyle.setString( StyleConstants.STYLE_BORDER_TOP_COLOR, borderColourTop );			
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_STYLE, borderStyleTop );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_WIDTH, borderWidthTop );
+			birtStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_COLOR, borderColourTop );			
 		}
 		
 		CellStyle newStyle = getStyle( birtStyle );

@@ -81,7 +81,11 @@ public class HandlerState {
 	public float requiredRowHeightInPoints;
 	public int rowOffset;
 	public int colOffset;
-	
+
+	/**
+	 * Border overrides for the current row/table
+	 */
+	public List<AreaBorders> areaBorders = new ArrayList<AreaBorders>();
 	
 	/**
 	 * Constructor
@@ -137,6 +141,19 @@ public class HandlerState {
 	public void setHandler(IHandler handler) {
 		this.handler = handler;
 		this.handler.notifyHandler(this);
+	}
+	
+	public void insertBorderOverload(AreaBorders defn) {
+		if( areaBorders == null ) {
+			areaBorders = new ArrayList<AreaBorders>();
+		}
+		areaBorders.add( defn );
+	}
+	
+	public void removeBorderOverload(AreaBorders defn) {
+		if( areaBorders != null ) {
+			areaBorders.remove(defn);
+		}
 	}
 	
 }

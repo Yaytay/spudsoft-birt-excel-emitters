@@ -19,6 +19,7 @@ import org.eclipse.birt.report.engine.content.ITableBandContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITableGroupContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
+import org.w3c.dom.css.CSSValue;
 
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 
@@ -26,7 +27,7 @@ public interface IHandler {
 	
 	public IHandler getParent();
 	public <T extends IHandler> T getAncestor(Class<T> clazz);
-	public String getBackgroundColour();
+	public CSSValue getBackgroundColour();
 	
 	public void notifyHandler(HandlerState state);
 	
