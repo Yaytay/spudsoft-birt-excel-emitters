@@ -95,7 +95,7 @@ public class StyleManager {
 	}
 	
 	
-	private static int COMPARE_CSS_PROPERTIES[] = {
+	static int COMPARE_CSS_PROPERTIES[] = {
 		StyleConstants.STYLE_TEXT_ALIGN,
 		StyleConstants.STYLE_BACKGROUND_COLOR,
 		StyleConstants.STYLE_BORDER_TOP_STYLE,
@@ -112,7 +112,6 @@ public class StyleManager {
 		StyleConstants.STYLE_BORDER_BOTTOM_COLOR,
 		StyleConstants.STYLE_WHITE_SPACE,
 		StyleConstants.STYLE_VERTICAL_ALIGN,
-		BirtStyle.TEXT_ROTATION,
 	};
 	
 	/**
@@ -140,6 +139,12 @@ public class StyleManager {
 				return false;
 			}
 		}
+		if( ! StyleManagerUtils.objectsEqual( style1.getProperty( BirtStyle.TEXT_ROTATION ), style2.getProperty( BirtStyle.TEXT_ROTATION ) ) ) {
+			// System.out.println( "Differ on " + i + " because " + value1 + " != " + value2 );
+			return false;
+		}
+		
+		
 		// Number format
 		if( ! StyleManagerUtils.dataFormatsEquivalent( (DataFormatValue)style1.getProperty( StyleConstants.STYLE_DATA_FORMAT )
 				, (DataFormatValue)style2.getProperty( StyleConstants.STYLE_DATA_FORMAT ) ) ) {

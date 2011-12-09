@@ -45,6 +45,15 @@ public class AbstractHandler implements IHandler {
 	}
 
 	@Override
+	public String getPath() {
+		if( parent != null ) {
+			return this.getClass().getSimpleName() + "/" + parent.getPath();
+		} else {
+			return this.getClass().getSimpleName();			
+		}
+	}
+	
+	@Override
 	public IHandler getParent() {
 		return parent;
 	}

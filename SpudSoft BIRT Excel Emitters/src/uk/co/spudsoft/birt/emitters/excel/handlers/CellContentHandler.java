@@ -242,40 +242,40 @@ public class CellContentHandler extends AbstractHandler {
 	 */
 	private <T> void setCellContents(Cell cell, Object value) {
 		if( value instanceof Double ) {
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue((Double)value);
 			lastValue = value;
 		} else if( value instanceof Integer ) {
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue((Integer)value);				
 			lastValue = value;
 		} else if( value instanceof Long ) {
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue((Long)value);				
 			lastValue = value;
 		} else if( value instanceof Date ) {
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue((Date)value);
 			lastValue = value;
 		} else if( value instanceof Boolean ) {
-			cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+			// cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 			cell.setCellValue(((Boolean)value).booleanValue());
 			lastValue = value;
 		} else if( value instanceof BigDecimal ) {
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue(((BigDecimal)value).doubleValue());				
 			lastValue = value;
 		} else if( value instanceof String ) {
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			// cell.setCellType(Cell.CELL_TYPE_STRING);
 			cell.setCellValue((String)value);				
 			lastValue = value;
 		} else if( value instanceof RichTextString ) {
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			// cell.setCellType(Cell.CELL_TYPE_STRING);
 			cell.setCellValue((RichTextString)value);				
 			lastValue = value;
 		} else if( value != null ){
 			log.debug( "Unhandled data: " + ( value == null ? "<null>" : value.toString() ) );
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			// cell.setCellType(Cell.CELL_TYPE_STRING);
 			cell.setCellValue(value.toString());				
 			lastValue = value;
 		}

@@ -29,6 +29,7 @@ public interface IHandler {
 	public <T extends IHandler> T getAncestor(Class<T> clazz);
 	public CSSValue getBackgroundColour();
 	
+	public String getPath();
 	public void notifyHandler(HandlerState state);
 	
 	public void startPage(HandlerState state, IPageContent page) throws BirtException;

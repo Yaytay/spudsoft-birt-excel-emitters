@@ -70,7 +70,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 		}
 		if( ( lastValue != null ) || includeFormatOnly ) {
 			Cell currentCell = state.currentSheet.getRow(state.rowNum).createCell( column );
-			currentCell.setCellType(Cell.CELL_TYPE_BLANK);
+			// currentCell.setCellType(Cell.CELL_TYPE_BLANK);
 					
 			ICellContent cell = (ICellContent)element; 
 					

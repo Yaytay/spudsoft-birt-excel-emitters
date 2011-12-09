@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.slf4j.LoggerFactory;
 
+import uk.co.spudsoft.birt.emitters.excel.HandlerState;
+
 /**
  * The Logger for the SpudSoft BIRT Excel Emitter.
  * <br/>
@@ -70,6 +72,7 @@ public class Logger {
 	 * Set the debug state of the logger.
 	 * @param debug
 	 * When true and run within Equinox debug statements are output to the console.
+	 * When not true the prefix handling is turned off.
 	 */
 	public void setDebug( boolean debug ) {
 		this.debug = debug;
@@ -81,7 +84,9 @@ public class Logger {
 	 * Character to add to the prefix stack.
 	 */
 	public void addPrefix( char c ) {
-		prefix.append( c );
+		if( debug ) {
+			prefix.append( c );
+		}
 	}
 
 	/**
@@ -92,12 +97,14 @@ public class Logger {
 	 * If the prefix at the top of the prefix stack does not match c.
 	 */
 	public void removePrefix( char c ) {
-		int length = prefix.length();
-		char old = prefix.charAt( length - 1 );
-		if(old != c ) {
-			throw new IllegalStateException( "Old prefix (" + old + ") does not match that expected (" + c + "), whole prefix is \"" + prefix + "\"" );
+		if( debug ) {
+			int length = prefix.length();
+			char old = prefix.charAt( length - 1 );
+			if(old != c ) {
+				throw new IllegalStateException( "Old prefix (" + old + ") does not match that expected (" + c + "), whole prefix is \"" + prefix + "\"" );
+			}
+			prefix.setLength( length - 1);
 		}
-		prefix.setLength( length - 1);
 	}
 	
 	/** 
@@ -112,6 +119,25 @@ public class Logger {
 			}
 		} else {
 			backupLog.debug( prefix.toString() + " " + message );
+		}
+	}
+	
+	/** 
+	 * Log a message with debug severity. 
+	 * @param state
+	 * Postfix the message with details of this state if debug is on
+	 * @param message
+	 * The message to log.
+	 */
+	public void debug( HandlerState state, String message ) {
+		if( eclipseLog != null ) {
+			if( debug ) {
+				System.out.println( prefix.toString() + " " + message + state.getHandler().getPath() );
+			}
+		} else {
+			if( backupLog.isDebugEnabled() ) {
+				backupLog.debug( prefix.toString() + " " + message + ( debug ? " " + state.getHandler().getPath() : "" ) );
+			}
 		}
 	}
 	

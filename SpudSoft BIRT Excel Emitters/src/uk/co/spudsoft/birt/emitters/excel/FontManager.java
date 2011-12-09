@@ -111,7 +111,7 @@ public class FontManager {
 		return stringValue;
 	}
 	
-	private static int COMPARE_CSS_PROPERTIES[] = {
+	static int COMPARE_CSS_PROPERTIES[] = {
 		StyleConstants.STYLE_FONT_FAMILY,
 		StyleConstants.STYLE_FONT_SIZE,
 		StyleConstants.STYLE_FONT_WEIGHT,
@@ -208,7 +208,7 @@ public class FontManager {
 	/**
 	 * Get a Font matching the BIRT style, either from the cache or by creating a new one.
 	 * @param birtStyle
-	 * The BIRT style to base the Front upon.
+	 * The BIRT style to base the Font upon.
 	 * @return
 	 * A Font whose attributes are described by the BIRT style. 
 	 */

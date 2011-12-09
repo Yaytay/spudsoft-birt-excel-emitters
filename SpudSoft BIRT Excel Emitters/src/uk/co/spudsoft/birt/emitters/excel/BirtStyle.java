@@ -108,6 +108,19 @@ public class BirtStyle {
 		if( rotation != null ) {
 			setFloat(TEXT_ROTATION, CSSPrimitiveValue.CSS_DEG, rotation);
 		}
+		
+		// Cache the element properties to avoid calculation cost many time
+		propertyOverride = new CSSValue[ BirtStyle.NUMBER_OF_STYLES ];
+		for( int i = 0; i < StyleManager.COMPARE_CSS_PROPERTIES.length; ++i ) {
+			int prop = StyleManager.COMPARE_CSS_PROPERTIES[ i ];
+			propertyOverride[ prop ] = elemStyle.getProperty( prop ); 
+		}
+		propertyOverride[ StyleConstants.STYLE_DATA_FORMAT ] = elemStyle.getProperty( StyleConstants.STYLE_DATA_FORMAT ); 
+		for( int i = 0; i < FontManager.COMPARE_CSS_PROPERTIES.length; ++i ) {
+			int prop = FontManager.COMPARE_CSS_PROPERTIES[ i ];
+			propertyOverride[ prop ] = elemStyle.getProperty( prop ); 
+		}
+
 	}
 	
 	private static Float extractRotation(IContent element) {
@@ -136,6 +149,8 @@ public class BirtStyle {
 	}
 	
 	public CSSValue getProperty( int propIndex ) {
+		return propertyOverride[ propIndex ];
+		/*
 		if( ( propertyOverride != null )
 				&& ( propertyOverride[ propIndex ] != null ) ) {
 			return propertyOverride[ propIndex ];
@@ -145,6 +160,7 @@ public class BirtStyle {
 		} else {
 			return null;
 		}
+		*/
 	}
 	
 	public void setFloat( int propIndex, short units, float newValue ) {
