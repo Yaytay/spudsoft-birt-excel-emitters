@@ -1,0 +1,896 @@
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory loadFontMappingConfig
+INFO: load font config in bundleentry://150.fwk918077175/fontsConfig.xml cost 31ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/ja/X11/fonts/TT cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_13/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/ru.ansi-1251/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_15/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in d:/windows/fonts cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in C:/windows/fonts cost:625ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/X11R6/lib/X11/fonts/truetype cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/ar/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in e:/WINNT/fonts cost:16ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /var/lib/defoma/x-ttcidfont-conf.d/dirs/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in C:/WINNT/fonts cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_2/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/X11R6/lib/X11/fonts/tt cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/th_TH/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_8/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_7/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/X11R6/lib/X11/fonts/TTF cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/share/fonts/truetype cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in f:/WINNT/fonts cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/ko.UTF-8/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in g:/WINNT/fonts cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_5/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in f:/windows/fonts cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in d:/WINNT/fonts cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/share/fonts/ko/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/zh_TW/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in e:/windows/fonts cost:16ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/share/fonts/zh_TW/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/share/fonts/ja/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/zh_CN.GB18030/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/share/fonts/default/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/X/lib/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/euro_fonts/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/hi_IN.UTF-8/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/zh.GBK/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/X11R6/lib/X11/fonts/OTF cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/iso_8859_9/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/X11R6/lib/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/zh_TW.BIG5/X11/fonts/TT cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/ko/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/zh_HK.BIG5HK/X11/fonts/TT cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/KOI8-R/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/openwin/lib/locale/zh/X11/fonts/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in /usr/share/fonts/zh_CN/TrueType cost:0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory$2 run
+INFO: register fonts in g:/windows/fonts cost:15ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory loadFontMappingConfig
+INFO: load font config in bundleentry://150.fwk918077175/fontsConfig_win32.xml cost 0ms
+11-Dec-2011 05:20:56 org.eclipse.birt.report.engine.layout.pdf.font.FontMappingManagerFactory loadFontMappingConfig
+INFO: load font config in bundleentry://150.fwk918077175/fontsConfig_pdf.xml cost 0ms
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheets126.pdf
+Run MultiSheets1 : 3.174s
+Render MultiSheets1 : 0.397s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheets178.xlsx
+!SESSION 2011-12-11 05:20:46.097 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.6.0_25
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  -version 3 -port 50691 -testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader -loaderpluginname org.eclipse.jdt.junit4.runtime -testNameFile C:\Users\jtalbut\AppData\Local\Temp\testNames6409399138801475707.txt -application org.eclipse.pde.junit.runtime.coretestapplication -testpluginname uk.co.spudsoft.birt.emitters.excel.tests
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -consoleLog -version 3 -port 50691 -testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader -loaderpluginname org.eclipse.jdt.junit4.runtime -testNameFile C:\Users\jtalbut\AppData\Local\Temp\testNames6409399138801475707.txt -application org.eclipse.pde.junit.runtime.coretestapplication -data C:\Work\spudsoft-birt-excel-emitters/../junit-workspace -dev file:C:/Work/spudsoft-birt-excel-emitters/.metadata/.plugins/org.eclipse.pde.core/pde-junit/dev.properties -os win32 -ws win32 -arch x86_64 -consoleLog -testpluginname uk.co.spudsoft.birt.emitters.excel.tests
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:20:58.058
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@7d6bb63e
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheets179.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:01.980
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@732e8204
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheets180.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:03.299
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@7393e1fc
+Run MultiSheets1 : 0.172s
+Render MultiSheets1 : 0.488s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheetsBreakInSubTable26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:04.098
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@3394214b
+Run MultiSheetsBreakInSubTable : 0.219s
+Render MultiSheetsBreakInSubTable : 0.515s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheetsNoNames26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:04.885
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@6318994d
+Run MultiSheetsNoNames : 0.172s
+Render MultiSheetsNoNames : 0.44s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheetsTwoNames26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:05.559
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@33cf0283
+Run MultiSheetsTwoNames : 0.172s
+Render MultiSheetsTwoNames : 0.469s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheetsBigTableFortyInterval26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:06.998
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@4f781d1d
+Run MultiSheetsBigTableFortyInterval : 0.907s
+Render MultiSheetsBigTableFortyInterval : 0.782s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheetsBigTableZeroInterval52.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:08.672
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@4f70a570
+Run MultiSheetsBigTableZeroInterval : 0.656s
+Render MultiSheetsBigTableZeroInterval : 0.627s
+C:\Users\jtalbut\AppData\Local\Temp\MultiSheetsBigTableZeroInterval53.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:09.970
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@1889c3ae
+Run MultiSheetsBigTableZeroInterval : 0.547s
+Render MultiSheetsBigTableZeroInterval : 0.58s
+C:\Users\jtalbut\AppData\Local\Temp\NestedTablesSingleColumnGrid26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:10.753
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@4e86bf7f
+Run NestedTablesSingleColumnGrid : 0.078s
+Render NestedTablesSingleColumnGrid : 0.063s
+C:\Users\jtalbut\AppData\Local\Temp\NestedTablesSingleColumnGrid26.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:10.940
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@2d724ca6
+Run NestedTablesSingleColumnGrid : 0.078s
+Render NestedTablesSingleColumnGrid : 0.234s
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 0
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 1
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 0
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 0
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 1
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 1
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 2
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 2
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 3
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 3
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 4
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 4
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 5
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 5
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 6
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 6
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 7
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 7
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 8
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 8
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 9
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 9
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 10
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 10
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 11
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 11
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 12
+11-Dec-2011 05:21:12 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 12
+C:\Users\jtalbut\AppData\Local\Temp\BigCrosstab42.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:15.244
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@7af2a691
+Run BigCrosstab : 3.724s
+Render BigCrosstab : 2.561s
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 0
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 1
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 0
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 0
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 1
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 1
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 2
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 2
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 3
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 3
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 4
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 4
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 5
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 5
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 6
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 6
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 7
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 7
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 8
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 8
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 9
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 9
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 10
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 10
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 11
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 11
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 12
+11-Dec-2011 05:21:18 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 1, Data Position: 12
+C:\Users\jtalbut\AppData\Local\Temp\BigCrosstab38.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:20.433
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@29d1cb0d
+11-Dec-2011 05:21:21 org.eclipse.birt.report.engine.ir.DimensionType parserUnit
+SEVERE: The value "medium" is invalid with the type "dimension".
+11-Dec-2011 05:21:21 org.eclipse.birt.report.engine.ir.DimensionType parserUnit
+SEVERE: The value "medium" is invalid with the type "dimension".
+11-Dec-2011 05:21:21 org.eclipse.birt.report.engine.ir.DimensionType parserUnit
+SEVERE: The value "medium" is invalid with the type "dimension".
+Run BigCrosstab : 2.332s
+Render BigCrosstab : 1.048s
+C:\Users\jtalbut\AppData\Local\Temp\NumberFormats25.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:21.907
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@64c3adf2
+Run NumberFormats : 0.25s
+Render NumberFormats : 0.628s
+C:\Users\jtalbut\AppData\Local\Temp\Wrap25.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:22.689
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@45813f99
+Run Wrap : 0.14s
+Render Wrap : 0.239s
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 0
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 0
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 1
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 2
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 3
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 4
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 5
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 6
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 7
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 8
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 9
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 10
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 11
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 12
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 13
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 14
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 15
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 16
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 17
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 18
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 19
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 20
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 21
+11-Dec-2011 05:21:23 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 22
+C:\Users\jtalbut\AppData\Local\Temp\RaggedCrosstab25.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:23.115
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@56cfec7c
+Run RaggedCrosstab : 0.187s
+Render RaggedCrosstab : 0.375s
+C:\Users\jtalbut\AppData\Local\Temp\Grouping25.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:24.414
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@b91db8
+Run Grouping : 0.705s
+Render Grouping : 0.801s
+C:\Users\jtalbut\AppData\Local\Temp\Borders234.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:25.230
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@7ab11143
+Run Borders2 : 0.062s
+Render Borders2 : 0.172s
+C:\Users\jtalbut\AppData\Local\Temp\CombinedGrid27.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:25.543
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@763026b0
+Run CombinedGrid : 0.109s
+Render CombinedGrid : 0.079s
+C:\Users\jtalbut\AppData\Local\Temp\CombinedGrid27.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:25.716
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@651d0953
+Run CombinedGrid : 0.062s
+Render CombinedGrid : 0.234s
+11-Dec-2011 05:21:26 org.eclipse.birt.report.data.oda.sampledb.SampledbPlugin start
+INFO: Sampledb plugin starts up. Current startCount=0
+11-Dec-2011 05:21:26 org.eclipse.birt.report.data.oda.sampledb.SampledbPlugin init
+INFO: Creating Sampledb database at location C:\Users\jtalbut\AppData\Local\Temp\/BIRTSampleDB_1323580886347_1cbaaf
+11-Dec-2011 05:21:26 org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager loadDriverExtensions
+INFO: Found JDBC driverinfo extension: driverClass=org.eclipse.birt.report.data.oda.hive.HiveDriver, connectionFactory=null
+11-Dec-2011 05:21:26 org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager loadDriverExtensions
+INFO: Found JDBC driverinfo extension: driverClass=org.apache.derby.jdbc.EmbeddedDriver, connectionFactory=null
+11-Dec-2011 05:21:26 org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager loadDriverExtensions
+INFO: Found JDBC driverinfo extension: driverClass=org.eclipse.birt.report.data.oda.sampledb.Driver, connectionFactory=org.eclipse.birt.report.data.oda.sampledb.SampleDBJDBCConnectionFactory
+C:\Users\jtalbut\AppData\Local\Temp\ProductCatalog26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:27.890
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@2b88ede8
+Run \ProductCatalog : 1.606s
+Render \ProductCatalog : 1.547s
+C:\Users\jtalbut\AppData\Local\Temp\cascade26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:29.598
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@56b865c5
+Run \cascade : 0.144s
+Render \cascade : 0.095s
+C:\Users\jtalbut\AppData\Local\Temp\CustomerOrdersFinal24.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:33.383
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@58b7d0f
+Run \CustomerOrdersFinal : 3.064s
+Render \CustomerOrdersFinal : 9.833s
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 0
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 1
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 0
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 1
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 2
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 3
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 4
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 5
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 6
+11-Dec-2011 05:21:46 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: GRAND_TOTAL, Measure: 0
+C:\Users\jtalbut\AppData\Local\Temp\CrosstabSampleRevenue23.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:46.715
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@26965070
+Run \CrosstabSampleRevenue : 3.434s
+Render \CrosstabSampleRevenue : 0.329s
+C:\Users\jtalbut\AppData\Local\Temp\OrderDetailAfter23.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:47.091
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@5749b53b
+Run \OrderDetailAfter : 0.078s
+Render \OrderDetailAfter : 0.11s
+C:\Users\jtalbut\AppData\Local\Temp\OrderMasterAfter23.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:47.388
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@4997a686
+Run \OrderMasterAfter : 0.172s
+Render \OrderMasterAfter : 0.328s
+C:\Users\jtalbut\AppData\Local\Temp\ParameterToDataSetParameter23.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:47.780
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@319019e9
+Run \ParameterToDataSetParameter : 0.047s
+Render \ParameterToDataSetParameter : 0.048s
+C:\Users\jtalbut\AppData\Local\Temp\MasterDetailOneReport22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:47.922
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@494ce1be
+Run \MasterDetailOneReport : 0.078s
+Render \MasterDetailOneReport : 0.063s
+C:\Users\jtalbut\AppData\Local\Temp\Expressions22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:49.640
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@6b4ee271
+Run \Expressions : 1.625s
+Render \Expressions : 4.034s
+C:\Users\jtalbut\AppData\Local\Temp\CustomerListAfter_Grouping22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:53.802
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@6844f2eb
+Run \CustomerListAfter_Grouping : 0.109s
+Render \CustomerListAfter_Grouping : 0.379s
+C:\Users\jtalbut\AppData\Local\Temp\ProductListAfter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:54.366
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@6519e738
+Run \ProductListAfter : 0.157s
+Render \ProductListAfter : 0.203s
+C:\Users\jtalbut\AppData\Local\Temp\CustomerListAfter_Mapping22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:54.678
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@73c3d061
+Run \CustomerListAfter_Mapping : 0.11s
+Render \CustomerListAfter_Mapping : 0.174s
+C:\Users\jtalbut\AppData\Local\Temp\EmployeeAfter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:55.555
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@25d13f60
+Run \EmployeeAfter : 0.672s
+Render \EmployeeAfter : 0.095s
+C:\Users\jtalbut\AppData\Local\Temp\NullParameter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:55.728
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@756e81c4
+Run \NullParameter : 0.078s
+Render \NullParameter : 0.063s
+C:\Users\jtalbut\AppData\Local\Temp\OrderDetailsAfter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:55.891
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@5a6b7a49
+Run \OrderDetailsAfter : 0.084s
+Render \OrderDetailsAfter : 0.078s
+C:\Users\jtalbut\AppData\Local\Temp\ProductLinesAfter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:56.126
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@e21be00
+Run \ProductLinesAfter : 0.14s
+Render \ProductLinesAfter : 0.235s
+C:\Users\jtalbut\AppData\Local\Temp\SortTableByReportParameter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:56.485
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@1a9560bc
+Run \SortTableByReportParameter : 0.11s
+Render \SortTableByReportParameter : 0.265s
+C:\Users\jtalbut\AppData\Local\Temp\OrdersAfter22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:57.129
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@37877541
+Run \OrdersAfter : 0.358s
+Render \OrdersAfter : 0.126s
+C:\Users\jtalbut\AppData\Local\Temp\XMLDS_After22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:58.903
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@8dd7659
+java.net.MalformedURLException: no protocol: Classic-Models-Minimal-M-Trans (smaller).png
+	at java.net.URL.<init>(Unknown Source)
+	at java.net.URL.<init>(Unknown Source)
+	at java.net.URL.<init>(Unknown Source)
+	at uk.co.spudsoft.birt.emitters.excel.handlers.CellContentHandler.recordImage(CellContentHandler.java:405)
+	at uk.co.spudsoft.birt.emitters.excel.handlers.AbstractRealTableCellHandler.emitImage(AbstractRealTableCellHandler.java:188)
+	at uk.co.spudsoft.birt.emitters.excel.ExcelEmitter.startImage(ExcelEmitter.java:311)
+	at org.eclipse.birt.report.engine.emitter.ContentEmitterUtil.startContent(ContentEmitterUtil.java:74)
+	at org.eclipse.birt.report.engine.layout.html.HTMLTableLayoutEmitter.startContent(HTMLTableLayoutEmitter.java:146)
+	at org.eclipse.birt.report.engine.emitter.ContentEmitterAdapter.startImage(ContentEmitterAdapter.java:174)
+	at org.eclipse.birt.report.engine.emitter.ContentEmitterUtil.startContent(ContentEmitterUtil.java:74)
+	at org.eclipse.birt.report.engine.layout.html.buffer.DummyPageBuffer.startContent(DummyPageBuffer.java:126)
+	at org.eclipse.birt.report.engine.layout.html.HTMLLeafItemLM.start(HTMLLeafItemLM.java:67)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:139)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLInlineStackingLM.resumeLayout(HTMLInlineStackingLM.java:111)
+	at org.eclipse.birt.report.engine.layout.html.HTMLInlineStackingLM.layoutNodes(HTMLInlineStackingLM.java:160)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLTableLM.layoutChildren(HTMLTableLM.java:132)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLPageLM.layout(HTMLPageLM.java:92)
+	at org.eclipse.birt.report.engine.layout.html.HTMLReportLayoutEngine.layout(HTMLReportLayoutEngine.java:100)
+	at uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask$PageRangeRender.render(FixedRenderTask.java:681)
+	at uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask.render(FixedRenderTask.java:296)
+	at uk.co.spudsoft.birt.emitters.excel.tests.ReportRunner.runAndRenderReportCustomTask(ReportRunner.java:356)
+	at uk.co.spudsoft.birt.emitters.excel.tests.ReportRunner.runAndRenderReport(ReportRunner.java:114)
+	at uk.co.spudsoft.birt.emitters.excel.tests.SampleReportsTest.runAndRenderSampleReport(SampleReportsTest.java:26)
+	at uk.co.spudsoft.birt.emitters.excel.tests.SampleReportsTest.xmlDataSource(SampleReportsTest.java:327)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.internal.app.EclipseAppContainer.callMethodWithException(EclipseAppContainer.java:587)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:198)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+Run \XMLDS_After : 1.632s
+Render \XMLDS_After : 0.392s
+C:\Users\jtalbut\AppData\Local\Temp\SalesInvoice22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:59.638
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@6b6552dc
+Run \SalesInvoice : 0.297s
+Render \SalesInvoice : 0.141s
+C:\Users\jtalbut\AppData\Local\Temp\Fonts22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:59.795
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@7ae73ef1
+Run Fonts : 0.032s
+Render Fonts : 0.031s
+C:\Users\jtalbut\AppData\Local\Temp\CurrencyFormats22.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:21:59.967
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@6115468c
+onRender
+£
+163.0
+onRender
+$
+36.0
+onRender
+¥
+165.0
+onRender
+€
+8364.0
+Run CurrencyFormats : 0.093s
+Render CurrencyFormats : 0.056s
+C:\Users\jtalbut\AppData\Local\Temp\CurrencyFormats22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:00.084
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@18810086
+onRender
+£
+163.0
+onRender
+$
+36.0
+onRender
+¥
+165.0
+onRender
+€
+8364.0
+Run CurrencyFormats : 0.047s
+Render CurrencyFormats : 0.156s
+C:\Users\jtalbut\AppData\Local\Temp\SimpleTable22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:00.396
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@35069006
+Run SimpleTable : 0.125s
+Render SimpleTable : 0.047s
+C:\Users\jtalbut\AppData\Local\Temp\BackgroundColours25.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:00.553
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@5af5db4b
+Run BackgroundColours : 0.047s
+Render BackgroundColours : 0.047s
+C:\Users\jtalbut\AppData\Local\Temp\BackgroundColours26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:00.678
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@1f0ed511
+Run BackgroundColours : 0.047s
+Render BackgroundColours : 0.282s
+C:\Users\jtalbut\AppData\Local\Temp\NestedTables32.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:01.069
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@22335a6b
+Run NestedTables : 0.063s
+Render NestedTables : 0.048s
+C:\Users\jtalbut\AppData\Local\Temp\AutoRowHeight22.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:01.195
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@7b750dd2
+11-Dec-2011 05:22:01 org.eclipse.birt.report.engine.ir.DimensionType parserUnit
+SEVERE: The value "medium" is invalid with the type "dimension".
+11-Dec-2011 05:22:01 org.eclipse.birt.report.engine.ir.DimensionType parserUnit
+SEVERE: The value "medium" is invalid with the type "dimension".
+11-Dec-2011 05:22:01 org.eclipse.birt.report.engine.ir.DimensionType parserUnit
+SEVERE: The value "medium" is invalid with the type "dimension".
+Run AutoRowHeight : 0.046s
+Render AutoRowHeight : 0.079s
+C:\Users\jtalbut\AppData\Local\Temp\AutoRowHeight22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:01.320
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@44919850
+Run AutoRowHeight : 0.031s
+Render AutoRowHeight : 0.094s
+C:\Users\jtalbut\AppData\Local\Temp\PageLayout22.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:01.461
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@587b29ec
+Run PageLayout : 0.016s
+Render PageLayout : 0.016s
+C:\Users\jtalbut\AppData\Local\Temp\PageLayout22.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:01.492
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@220a769a
+Run PageLayout : 0.016s
+Render PageLayout : 0.391s
+11-Dec-2011 05:22:02 org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager$DriverClassLoader refreshFileURL
+INFO: JDBCDriverManager: found JAR file mysql-connector-java-5.1.18-bin.jar. URL=file:/C:/Program%20Files/eclipse-3.7.1/plugins/org.eclipse.birt.report.data.oda.jdbc_3.7.1.v20110905/drivers/mysql-connector-java-5.1.18-bin.jar
+C:\Users\jtalbut\AppData\Local\Temp\MegaSize50.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:22:44.996
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@1fc550fd
+Run MegaSize : 42.972s
+Render MegaSize : 52.473s
+C:\Users\jtalbut\AppData\Local\Temp\MegaSize51.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:24:19.800
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@3bd7788b
+Run MegaSize : 42.299s
+Render MegaSize : 54.144s
+C:\Users\jtalbut\AppData\Local\Temp\MegaSize20.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:25:55.150
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@2f4f603b
+11-Dec-2011 05:26:16 uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask render
+SEVERE: An error happened while running the report. Cause:
+java.lang.IllegalArgumentException: Invalid row number (65536) outside allowable range (0..65535)
+	at org.apache.poi.hssf.usermodel.HSSFRow.setRowNum(HSSFRow.java:239)
+	at org.apache.poi.hssf.usermodel.HSSFRow.<init>(HSSFRow.java:87)
+	at org.apache.poi.hssf.usermodel.HSSFRow.<init>(HSSFRow.java:71)
+	at org.apache.poi.hssf.usermodel.HSSFSheet.createRow(HSSFSheet.java:199)
+	at org.apache.poi.hssf.usermodel.HSSFSheet.createRow(HSSFSheet.java:65)
+	at uk.co.spudsoft.birt.emitters.excel.handlers.AbstractRealTableRowHandler.resumeRow(AbstractRealTableRowHandler.java:48)
+	at uk.co.spudsoft.birt.emitters.excel.handlers.AbstractRealTableRowHandler.startRow(AbstractRealTableRowHandler.java:35)
+	at uk.co.spudsoft.birt.emitters.excel.handlers.TopLevelTableRowHandler.startRow(TopLevelTableRowHandler.java:18)
+	at uk.co.spudsoft.birt.emitters.excel.handlers.TopLevelTableHandler.startRow(TopLevelTableHandler.java:33)
+	at uk.co.spudsoft.birt.emitters.excel.ExcelEmitter.startRow(ExcelEmitter.java:232)
+	at org.eclipse.birt.report.engine.layout.html.HTMLTableLayoutEmitter.startRow(HTMLTableLayoutEmitter.java:607)
+	at org.eclipse.birt.report.engine.emitter.ContentEmitterUtil.startContent(ContentEmitterUtil.java:56)
+	at org.eclipse.birt.report.engine.layout.html.buffer.ContainerBufferNode.start(ContainerBufferNode.java:83)
+	at org.eclipse.birt.report.engine.layout.html.buffer.ContainerBufferNode.start(ContainerBufferNode.java:79)
+	at org.eclipse.birt.report.engine.layout.html.buffer.HTMLPageBuffer.startContent(HTMLPageBuffer.java:113)
+	at org.eclipse.birt.report.engine.layout.html.buffer.TableBreakBuffer.startContent(TableBreakBuffer.java:287)
+	at org.eclipse.birt.report.engine.layout.html.HTMLLeafItemLM.start(HTMLLeafItemLM.java:67)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:139)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLInlineStackingLM.resumeLayout(HTMLInlineStackingLM.java:111)
+	at org.eclipse.birt.report.engine.layout.html.HTMLInlineStackingLM.layoutNodes(HTMLInlineStackingLM.java:160)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLTableBandLM.layoutChildren(HTMLTableBandLM.java:67)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLStackingLM.layoutChildren(HTMLStackingLM.java:26)
+	at org.eclipse.birt.report.engine.layout.html.HTMLTableLM.layoutChildren(HTMLTableLM.java:132)
+	at org.eclipse.birt.report.engine.layout.html.HTMLAbstractLM.layout(HTMLAbstractLM.java:140)
+	at org.eclipse.birt.report.engine.layout.html.HTMLBlockStackingLM.layoutNodes(HTMLBlockStackingLM.java:70)
+	at org.eclipse.birt.report.engine.layout.html.HTMLPageLM.layout(HTMLPageLM.java:92)
+	at org.eclipse.birt.report.engine.layout.html.HTMLReportLayoutEngine.layout(HTMLReportLayoutEngine.java:100)
+	at uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask$PageRangeRender.render(FixedRenderTask.java:661)
+	at uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask.render(FixedRenderTask.java:296)
+	at uk.co.spudsoft.birt.emitters.excel.tests.ReportRunner.runAndRenderReportCustomTask(ReportRunner.java:356)
+	at uk.co.spudsoft.birt.emitters.excel.tests.ReportRunner.runAndRenderReport(ReportRunner.java:114)
+	at uk.co.spudsoft.birt.emitters.excel.tests.MegaSizeTest.testMegaXls(MegaSizeTest.java:46)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.internal.app.EclipseAppContainer.callMethodWithException(EclipseAppContainer.java:587)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:198)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+C:\Users\jtalbut\AppData\Local\Temp\Borders123.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:16.779
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@783cb939
+Run Borders1 : 0.031s
+Render Borders1 : 0.236s
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 0
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 1
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 2
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 3
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 4
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 5
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: ROW_EDGE, Dimension: 0, Level: 6
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 0
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 1
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 2
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 3
+11-Dec-2011 05:26:17 org.eclipse.birt.report.item.crosstab.core.re.executor.TableColumnGenerator generateColumns
+INFO: Type: COLUMN_EDGE, Measure: 0, Data Position: 4
+C:\Users\jtalbut\AppData\Local\Temp\GappyData21.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:17.733
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@4be1c64b
+Run GappyData : 0.625s
+Render GappyData : 0.485s
+C:\Users\jtalbut\AppData\Local\Temp\NumberFormats26.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:18.390
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@27363995
+C:\Users\jtalbut\AppData\Local\Temp\NestedTables223.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:18.923
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@5bed1885
+Run NestedTables2 : 0.047s
+Render NestedTables2 : 0.048s
+C:\Users\jtalbut\AppData\Local\Temp\NestedTables223.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:19.033
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@3b21fe15
+Run NestedTables2 : 0.047s
+Render NestedTables2 : 0.032s
+C:\Users\jtalbut\AppData\Local\Temp\AutoColWidths21.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:19.158
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@78a43631
+Run AutoColWidths : 0.078s
+Render AutoColWidths : 0.157s
+C:\Users\jtalbut\AppData\Local\Temp\Simple21.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:19.361
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@21e97249
+Run Simple : 0.031s
+Render Simple : 0.031s
+C:\Users\jtalbut\AppData\Local\Temp\SimpleWithJpeg21.xlsx
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:19.470
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@1a5d883b
+Run SimpleWithJpeg : 0.031s
+Render SimpleWithJpeg : 0.032s
+C:\Users\jtalbut\AppData\Local\Temp\SimpleWithJpeg21.xls
+
+!ENTRY uk.co.spudsoft.birt.emitters.excel 1 0 2011-12-11 05:26:19.565
+!MESSAGE start:org.eclipse.birt.report.engine.content.impl.ReportContent@5e158d57
+Run SimpleWithJpeg : 0.032s
+Render SimpleWithJpeg : 0.015s
+11-Dec-2011 05:26:19 org.eclipse.birt.report.data.oda.sampledb.SampledbPlugin stop
+INFO: Sampledb plugin stopping. Current startCount=1
+11-Dec-2011 05:26:19 org.eclipse.birt.report.data.oda.sampledb.SampledbPlugin removeDatabase
+INFO: Removing Sampledb DB directory at location C:\Users\jtalbut\AppData\Local\Temp\/BIRTSampleDB_1323580886347_1cbaaf

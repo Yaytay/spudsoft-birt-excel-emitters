@@ -133,16 +133,16 @@ public class CellContentHandler extends AbstractHandler {
 					Font lastFont = richTextRuns.get(0).font;
 					for( int i = 0; i < richTextRuns.size(); ++i ) {
 						RichTextRun run = richTextRuns.get(i);
-						log.debug( "Run: " + run.startIndex + " font :" + run.font.toString().replace( "\n", "" ) ); 
+						log.debug( "Run: ", run.startIndex, " font :", run.font ); 
 						if( ! lastFont.equals( run.font ) ) {
-							log.debug("Applying " + runStart + " - " + run.startIndex );
+							log.debug("Applying ", runStart, " - ", run.startIndex );
 							rich.applyFont(runStart, run.startIndex, lastFont);
 							runStart = run.startIndex;
 							lastFont = richTextRuns.get(i).font;						
 						}
 					}
 					
-					log.debug("Finalising with " + runStart + " - " + lastString.length() );
+					log.debug("Finalising with ", runStart, " - ", lastString.length() );
 					rich.applyFont(runStart, lastString.length(), lastFont);
 
 					setCellContents( cell, rich );
@@ -274,7 +274,7 @@ public class CellContentHandler extends AbstractHandler {
 			cell.setCellValue((RichTextString)value);				
 			lastValue = value;
 		} else if( value != null ){
-			log.debug( "Unhandled data: " + ( value == null ? "<null>" : value.toString() ) );
+			log.debug( "Unhandled data: ", ( value == null ? "<null>" : value ) );
 			// cell.setCellType(Cell.CELL_TYPE_STRING);
 			cell.setCellValue(value.toString());				
 			lastValue = value;
@@ -348,12 +348,7 @@ public class CellContentHandler extends AbstractHandler {
 			lastValue = value;
 			lastElement = element;
 			lastCellContentsWasBlock = asBlock;
-			log.debug( "value == " + value );
-			log.debug( "lastCellContentsWasBlock == " + lastCellContentsWasBlock );
 			return ;
-		} else {
-			log.debug( "value == " + value );
-			log.debug( "lastCellContentsWasBlock == " + lastCellContentsWasBlock );
 		}
 		
 		StyleManager sm = state.getSm();
@@ -413,17 +408,17 @@ public class CellContentHandler extends AbstractHandler {
 					data = smu.downloadImage(conn);
 				}
 			} catch( MalformedURLException ex ) {
-				log.debug( ex.getClass().getName() + ": " + ex.getMessage() );
+				log.debug( ex.getClass(), ": ", ex.getMessage() );
 				ex.printStackTrace();
 			} catch( IOException ex ) {
-				log.debug( ex.getClass().getName() + ": " + ex.getMessage() );
+				log.debug( ex.getClass(), ": ", ex.getMessage() );
 				ex.printStackTrace();
 			}
 		}
 		if( data != null ) {
 			int imageType = smu.poiImageTypeFromMimeType( mimeType, data );
 			if( imageType == 0 ) {
-				log.debug( "Unrecognised/unhandled image MIME type: " + image.getMIMEType() );
+				log.debug( "Unrecognised/unhandled image MIME type: ", image.getMIMEType() );
 			} else {
 				int imageIdx = wb.addPicture( data, imageType );
 				

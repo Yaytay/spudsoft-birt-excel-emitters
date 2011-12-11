@@ -71,7 +71,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 	@Override
 	public void emitForeign(HandlerState state, IForeignContent foreign) throws BirtException {
 		
-		log.debug( "Handling foreign content of type " + foreign.getRawType() );
+		log.debug( "Handling foreign content of type ", foreign.getRawType() );
 		if ( IForeignContent.HTML_TYPE.equalsIgnoreCase( foreign.getRawType( ) ) )
 		{
 			HTML2Content.html2Content( foreign );

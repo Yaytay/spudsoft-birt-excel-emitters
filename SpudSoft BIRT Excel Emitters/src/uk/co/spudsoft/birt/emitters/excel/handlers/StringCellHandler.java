@@ -84,8 +84,9 @@ public class StringCellHandler extends CellContentHandler {
 
 	@Override
 	public void emitText(HandlerState state, ITextContent text) throws BirtException {
-		log.debug( "text:" + text.getText() );
-		emitContent(state,text,text.getText(), ( ! "inline".equals( getStyleProperty(text, StyleConstants.STYLE_DISPLAY, "block") ) ) );
+		String textText = text.getText();
+		log.debug( "text:", textText );
+		emitContent(state,text,textText, ( ! "inline".equals( getStyleProperty(text, StyleConstants.STYLE_DISPLAY, "block") ) ) );
 	}
 
 	@Override

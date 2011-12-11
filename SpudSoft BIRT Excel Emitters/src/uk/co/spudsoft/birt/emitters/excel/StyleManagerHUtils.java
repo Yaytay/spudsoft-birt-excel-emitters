@@ -92,7 +92,6 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 		if( ( dim != null ) && ( "px".equals(dim.getUnits()) ) ){
 			pxWidth = dim.getMeasure();
 		}
-		log.debug( "Border width: " + dim + " == " + pxWidth + "px." );
 		if( "solid".equals(birtBorder) ) {
 			if( pxWidth < 2.9 ) {
 				return CellStyle.BORDER_THIN;
@@ -115,7 +114,7 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 			return CellStyle.BORDER_NONE;
 		}
 
-		log.debug( "Border style \"" + birtBorder + "\" is not recognised" );
+		log.debug( "Border style \"", birtBorder, "\" is not recognised" );
 		return CellStyle.BORDER_NONE;
 	}
 	
@@ -195,7 +194,6 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 			return ;
 		}
 		if(font instanceof HSSFFont) {
-			log.debug("Colour " + colour);
 			HSSFFont hFont = (HSSFFont)font;
 			short colourIndex = getHColour((HSSFWorkbook)workbook, colour);
 			if( colourIndex > 0 ) {

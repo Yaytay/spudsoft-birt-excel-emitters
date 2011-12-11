@@ -42,7 +42,7 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 	}
 
 	public void resumeRow(HandlerState state) {
-		log.debug( "Resume row at " + state.rowNum );
+		log.debug( "Resume row at ", state.rowNum );
 
 		myRow = state.rowNum;
 		currentRow = state.currentSheet.createRow( state.rowNum );
@@ -56,7 +56,7 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 	}
 	
 	public void interruptRow(HandlerState state) throws BirtException {
-		log.debug( "Interrupt row at " + state.rowNum );
+		log.debug( "Interrupt row at ", state.rowNum );
 		boolean blankRow = EmitterServices.booleanOption( state.getRenderOptions(), ExcelEmitter.REMOVE_BLANK_ROWS, true );
 		if( blankRow ) {
 			for(Iterator<Cell> iter = currentRow.cellIterator(); iter.hasNext(); ) {
@@ -77,7 +77,6 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 		}
 		
 		if(blankRow || ( currentRow.getPhysicalNumberOfCells() == 0 )) {
-			log.debug( "currentRow.getPhysicalNumberOfCells() == " + currentRow.getPhysicalNumberOfCells() );
 			state.currentSheet.removeRow(currentRow);
 		} else {
 			DimensionType height = ((IRowContent)element).getHeight();

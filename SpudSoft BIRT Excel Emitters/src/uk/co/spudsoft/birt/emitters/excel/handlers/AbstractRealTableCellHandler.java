@@ -101,7 +101,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	
 	@Override
 	public void startContainer(HandlerState state, IContainerContent container) throws BirtException {
-		log.debug( "Container display = " + getStyleProperty( container, StyleConstants.STYLE_DISPLAY, "block") );
+		// log.debug( "Container display = " + getStyleProperty( container, StyleConstants.STYLE_DISPLAY, "block") );
 		if( ! "inline".equals( getStyleProperty( container, StyleConstants.STYLE_DISPLAY, "block") ) ) {
 			lastCellContentsWasBlock = true;
 		}
@@ -109,7 +109,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	
 	@Override
 	public void endContainer(HandlerState state, IContainerContent container) throws BirtException {
-		log.debug( "Container display = " + getStyleProperty( container, StyleConstants.STYLE_DISPLAY, "block") );
+		// log.debug( "Container display = " + getStyleProperty( container, StyleConstants.STYLE_DISPLAY, "block") );
 		if( ! "inline".equals( getStyleProperty( container, StyleConstants.STYLE_DISPLAY, "block") ) ) {
 			lastCellContentsWasBlock = true;
 		}
@@ -141,8 +141,9 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 
 	@Override
 	public void emitText(HandlerState state, ITextContent text) throws BirtException {
-		log.debug( "text:" + text.getText() );
-		emitContent(state,text,text.getText(), ( ! "inline".equals( getStyleProperty(text, StyleConstants.STYLE_DISPLAY, "block") ) ) );
+		String textText = text.getText();
+		log.debug( "text:", textText );
+		emitContent(state,text,textText, ( ! "inline".equals( getStyleProperty(text, StyleConstants.STYLE_DISPLAY, "block") ) ) );
 	}
 
 	@Override
@@ -153,7 +154,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	@Override
 	public void emitLabel(HandlerState state, ILabelContent label) throws BirtException {
 		String labelText = ( label.getLabelText() != null ) ? label.getLabelText() : label.getText();
-		log.debug( "labelText:" + labelText );
+		log.debug( "labelText:", labelText );
 		emitContent(state,label,labelText, ( ! "inline".equals( getStyleProperty(label, StyleConstants.STYLE_DISPLAY, "block") ) ));
 	}
 
@@ -165,7 +166,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	@Override
 	public void emitForeign(HandlerState state, IForeignContent foreign) throws BirtException {
 
-		log.debug( "Handling foreign content of type " + foreign.getRawType() );
+		log.debug( "Handling foreign content of type ", foreign.getRawType() );
 		if ( IForeignContent.HTML_TYPE.equalsIgnoreCase( foreign.getRawType( ) ) )
 		{
 			HTML2Content.html2Content( foreign );

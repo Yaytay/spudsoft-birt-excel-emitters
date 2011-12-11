@@ -112,13 +112,30 @@ public class Logger {
 	 * @param message
 	 * The message to log.
 	 */
-	public void debug( String message ) {
+	public void debug( Object ... message  ) {
 		if( eclipseLog != null ) {
 			if( debug ) {
-				System.out.println( prefix.toString() + " " + message );
+				if( message.length > 1 ) {
+					StringBuilder msg = new StringBuilder();
+					for( Object part : message ) {
+						msg.append( part );
+					}
+					System.out.println( prefix.toString() + " " + msg.toString() );
+				} else {
+					System.out.println( prefix.toString() + " " + message.toString() );
+				}
 			}
-		} else {
-			backupLog.debug( prefix.toString() + " " + message );
+		} else if( backupLog.isDebugEnabled() ) {
+			if( message.length > 1 ) {
+				StringBuilder msg = new StringBuilder();
+				msg.append( prefix ).append( ' ' );
+				for( Object part : message ) {
+					msg.append( part );
+				}
+				backupLog.debug( msg.toString() );
+			} else {
+				backupLog.debug( prefix.toString() + " " + message.toString() );
+			}
 		}
 	}
 	
@@ -129,15 +146,29 @@ public class Logger {
 	 * @param message
 	 * The message to log.
 	 */
-	public void debug( HandlerState state, String message ) {
+	public void debug( HandlerState state, Object ... message ) {
 		if( eclipseLog != null ) {
 			if( debug ) {
-				System.out.println( prefix.toString() + " " + message + state.getHandler().getPath() );
+				StringBuilder msg = new StringBuilder();
+				msg.append( prefix ).append( ' ' );
+				for( Object part : message ) {
+					msg.append( part );
+				}
+				if( debug ) {
+					msg.append( ' ' ).append( state.getHandler().getPath() );
+				}
+				System.out.println( msg.toString() );
 			}
-		} else {
-			if( backupLog.isDebugEnabled() ) {
-				backupLog.debug( prefix.toString() + " " + message + ( debug ? " " + state.getHandler().getPath() : "" ) );
+		} else if( backupLog.isDebugEnabled() ) {
+			StringBuilder msg = new StringBuilder();
+			msg.append( prefix ).append( ' ' );
+			for( Object part : message ) {
+				msg.append( part );
 			}
+			if( debug ) {
+				msg.append( ' ' ).append( state.getHandler().getPath() );
+			}
+			backupLog.debug( msg.toString() );
 		}
 	}
 	

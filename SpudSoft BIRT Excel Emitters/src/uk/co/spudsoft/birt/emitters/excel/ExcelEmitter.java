@@ -141,7 +141,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 
 	public void end( IReportContent report ) throws BirtException {
 		log.removePrefix('>');
-		log.debug("end:" + report.toString());
+		log.debug("end:", report);
 		
 		String reportTitle = report.getTitle();
 		if( ( handlerState.getWb().getNumberOfSheets() == 1 ) 
@@ -169,7 +169,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 			}
 			handlerState.getWb().write(outputStream);
 		} catch( Throwable ex ) {
-			log.debug("ex:" + ex.toString());
+			log.debug("ex:", ex.toString());
 			ex.printStackTrace();
 			
 			throw new BirtException( EmitterServices.getPluginName()
@@ -183,7 +183,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 				try {
 					outputStream.close();
 				} catch( IOException ex ) {
-					log.debug("ex:" + ex.toString());
+					log.debug("ex:", ex.toString());
 				}
 			}
 			handlerState = null;

@@ -175,7 +175,7 @@ public abstract class StyleManagerUtils {
 		}
 		
 		DimensionType dim = DimensionType.parserUnit(fontSize, "pt");
-		log.debug( "fontSize: \"" + fontSize + "\", parses as: \"" + dim.toString() + "\" (" + dim.getMeasure() + " " + dim.getUnits() + ")");
+		// log.debug( "fontSize: \"", fontSize, "\", parses as: \"", dim.toString(), "\" (", dim.getMeasure(), " ", dim.getUnits(), ")");
 		if(DimensionType.UNITS_PX.equals(dim.getUnits())) {
 			double px = dim.getMeasure();
 			double inches = px / 96;
@@ -209,7 +209,7 @@ public abstract class StyleManagerUtils {
 				mmWidth = dim.convertTo( "mm" );
 			}
 			int result = ClientAnchorConversions.millimetres2WidthUnits(mmWidth);
-			log.debug( "Column width in mm: " + mmWidth + "; converted result: " + result );			
+			// log.debug( "Column width in mm: ", mmWidth, "; converted result: ", result );			
 			return result;
 		} else {
 			return 0;
@@ -417,10 +417,10 @@ public abstract class StyleManagerUtils {
 				imageStream.close();
 			}
 		} catch( MalformedURLException ex ) {
-			log.debug( ex.getClass().getName() + ": " + ex.getMessage() );
+			log.debug( ex.getClass(), ": ", ex.getMessage() );
 			return null;
 		} catch( IOException ex ) {
-			log.debug( ex.getClass().getName() + ": " + ex.getMessage() );
+			log.debug( ex.getClass(), ": ", ex.getMessage() );
 			return null;
 		}
 		
@@ -625,23 +625,33 @@ public abstract class StyleManagerUtils {
 	 */
 	public void applyNumberFormat(Workbook workbook, BirtStyle birtStyle, CellStyle poiStyle) {
 		String dataFormat = null;
-		if( getNumberFormat(birtStyle) != null ) {
-			log.debug( "BIRT number format == " + getNumberFormat(birtStyle));
-			dataFormat = poiNumberFormatFromBirt(getNumberFormat(birtStyle));
-		} else if( getDateTimeFormat(birtStyle) != null ) {
-			log.debug( "BIRT date/time format == " + getDateTimeFormat(birtStyle));
-			dataFormat = poiDateTimeFormatFromBirt(getDateTimeFormat(birtStyle));
-		} else if( getTimeFormat(birtStyle) != null ) {
-			log.debug( "BIRT time format == " + getTimeFormat(birtStyle));
-			dataFormat = poiDateTimeFormatFromBirt(getTimeFormat(birtStyle));
-		} else if( getDateFormat(birtStyle) != null ) {
-			log.debug( "BIRT date format == " + getDateFormat(birtStyle));
-			dataFormat = poiDateTimeFormatFromBirt(getDateFormat(birtStyle));
+		String format = getNumberFormat(birtStyle);
+		if( format != null ) {
+			log.debug( "BIRT number format == ", format);
+			dataFormat = poiNumberFormatFromBirt(format);
+		} else {
+			format = getDateTimeFormat(birtStyle);
+			if( format != null ) {
+				log.debug( "BIRT date/time format == " + format );
+				dataFormat = poiDateTimeFormatFromBirt( format );
+			} else {
+				format = getTimeFormat(birtStyle);
+				if( format != null ) {
+					log.debug( "BIRT time format == " + format );
+					dataFormat = poiDateTimeFormatFromBirt( format );
+				} else {
+					format = getDateFormat(birtStyle);
+					if( format != null ) {
+						log.debug( "BIRT date format == " + format );
+						dataFormat = poiDateTimeFormatFromBirt( format );
+					}
+				}
+			}
 		}
 		if( dataFormat != null ) {
-			DataFormat format = workbook.createDataFormat();
-			log.debug( "Setting POI data format to " + dataFormat);
-			poiStyle.setDataFormat(format.getFormat(dataFormat));
+			DataFormat poiFormat = workbook.createDataFormat();
+			log.debug( "Setting POI data format to ", poiFormat);
+			poiStyle.setDataFormat(poiFormat.getFormat(dataFormat));
 		}
 	}
 		
@@ -699,7 +709,7 @@ public abstract class StyleManagerUtils {
 	 * The heigh, in points, of a box big enough to contain the formatted sourceText.
 	 */
 	public float calculateTextHeightPoints( String sourceText, Font defaultFont, double widthMM, List< RichTextRun> richTextRuns ) {
-		log.debug( "Calculating height for " + sourceText);
+		log.debug( "Calculating height for ", sourceText);
 		
 		final float widthPt = (float)(72 * Math.max( 0, widthMM - 6 ) / 25.4); 
 		
@@ -726,7 +736,7 @@ public abstract class StyleManagerUtils {
 				}
 			}
 			
-			log.debug( "Adding attribute - [" + 0 + " - " + runEnd + "] = " + defaultFont.getFontName() + " " + defaultFont.getFontHeightInPoints() + "pt" );
+			log.debug( "Adding attribute - [", 0, " - ", runEnd, "] = ", defaultFont.getFontName(), " ", defaultFont.getFontHeightInPoints(), "pt" );
 			addFontAttributes(attrString, font, 0, runEnd );
 
 			for( ++richTextRunIndex; ( richTextRunIndex < richTextRuns.size() ) && ( richTextRuns.get( richTextRunIndex ).startIndex < lineStartIndex + textLine.length() ) ; ++richTextRunIndex ) {
@@ -739,7 +749,7 @@ public abstract class StyleManagerUtils {
 						endIdx = textLine.length();
 					}
 					if( startIdx < endIdx ) {
-						log.debug( "Adding attribute: [" + startIdx + " - " + endIdx + "] = " + run.font.getFontName() + " " + run.font.getFontHeightInPoints() + "pt" );
+						log.debug( "Adding attribute: [", startIdx, " - ", endIdx, "] = ", run.font.getFontName(), " ", run.font.getFontHeightInPoints(), "pt" );
 						addFontAttributes(attrString, run.font, startIdx, endIdx );
 					}
 				}
@@ -754,13 +764,13 @@ public abstract class StyleManagerUtils {
 		         if( layout.getDescent() + layout.getLeading() > heightAdjustment ) {
 		        	 heightAdjustment = layout.getDescent() + layout.getLeading();
 		         }
-		         log.debug ( "Line: " + textLine + " gives height " + lineHeight + "(" + layout.getAscent() + "/" + layout.getDescent() + "/" + layout.getLeading() + ")");
+		         log.debug ( "Line: ", textLine, " gives height ", lineHeight, "(", layout.getAscent(), "/", layout.getDescent(), "/", layout.getLeading(), ")");
 		         totalHeight += lineHeight;
 			}
 			totalHeight += heightAdjustment;
 			
 		}
-		log.debug( "Height calculated as " + totalHeight );
+		log.debug( "Height calculated as ", totalHeight );
 		return totalHeight;
 	}
 	

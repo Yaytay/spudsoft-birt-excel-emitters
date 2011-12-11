@@ -124,7 +124,7 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 			return BorderStyle.DOUBLE;
 		}
 
-		log.debug( "Border style \"" + birtBorder + "\" is not recognised." );
+		log.debug( "Border style \"", birtBorder, "\" is not recognised." );
 		return BorderStyle.NONE;
 	}
 
@@ -188,11 +188,9 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 			return ;
 		}
 		if(font instanceof XSSFFont) {
-			log.debug("Colour " + colour);
 			XSSFFont xFont = (XSSFFont)font;
 			XSSFColor xColour = getXColour(colour);
 			
-			log.debug("XColour " + xColour.getARGBHex());
 			if(xColour != null) {
 				xFont.setColor(xColour);
 			}

@@ -37,7 +37,6 @@ public class PageHandler extends AbstractHandler {
 		PrintSetup printSetup = state.currentSheet.getPrintSetup();
 		printSetup.setPaperSize(state.getSmu().getPaperSizeFromString(page.getPageType()));
 		if( page.getOrientation() != null ) {
-			log.debug( "Orientation: " + page.getOrientation() );
 			if( "landscape".equals(page.getOrientation())) {
 				printSetup.setLandscape(true);
 			}
@@ -96,7 +95,7 @@ public class PageHandler extends AbstractHandler {
 	@Override
 	public void startPage(HandlerState state, IPageContent page) throws BirtException {
 	    state.currentSheet = state.getWb().createSheet();
-		log.debug("Page type: " + page.getPageType());
+		log.debug("Page type: ", page.getPageType());
 		
 		if( page.getPageType() != null ) {
 			setupPageSize(state, page);
@@ -111,7 +110,7 @@ public class PageHandler extends AbstractHandler {
 	@Override
 	public void endPage(HandlerState state, IPageContent page) throws BirtException {
 		if( state.sheetName != null ) {
-			log.debug("Attempting to name sheet " + ( state.getWb().getNumberOfSheets() - 1 ) + "\"" + state.sheetName + "\" ");
+			log.debug("Attempting to name sheet ", ( state.getWb().getNumberOfSheets() - 1 ), "\"", state.sheetName, "\" ");
 			boolean alreadyFound = false;
 			for( int i = 0; i < state.getWb().getNumberOfSheets() - 1; ++i ) {
 				if( state.getWb().getSheetName(i).equals(state.sheetName)) {
@@ -173,14 +172,14 @@ public class PageHandler extends AbstractHandler {
         }
 		// Allow image to span multiple columns
 		if(cellImage.spanColumns) {
-	        log.debug( "Image size: " + image.getWidth() + " translates as mmWidth = " + mmWidth );
+	        log.debug( "Image size: ", image.getWidth(), " translates as mmWidth = ", mmWidth );
 	        if( mmWidth > 0) {
 	            double mmAccumulatedWidth = 0;
 	            for( endCol = cell.getColumnIndex(); mmAccumulatedWidth < mmWidth; ++ endCol ) {
 	                lastColWidth = ClientAnchorConversions.widthUnits2Millimetres( (short)state.currentSheet.getColumnWidth( endCol ) )
 	                		+ 2.0;
 	                mmAccumulatedWidth += lastColWidth;
-	                log.debug( "lastColWidth = " + lastColWidth + "; mmAccumulatedWidth = " + mmAccumulatedWidth);
+	                log.debug( "lastColWidth = ", lastColWidth, "; mmAccumulatedWidth = ", mmAccumulatedWidth);
 	            }
 	            if( mmAccumulatedWidth > mmWidth ) {
 	                mmAccumulatedWidth -= lastColWidth;
