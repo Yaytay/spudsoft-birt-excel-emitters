@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.birt.core.exception.BirtException;
-import org.eclipse.birt.report.engine.api.EngineException;
 import org.junit.Test;
 
 public class MegaSizeTest extends ReportRunner {

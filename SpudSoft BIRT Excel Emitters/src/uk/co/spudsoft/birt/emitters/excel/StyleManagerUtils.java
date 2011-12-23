@@ -456,10 +456,12 @@ public abstract class StyleManagerUtils {
 		if( dim == null ) {
 			return false;
 		}
-		return DimensionType.UNITS_CM.equals(dim.getUnits())
-				|| DimensionType.UNITS_IN.equals(dim.getUnits())
-				|| DimensionType.UNITS_MM.equals(dim.getUnits())
-				|| DimensionType.UNITS_PT.equals(dim.getUnits())
+		String units = dim.getUnits();
+		return DimensionType.UNITS_CM.equals(units)
+				|| DimensionType.UNITS_IN.equals(units)
+				|| DimensionType.UNITS_MM.equals(units)
+				|| DimensionType.UNITS_PT.equals(units)
+				|| DimensionType.UNITS_PC.equals(units)
 				;
 	}
 	
