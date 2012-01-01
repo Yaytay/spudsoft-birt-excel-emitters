@@ -38,6 +38,12 @@ public class Issue24 extends ReportRunner {
 			assertEquals( "FF6495ED",              ((XSSFColor)sheet.getRow(2).getCell(1).getCellStyle().getFillForegroundColorColor()).getARGBHex());
 			assertEquals( "FF6495ED",              ((XSSFColor)sheet.getRow(2).getCell(2).getCellStyle().getFillForegroundColorColor()).getARGBHex());
 			assertEquals( "FF6495ED",              ((XSSFColor)sheet.getRow(2).getCell(3).getCellStyle().getFillForegroundColorColor()).getARGBHex());
+
+			assertEquals( "Customer",              sheet.getRow(1).getCell(0).getStringCellValue());
+			assertEquals( "Given Name",            sheet.getRow(1).getCell(1).getStringCellValue());
+			assertEquals( "Family Name",           sheet.getRow(1).getCell(2).getStringCellValue());
+			assertEquals( "Phone",                 sheet.getRow(1).getCell(3).getStringCellValue());
+		
 		} finally {
 			inputStream.close();
 		}

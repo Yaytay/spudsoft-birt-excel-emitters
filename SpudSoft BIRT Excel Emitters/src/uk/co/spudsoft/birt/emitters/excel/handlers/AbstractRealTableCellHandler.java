@@ -153,7 +153,8 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 
 	@Override
 	public void emitLabel(HandlerState state, ILabelContent label) throws BirtException {
-		String labelText = ( label.getLabelText() != null ) ? label.getLabelText() : label.getText();
+		// String labelText = ( label.getLabelText() != null ) ? label.getLabelText() : label.getText();
+		String labelText = ( label.getText() != null ) ? label.getText() : label.getLabelText();
 		log.debug( "labelText:", labelText );
 		emitContent(state,label,labelText, ( ! "inline".equals( getStyleProperty(label, StyleConstants.STYLE_DISPLAY, "block") ) ));
 	}

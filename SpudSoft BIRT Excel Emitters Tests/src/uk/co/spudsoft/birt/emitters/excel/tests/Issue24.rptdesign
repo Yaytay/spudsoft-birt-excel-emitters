@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <simple-property-list name="includeResource">
+        <value>src/uk/co/spudsoft/birt/emitters/excel/tests/Issue24</value>
+    </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/first_report.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.firstreport</property>
@@ -285,28 +288,28 @@
                         <label id="166">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
-                            <text-property name="text">Customer</text-property>
+                            <text-property name="text" key="CustName">Customer</text-property>
                         </label>
                     </cell>
                     <cell id="167">
                         <label id="168">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
-                            <text-property name="text">First</text-property>
+                            <text-property name="text" key="Given"></text-property>
                         </label>
                     </cell>
                     <cell id="169">
                         <label id="170">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
-                            <text-property name="text">Last</text-property>
+                            <text-property name="text" key="Family">Last</text-property>
                         </label>
                     </cell>
                     <cell id="171">
                         <label id="172">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
-                            <text-property name="text">Phone</text-property>
+                            <text-property name="text" key="TelNo">Phone</text-property>
                         </label>
                     </cell>
                 </row>
