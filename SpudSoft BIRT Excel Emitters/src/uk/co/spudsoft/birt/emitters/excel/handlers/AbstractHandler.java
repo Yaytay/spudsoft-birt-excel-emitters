@@ -82,7 +82,7 @@ public class AbstractHandler implements IHandler {
 				backgroundColour = elemColour;
 			}
 		}
-		if( parent != null ) {
+		if( ( parent != null ) && ( backgroundColour ==  null ) ) {
 			backgroundColour = parent.getBackgroundColour();
 		}
 		return backgroundColour;

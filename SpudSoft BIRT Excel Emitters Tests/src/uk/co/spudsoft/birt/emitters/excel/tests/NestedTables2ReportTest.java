@@ -59,8 +59,8 @@ public class NestedTables2ReportTest extends ReportRunner {
 			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(1).getStringCellValue());
 			
 			XSSFColor bgColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillForegroundColorColor();
-			// assertEquals( "FFFFFFFF", bgColour.getARGBHex() );
-			assertEquals( null, bgColour );
+			assertEquals( "FFFFFFFF", bgColour.getARGBHex() );
+			// assertEquals( null, bgColour );
 			XSSFColor baseColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFont().getXSSFColor();
 			assertEquals( "FFFFFFFF", baseColour.getARGBHex() );
 			// assertTrue( !bgColour.equals( baseColour ) );
