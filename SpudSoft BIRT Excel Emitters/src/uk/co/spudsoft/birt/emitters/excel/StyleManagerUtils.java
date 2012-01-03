@@ -91,7 +91,6 @@ public abstract class StyleManagerUtils {
 	 */
 	public abstract RichTextString createRichTextString(String value);
 	
-
 	/**
 	 * Compare two objects in a null-safe manner.
 	 * @param lhs

@@ -75,7 +75,7 @@ public class StyleManagerXUtils extends StyleManagerUtils {
 		XSSFRichTextString result = new XSSFRichTextString(value);
 		return result;
 	}
-	
+
 	/**
 	 * Converts a BIRT border style into a POI BorderStyle.
 	 * @param birtBorder

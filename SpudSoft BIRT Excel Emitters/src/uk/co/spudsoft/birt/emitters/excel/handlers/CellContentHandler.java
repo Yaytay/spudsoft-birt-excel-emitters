@@ -12,12 +12,14 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.ICellContent;
 import org.eclipse.birt.report.engine.content.IContent;
+import org.eclipse.birt.report.engine.content.IHyperlinkAction;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.css.engine.value.StringValue;
@@ -78,6 +80,10 @@ public class CellContentHandler extends AbstractHandler {
 	 * Override the cell alignment to this instead, unless zero
 	 */
 	protected CSSValue preferredAlignment;
+	/**
+	 * URL that this cell should hyperlink to
+	 */
+	protected String hyperlinkUrl;
 	
 
 	public CellContentHandler(IContentEmitter emitter, Logger log, IHandler parent, ICellContent cell) {
@@ -116,6 +122,13 @@ public class CellContentHandler extends AbstractHandler {
 			if( parent != null ) {
 				birtCellStyle.setProperty( StyleConstants.STYLE_BACKGROUND_COLOR, parent.getBackgroundColour() );
 			}
+		}
+		if( hyperlinkUrl != null ) {
+			Hyperlink hyperlink = cell.getSheet().getWorkbook().getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
+			hyperlink.setAddress(hyperlinkUrl);
+			cell.setHyperlink(hyperlink);
+			birtCellStyle.parseString( StyleConstants.STYLE_COLOR , "blue" );
+			birtCellStyle.parseString( StyleConstants.STYLE_TEXT_UNDERLINE, "underline" );
 		}
 			
 		if( lastValue != null ) {
@@ -348,6 +361,20 @@ public class CellContentHandler extends AbstractHandler {
 			lastValue = value;
 			lastElement = element;
 			lastCellContentsWasBlock = asBlock;
+			
+			IHyperlinkAction birtHyperlink = element.getHyperlinkAction();
+			if( birtHyperlink != null ) {
+				switch( birtHyperlink.getType() ) {
+				case IHyperlinkAction.ACTION_HYPERLINK:
+					hyperlinkUrl = birtHyperlink.getHyperlink();
+					break;
+				case IHyperlinkAction.ACTION_BOOKMARK:
+					break;
+				default:
+					log.debug( "Unhandled hyperlink type: {}", birtHyperlink.getType() );
+				}
+			}
+						
 			return ;
 		}
 		
@@ -382,6 +409,7 @@ public class CellContentHandler extends AbstractHandler {
 		}
 		
 		lastCellContentsWasBlock = asBlock;
+		hyperlinkUrl = null;
 	}
 
 	public void recordImage(HandlerState state, Coordinate location, IImageContent image, boolean spanColumns) throws BirtException {
