@@ -145,7 +145,7 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 
 	@Override
 	public void applyBorderStyle(Workbook workbook, CellStyle style, BorderSide side, CSSValue colour, CSSValue borderStyle, CSSValue width) {
-		if( ( colour == null ) || ( borderStyle != null ) || ( width != null ) ) {
+		if( ( colour != null ) || ( borderStyle != null ) || ( width != null ) ) {
 			String colourString = colour == null ? "rgb(0,0,0)" : colour.getCssText();
 			String borderStyleString = borderStyle == null ? "solid" : borderStyle.getCssText();
 			String widthString = width == null ? "medium" : width.getCssText();
