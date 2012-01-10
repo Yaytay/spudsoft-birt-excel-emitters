@@ -35,7 +35,7 @@ public class AutoRowHeightsTest extends ReportRunner {
 			assertEquals( 1405, sheet.getRow(3).getHeight() );
 			assertEquals( 2988, sheet.getRow(4).getHeight() );
 			assertEquals( 300, sheet.getRow(5).getHeight() );
-			assertEquals( 4000, sheet.getRow(6).getHeight() );
+			assertEquals( 4103, sheet.getRow(6).getHeight() );
 			
 		} finally {
 			inputStream.close();
@@ -64,7 +64,7 @@ public class AutoRowHeightsTest extends ReportRunner {
 			assertEquals( 1405, sheet.getRow(3).getHeight() );
 			assertEquals( 2988, sheet.getRow(4).getHeight() );
 			assertEquals( 275, sheet.getRow(5).getHeight() );
-			assertEquals( 4000, sheet.getRow(6).getHeight() );
+			assertEquals( 4103, sheet.getRow(6).getHeight() );
 			
 
 		} finally {

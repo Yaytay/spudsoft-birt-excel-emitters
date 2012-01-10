@@ -722,11 +722,10 @@ public abstract class StyleManagerUtils {
 		for( String textLine : textLines ) {
 			if( lastLine != null ) {
 				lineStartIndex += lastLine.length() + 1;
-			} else {
-				lastLine = textLine;
-			}
-
-			AttributedString attrString = new AttributedString(textLine);
+			} 
+			lastLine = textLine;
+			
+			AttributedString attrString = new AttributedString(textLine.isEmpty() ? " " : textLine);
 			int runEnd = textLine.length();
 			
 			int richTextRunIndex = getRichTextRunIndexForStart(richTextRuns, lineStartIndex);
@@ -738,7 +737,7 @@ public abstract class StyleManagerUtils {
 			}
 			
 			log.debug( "Adding attribute - [", 0, " - ", runEnd, "] = ", defaultFont.getFontName(), " ", defaultFont.getFontHeightInPoints(), "pt" );
-			addFontAttributes(attrString, font, 0, runEnd );
+			addFontAttributes(attrString, font, 0, textLine.isEmpty() ? 1 : runEnd );
 
 			for( ++richTextRunIndex; ( richTextRunIndex < richTextRuns.size() ) && ( richTextRuns.get( richTextRunIndex ).startIndex < lineStartIndex + textLine.length() ) ; ++richTextRunIndex ) {
 				RichTextRun run = richTextRuns.get( richTextRunIndex );
@@ -759,7 +758,8 @@ public abstract class StyleManagerUtils {
 			LineBreakMeasurer measurer = new LineBreakMeasurer( attrString.getIterator(), frc);
 		    
 			float heightAdjustment = 0.0F;
-			while (measurer.getPosition() < textLine.length()) {
+			int lineLength = textLine.isEmpty() ? 1 : textLine.length();
+			while (measurer.getPosition() < lineLength) {
 		         TextLayout layout = measurer.nextLayout( widthPt );
 		         float lineHeight = layout.getAscent() + layout.getDescent() + layout.getLeading();
 		         if( layout.getDescent() + layout.getLeading() > heightAdjustment ) {
