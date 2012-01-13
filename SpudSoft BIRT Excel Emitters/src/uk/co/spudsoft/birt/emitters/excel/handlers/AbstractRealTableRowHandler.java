@@ -76,6 +76,12 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 				}
 			}
 		}
+        if( blankRow ) {
+            if(state.computeNumberSpanBefore(state.rowNum, state.colNum) > 0) {
+                //this row is part of a row span. Dont delete it.
+                blankRow = false;
+            }
+        }
 		
 		if(blankRow || ( currentRow.getPhysicalNumberOfCells() == 0 )) {
 			state.currentSheet.removeRow(currentRow);

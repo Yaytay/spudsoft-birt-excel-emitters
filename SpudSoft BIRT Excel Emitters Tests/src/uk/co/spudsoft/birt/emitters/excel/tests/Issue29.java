@@ -28,7 +28,7 @@ public class Issue29 extends ReportRunner {
 			assertEquals( 1, workbook.getNumberOfSheets() );
 	
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 4, this.firstNullRow(sheet));
+			assertEquals( 6, this.firstNullRow(sheet));
 
 			for( int i = 0; i < 4; ++i ) {
 				for( Cell cell : sheet.getRow(i) ) {
@@ -38,6 +38,7 @@ public class Issue29 extends ReportRunner {
 					assertEquals( 0, cell.getCellStyle().getBorderBottom() );
 				}
 			}
+			assertEquals( "Bibble", sheet.getRow(5).getCell(0).getStringCellValue() );
 		
 		} finally {
 			inputStream.close();
@@ -57,7 +58,7 @@ public class Issue29 extends ReportRunner {
 			assertEquals( 1, workbook.getNumberOfSheets() );
 	
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 4, this.firstNullRow(sheet));
+			assertEquals( 6, this.firstNullRow(sheet));
 			
 			for( int i = 0; i < 4; ++i ) {
 				for( Cell cell : sheet.getRow(i) ) {
@@ -67,6 +68,7 @@ public class Issue29 extends ReportRunner {
 					assertEquals( 0, cell.getCellStyle().getBorderBottom() );
 				}
 			}
+			assertEquals( "Bibble", sheet.getRow(5).getCell(0).getStringCellValue() );
 		
 		} finally {
 			inputStream.close();
