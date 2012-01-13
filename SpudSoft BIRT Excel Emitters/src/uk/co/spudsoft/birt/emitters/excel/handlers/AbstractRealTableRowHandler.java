@@ -37,7 +37,8 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 
 	@Override
 	public void endRow(HandlerState state, IRowContent row) throws BirtException {
-		interruptRow(state);				
+		interruptRow(state);
+		state.checkPassedSpans();
 		state.setHandler(parent);
 	}
 

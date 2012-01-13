@@ -1,6 +1,7 @@
 package uk.co.spudsoft.birt.emitters.excel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -87,6 +88,13 @@ public class HandlerState {
 	 */
 	public List<AreaBorders> areaBorders = new ArrayList<AreaBorders>();
 	
+    /**
+     * List of Current Spans
+     * We could probably use CellRangeAdresses inside the sheet, but 
+     * this way we keep the tests to a minimum.
+     */
+    public List<Area> rowSpans = new ArrayList<Area>();
+	
 	/**
 	 * Constructor
 	 * @param log
@@ -156,4 +164,32 @@ public class HandlerState {
 		}
 	}
 	
+	public void addRowSpan(int rowX, int colX, int rowY, int colY) {
+	    rowSpans.add(new Area(new Coordinate(rowX, colX), new Coordinate(rowY, colY)));
+	}
+	
+	public void checkPassedSpans() {
+	    for(Iterator<Area> it = rowSpans.iterator(); it.hasNext();) {
+	        Area a = it.next();
+	        if(a.y.getRow() < rowNum) {
+	            it.remove();
+	        }
+	    }
+	}
+
+    public int computeNumberSpanBefore(int row, int col) {
+        int i = 0;
+        for(Area a : rowSpans) { //No need to check  a.y.row
+            //Correct this col to know the real col number
+            if(a.x.getCol() <= col) {
+                col += (a.y.getCol() - a.x.getCol()) + 1;
+            }
+            if(row > a.x.getRow() //Span on first appearance is ok. 
+                && a.x.getCol() <= col //This span is before this column
+                ) {
+                i += (a.y.getCol() - a.x.getCol()) + 1;
+            }
+        }
+        return i;
+    }
 }

@@ -73,10 +73,16 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 			// currentCell.setCellType(Cell.CELL_TYPE_BLANK);
 					
 			ICellContent cell = (ICellContent)element; 
-					
+			
 			if(( cell.getColSpan() > 1 )||( cell.getRowSpan() > 1 )) {
-				int endRow = state.rowNum + cell.getRowSpan() - 1;
+
+                int endRow = state.rowNum + cell.getRowSpan() - 1;
 				int endCol = state.colNum + cell.getColSpan() - 1;
+                
+                if(cell.getRowSpan() > 1) {
+                    state.addRowSpan(state.rowNum, state.colNum, endRow, endCol);
+                }
+				
 				
 	/*			System.out.println( "addMergedRegion( "
 						+ "" + state.rowNum 
@@ -86,7 +92,10 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 						+ " )" 
 						+ " [ " + cell.getRowSpan() + " & " + cell.getColSpan() + " ]" 
 						);
-	*/			state.currentSheet.addMergedRegion( new CellRangeAddress( state.rowNum, endRow, state.colNum, endCol ) );
+    */          
+                int offset = state.computeNumberSpanBefore(state.rowNum, state.colNum);
+                state.currentSheet.addMergedRegion( new CellRangeAddress( state.rowNum, endRow, state.colNum + offset, endCol + offset ) );
+                
 				colSpan = cell.getColSpan();
 			}
 	
