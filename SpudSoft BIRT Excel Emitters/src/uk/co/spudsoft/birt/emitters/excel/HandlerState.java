@@ -168,18 +168,14 @@ public class HandlerState {
 	    rowSpans.add(new Area(new Coordinate(rowX, colX), new Coordinate(rowY, colY)));
 	}
 	
-	public void checkPassedSpans() {
-	    for(Iterator<Area> it = rowSpans.iterator(); it.hasNext();) {
-	        Area a = it.next();
-	        if(a.y.getRow() < rowNum) {
-	            it.remove();
-	        }
-	    }
-	}
-
     public int computeNumberSpanBefore(int row, int col) {
         int i = 0;
-        for(Area a : rowSpans) { //No need to check  a.y.row
+        for(Area a : rowSpans) {
+        	// I'm now not removing passed spans, so do check a.y.row()
+        	if( a.y.getRow() < row ) {
+        		continue;
+        	}
+        	
             //Correct this col to know the real col number
             if(a.x.getCol() <= col) {
                 col += (a.y.getCol() - a.x.getCol()) + 1;
@@ -191,5 +187,18 @@ public class HandlerState {
             }
         }
         return i;
+    }
+    
+    public void clearRowSpans() {
+    	rowSpans.clear();
+    }
+    
+    public int findRowsSpanned( int rowX, int colX ) {
+    	for( Area a : rowSpans ) {
+    		if( ( a.x.getRow() == rowX ) && ( a.x.getCol() == colX ) ) {
+    			return a.y.getRow() - a.x.getRow();
+    		}
+    	}
+    	return 0;
     }
 }

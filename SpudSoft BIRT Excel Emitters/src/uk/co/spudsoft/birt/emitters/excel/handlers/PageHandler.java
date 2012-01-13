@@ -133,6 +133,7 @@ public class PageHandler extends AbstractHandler {
 		state.images.clear();
 		state.rowNum = 0;
 		state.colNum = 0;
+		state.clearRowSpans();
 		
 		state.currentSheet = null;
 	}
@@ -194,8 +195,16 @@ public class PageHandler extends AbstractHandler {
 			ptHeight = ptHeight / widthRatio;
 		}
 
-		if( ptHeight > cell.getRow().getHeightInPoints()) {
-			cell.getRow().setHeightInPoints( ptHeight );
+		int rowsSpanned = state.findRowsSpanned( cell.getRowIndex(), cell.getColumnIndex() );
+		float neededRowHeightPoints = ptHeight;
+		
+		for( int i = 0; i < rowsSpanned; ++i ) {
+			int rowIndex = cell.getRowIndex() + 1 + i;
+			neededRowHeightPoints -= state.currentSheet.getRow(rowIndex).getHeightInPoints();
+		}
+		
+		if( neededRowHeightPoints > cell.getRow().getHeightInPoints()) {
+			cell.getRow().setHeightInPoints( neededRowHeightPoints );
 		}
 		
 		// ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
@@ -203,7 +212,7 @@ public class PageHandler extends AbstractHandler {
         anchor.setCol1(cell.getColumnIndex());
         anchor.setRow1(cell.getRowIndex());
         anchor.setCol2(endCol);
-        anchor.setRow2(cell.getRowIndex());
+        anchor.setRow2(cell.getRowIndex() + rowsSpanned);
         anchor.setDx2(dx);
         anchor.setDy2( smu.anchorDyFromPoints( ptHeight, cell.getRow().getHeightInPoints() ) );
         anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
