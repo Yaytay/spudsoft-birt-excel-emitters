@@ -114,8 +114,13 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 				}
 			}
 		}
+		
+		if( table.getBookmark() != null ) {
+			createName(state, prepareName( table.getBookmark() ), startRow, 0, state.rowNum - 1, table.getColumnCount() - 1);
+		}
+		
 	}
-	
+
 	@Override
 	public void startTableBand(HandlerState state, ITableBandContent band) throws BirtException {
 		if( ( band.getBandType() == ITableBandContent.BAND_DETAIL ) && ( startDetailsRow < 0 ) ) {

@@ -84,6 +84,10 @@ public class CellContentHandler extends AbstractHandler {
 	 * URL that this cell should hyperlink to
 	 */
 	protected String hyperlinkUrl;
+	/**
+	 * Bookmark that this cell should hyperlink to
+	 */
+	protected String hyperlinkBookmark;
 	
 
 	public CellContentHandler(IContentEmitter emitter, Logger log, IHandler parent, ICellContent cell) {
@@ -94,6 +98,9 @@ public class CellContentHandler extends AbstractHandler {
 
 	@Override
 	public void startCell(HandlerState state, ICellContent cell) throws BirtException {
+		if( cell.getBookmark() != null ) {
+			System.err.println( "Bookmark: " + cell.getBookmark() );
+		}
 	}
 
 	/**
@@ -127,8 +134,11 @@ public class CellContentHandler extends AbstractHandler {
 			Hyperlink hyperlink = cell.getSheet().getWorkbook().getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
 			hyperlink.setAddress(hyperlinkUrl);
 			cell.setHyperlink(hyperlink);
-			birtCellStyle.parseString( StyleConstants.STYLE_COLOR , "blue" );
-			birtCellStyle.parseString( StyleConstants.STYLE_TEXT_UNDERLINE, "underline" );
+		}
+		if( hyperlinkBookmark != null ) {
+			Hyperlink hyperlink = cell.getSheet().getWorkbook().getCreationHelper().createHyperlink(Hyperlink.LINK_DOCUMENT);
+			hyperlink.setAddress(prepareName( hyperlinkBookmark ));
+			cell.setHyperlink(hyperlink);
 		}
 			
 		if( lastValue != null ) {
@@ -357,6 +367,10 @@ public class CellContentHandler extends AbstractHandler {
 		if( value == null ) {
 			return ;
 		}
+		if( element.getBookmark() != null ) {
+			createName(state, prepareName( element.getBookmark() ), state.rowNum, state.colNum, state.rowNum, state.colNum);
+		}
+		
 		if( lastValue == null ) {
 			lastValue = value;
 			lastElement = element;
@@ -369,6 +383,7 @@ public class CellContentHandler extends AbstractHandler {
 					hyperlinkUrl = birtHyperlink.getHyperlink();
 					break;
 				case IHyperlinkAction.ACTION_BOOKMARK:
+					hyperlinkBookmark = birtHyperlink.getBookmark(); 
 					break;
 				default:
 					log.debug( "Unhandled hyperlink type: {}", birtHyperlink.getType() );

@@ -53,6 +53,10 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	
 	@Override
 	public void endCell(HandlerState state, ICellContent cell) throws BirtException {
+		if( cell.getBookmark() != null ) {
+			createName(state, prepareName( cell.getBookmark() ), state.rowNum, state.colNum, state.rowNum, state.colNum);
+		}
+
 		interruptCell(state, ! containsTable );
 	}
 	

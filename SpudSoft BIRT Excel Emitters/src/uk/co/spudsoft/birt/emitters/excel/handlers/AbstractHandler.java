@@ -1,5 +1,9 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.CellReference.NameType;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IAutoTextContent;
 import org.eclipse.birt.report.engine.content.ICellContent;
@@ -97,6 +101,54 @@ public class AbstractHandler implements IHandler {
 		}
 	}
 	
+	protected static String prepareName( String name ) {
+		char c = name.charAt(0);
+		boolean requirePreparation = (!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1);
+		if( !requirePreparation ) {
+			for( int i = 1; i < name.length(); ++i ) {
+				c = name.charAt(i);
+				if(!(Character.isLetter(c) || Character.isDigit(c) || c == '_' )) {
+					requirePreparation = true;
+					break;
+				}
+			}
+		}
+		
+		if( requirePreparation ) {
+			name = name.trim();
+			char chars[] = name.toCharArray();
+			for( int i = 0; i < name.length(); ++i ) {
+				c = chars[i];
+				if(!(Character.isLetter(c) || Character.isDigit(c) || c == '_' )) {
+					chars[i] = '_';
+				}
+			}
+			name = new String(chars);
+		}
+		
+		NameType refType = CellReference.classifyCellReference( name, SpreadsheetVersion.EXCEL2007 );
+		if( ( NameType.CELL == refType ) || ( NameType.COLUMN == refType ) || ( NameType.ROW == refType ) ) {
+			name = "_" + name;
+		}
+		
+		return name;
+	}
+
+	protected void createName(HandlerState state, String bookmark, int row1, int col1, int row2, int col2 ) {
+		CellReference crFirst = new CellReference( state.currentSheet.getSheetName(), row1, col1, true, true );
+		CellReference crLast = new CellReference( row2, col2, true, true );
+		String formula = crFirst.formatAsString() + ":" + crLast.formatAsString();
+
+		Name name = state.currentSheet.getWorkbook().getName(bookmark);
+		if( name == null ) {
+			name = state.currentSheet.getWorkbook().createName();
+			name.setNameName( bookmark ); 
+			name.setRefersToFormula( formula );
+		} else {
+			name.setRefersToFormula(name.getRefersToFormula() + "," + formula);
+		}
+	}
+		
 	public void startPage(HandlerState state, IPageContent page) throws BirtException {
 		NoSuchMethodError ex = new NoSuchMethodError( "Method not implemented: " + this.getClass().getSimpleName() + ".startPage" );
 		log.error(0, "Method not implemented", ex);

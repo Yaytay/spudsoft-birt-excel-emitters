@@ -21,6 +21,7 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 public class AbstractRealTableRowHandler extends AbstractHandler {
 
 	protected Row currentRow;
+	protected int birtRowStartedAtPoiRow;
 	protected int myRow;
 
 	private BirtStyle rowStyle;
@@ -32,12 +33,17 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
+		birtRowStartedAtPoiRow = state.rowNum;
 		resumeRow(state);
 	}
 
 	@Override
 	public void endRow(HandlerState state, IRowContent row) throws BirtException {
 		interruptRow(state);
+		if( row.getBookmark() != null ) {
+			createName(state, prepareName( row.getBookmark() ), birtRowStartedAtPoiRow, 0, state.rowNum - 1, currentRow.getLastCellNum() - 1 );
+		}
+		
 		state.setHandler(parent);
 	}
 
@@ -81,7 +87,12 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
                 blankRow = false;
             }
         }
-		
+        if( blankRow ) {
+        	if( ((IRowContent)element).getBookmark() != null ) {
+        		blankRow = false;
+        	}
+        }
+        
 		if(blankRow || ( currentRow.getPhysicalNumberOfCells() == 0 )) {
 			state.currentSheet.removeRow(currentRow);
 		} else {
