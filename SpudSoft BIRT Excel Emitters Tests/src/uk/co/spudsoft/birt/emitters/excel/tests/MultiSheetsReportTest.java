@@ -56,6 +56,13 @@ public class MultiSheetsReportTest extends ReportRunner {
 			assertEquals(4, firstNullRow(workbook.getSheetAt(0)));
 			assertEquals(4, firstNullRow(workbook.getSheetAt(1)));
 			assertEquals(3, firstNullRow(workbook.getSheetAt(2)));
+			
+			assertEquals( true, workbook.getSheetAt(0).isDisplayGridlines());
+			assertEquals( false, workbook.getSheetAt(1).isDisplayGridlines());
+			assertEquals( false, workbook.getSheetAt(2).isDisplayGridlines());
+			assertEquals( true, workbook.getSheetAt(0).isDisplayRowColHeadings());
+			assertEquals( false, workbook.getSheetAt(1).isDisplayGridlines());
+			assertEquals( true, workbook.getSheetAt(2).isDisplayRowColHeadings());
 		} finally {
 			inputStream.close();
 		}
@@ -100,7 +107,7 @@ public class MultiSheetsReportTest extends ReportRunner {
 			inputStream.close();
 		}
 	}
-	
+
 	@Test
 	public void testBreakInSubTable() throws BirtException, IOException {
 
@@ -241,5 +248,4 @@ public class MultiSheetsReportTest extends ReportRunner {
 			inputStream.close();
 		}
 	}
-	
 }

@@ -65,6 +65,12 @@ public class ReportRunner {
 	protected boolean debug;
 	protected boolean removeEmptyRows = true;
 	protected boolean htmlPagination;
+	
+	protected Boolean displayFormulas = null;
+	protected Boolean displayGridlines = null;
+	protected Boolean displayRowColHeadings = null;
+	protected Boolean displayZeros = null;
+	
 	protected Map<String,Object> parameters = new HashMap<String, Object>();
 	protected long startTime;
 	protected long runTime;
@@ -475,6 +481,19 @@ public class ReportRunner {
 		if( htmlPagination ) {
 			renderOptions.setOption( HTMLRenderOption.HTML_PAGINATION, Boolean.TRUE );
 		}
+		if( displayFormulas != null ) {
+			renderOptions.setOption( "ExcelEmitter.DisplayFormulas", displayFormulas );
+		}
+		if( displayGridlines != null ) {
+			renderOptions.setOption( "ExcelEmitter.DisplayGridlines", displayGridlines );
+		}
+		if( displayRowColHeadings != null ) {
+			renderOptions.setOption( "ExcelEmitter.DisplayRowColHeadings", displayRowColHeadings );
+		}
+		if( displayZeros != null ) {
+			renderOptions.setOption( "ExcelEmitter.DisplayZeros", displayZeros );
+		}
+		
 		return renderOptions;
 	}
 

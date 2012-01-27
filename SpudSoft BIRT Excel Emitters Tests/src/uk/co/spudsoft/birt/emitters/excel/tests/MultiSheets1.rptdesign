@@ -2,8 +2,16 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
     <text-property name="title">Number Formats Test Report</text-property>
+    <list-property name="userProperties">
+        <structure>
+            <property name="name">ExcelEmitter.DisplayGridlines</property>
+            <property name="type">boolean</property>
+        </structure>
+    </list-property>
+    <property name="ExcelEmitter.DisplayGridlines">true</property>
     <property name="units">in</property>
     <method name="initialize"><![CDATA[var rowCount = 0;
+var pageCount = 0;
 ]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -220,6 +228,13 @@
     </page-setup>
     <body>
         <table name="Number Formats 1" id="41">
+            <list-property name="userProperties">
+                <structure>
+                    <property name="name">ExcelEmitter.DisplayGridlines</property>
+                    <property name="type">boolean</property>
+                </structure>
+            </list-property>
+            <property name="ExcelEmitter.DisplayGridlines">true</property>
             <property name="pageBreakAfter">always</property>
             <property name="width">7.614583333333333in</property>
             <property name="dataSet">Data Set</property>
@@ -420,6 +435,18 @@
             </footer>
         </table>
         <table name="Number Formats 2" id="97">
+            <list-property name="userProperties">
+                <structure>
+                    <property name="name">ExcelEmitter.DisplayGridlines</property>
+                    <property name="type">boolean</property>
+                </structure>
+                <structure>
+                    <property name="name">ExcelEmitter.DisplayRowColHeadings</property>
+                    <property name="type">boolean</property>
+                </structure>
+            </list-property>
+            <property name="ExcelEmitter.DisplayGridlines">false</property>
+            <property name="ExcelEmitter.DisplayRowColHeadings">false</property>
             <property name="pageBreakAfter">always</property>
             <property name="width">7.614583333333333in</property>
             <property name="dataSet">Data Set</property>
@@ -632,6 +659,13 @@
             </footer>
         </table>
         <table name="Number Formats 3" id="156">
+            <list-property name="userProperties">
+                <structure>
+                    <property name="name">ExcelEmitter.DisplayGridlines</property>
+                    <property name="type">boolean</property>
+                </structure>
+            </list-property>
+            <property name="ExcelEmitter.DisplayGridlines">false</property>
             <property name="pageBreakAfter">always</property>
             <property name="dataSet">Data Set</property>
             <list-property name="boundDataColumns">

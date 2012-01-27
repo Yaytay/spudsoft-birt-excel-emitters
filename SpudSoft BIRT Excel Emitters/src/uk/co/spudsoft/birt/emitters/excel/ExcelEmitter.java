@@ -40,6 +40,11 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	public static final String REMOVE_BLANK_ROWS = "ExcelEmitter.RemoveBlankRows";
 	public static final String ROTATION_PROP = "ExcelEmitter.Rotation";
 	public static final String FORCEAUTOCOLWIDTHS_PROP = "ExcelEmitter.ForceAutoColWidths";
+
+	public static final String DISPLAYFORMULAS_PROP = "ExcelEmitter.DisplayFormulas";
+	public static final String DISPLAYGRIDLINES_PROP = "ExcelEmitter.DisplayGridlines";
+	public static final String DISPLAYROWCOLHEADINGS_PROP = "ExcelEmitter.DisplayRowColHeadings";
+	public static final String DISPLAYZEROS_PROP = "ExcelEmitter.DisplayZeros";
 	
 	/**
 	 * Logger.
@@ -121,7 +126,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 		}
 				
 		renderOptions = service.getRenderOption();
-		boolean debug = EmitterServices.booleanOption( renderOptions, DEBUG, false );
+		boolean debug = EmitterServices.booleanOption( renderOptions, null, DEBUG, false );
 		if( debug )  {
 			this.log.setDebug(debug);
 		}		
