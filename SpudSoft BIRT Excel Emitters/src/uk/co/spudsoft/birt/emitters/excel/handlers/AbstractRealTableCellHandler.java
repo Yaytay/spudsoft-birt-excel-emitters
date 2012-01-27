@@ -33,8 +33,6 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 		column = cell.getColumn();
 	}
 
-	
-	
 	@Override
 	public void notifyHandler(HandlerState state) {
 		if( parentRow != null ) {
@@ -43,8 +41,6 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 			parentRow = null;
 		}
 	}
-
-
 
 	@Override
 	public void startCell(HandlerState state, ICellContent cell) throws BirtException {
@@ -72,6 +68,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 		} else if( state.currentSheet.getRow(state.rowNum) == null ) {
 			System.err.println( "state.currentSheet.getRow(" + state.rowNum + ") == null" );			
 		}
+
 		if( ( lastValue != null ) || includeFormatOnly ) {
 			Cell currentCell = state.currentSheet.getRow(state.rowNum).createCell( column );
 			// currentCell.setCellType(Cell.CELL_TYPE_BLANK);
@@ -87,26 +84,30 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
                     state.addRowSpan(state.rowNum, state.colNum, endRow, endCol);
                 }
 				
-				
-	/*			System.out.println( "addMergedRegion( "
-						+ "" + state.rowNum 
-						+ ", " + endRow
-						+ ", " + state.colNum
-						+ ", " + endCol
-						+ " )" 
-						+ " [ " + cell.getRowSpan() + " & " + cell.getColSpan() + " ]" 
-						);
-    */          
                 int offset = state.computeNumberSpanBefore(state.rowNum, state.colNum);
-                state.currentSheet.addMergedRegion( new CellRangeAddress( state.rowNum, endRow, state.colNum + offset, endCol + offset ) );
-                
+                CellRangeAddress newMergedRegion = new CellRangeAddress( state.rowNum, endRow, state.colNum + offset, endCol + offset );
+                state.currentSheet.addMergedRegion( newMergedRegion );
+                                
 				colSpan = cell.getColSpan();
 			}
 	
 			endCellContent(state, cell, lastElement, currentCell);
 		}
 
-		state.colNum += colSpan;
+		if( state.cellIsMergedWithBorders( state.rowNum, column ) ) {
+			int absoluteColumn = column;
+			++state.colNum;
+			--colSpan;
+			while( colSpan > 0 ) {
+				++absoluteColumn;
+				Cell currentCell = state.currentSheet.getRow(state.rowNum).createCell( absoluteColumn );
+				endCellContent(state, null, null, currentCell);
+				++state.colNum;
+				--colSpan;
+			}
+		} else {
+			state.colNum += colSpan;
+		}
 		
 		state.setHandler(parent);
 	}

@@ -3,6 +3,7 @@ package uk.co.spudsoft.birt.emitters.excel.handlers;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IRowContent;
@@ -63,7 +64,30 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 	
 	public void interruptRow(HandlerState state) throws BirtException {
 		log.debug( "Interrupt row at ", state.rowNum );
+
 		boolean blankRow = EmitterServices.booleanOption( state.getRenderOptions(), ExcelEmitter.REMOVE_BLANK_ROWS, true );
+
+		if( state.rowHasMergedCellsWithBorders( state.rowNum ) ) {
+			for( AreaBorders areaBorder : state.areaBorders ) {
+				if( ( areaBorder.isMergedCells ) 
+						&& ( areaBorder.top <= state.rowNum )
+						&& ( areaBorder.bottom >= state.rowNum ) ) {
+
+					for( int column = areaBorder.left; column <= areaBorder.right; ++column ) {
+						if( currentRow.getCell(column) == null ) {
+							BirtStyle birtCellStyle = new BirtStyle( state.getSm().getCssEngine() );
+							Cell cell = state.currentSheet.getRow(state.rowNum).createCell( column );
+							state.getSmu().applyAreaBordersToCell(state.areaBorders, cell, birtCellStyle, state.rowNum, column);
+							CellStyle cellStyle = state.getSm().getStyle(birtCellStyle);
+							cell.setCellStyle(cellStyle);
+						}
+					}
+				}
+			}			
+			blankRow = false;
+		}
+		
+		
 		if( blankRow ) {
 			for(Iterator<Cell> iter = currentRow.cellIterator(); iter.hasNext(); ) {
 				Cell cell = iter.next();
@@ -107,14 +131,6 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 				currentRow.setHeightInPoints( state.requiredRowHeightInPoints );
 			}
 			
-/*			state.getSmu().applyBordersToArea( state.getSm()
-					, state.currentSheet
-					, 0
-					, ((IRowContent)element).getTable().getColumnCount() - 1
-					, state.rowNum
-					, state.rowNum
-					, new BirtStyle( (IRowContent)element ) );
-*/			
 			state.rowNum += 1;
 		}
 		

@@ -5,6 +5,8 @@ import org.eclipse.birt.report.engine.css.engine.value.css.CSSConstants;
 import org.w3c.dom.css.CSSValue;
 
 public class AreaBorders {
+	public boolean isMergedCells;
+	
 	public int bottom;
 	public int left;
 	public int right;
@@ -14,8 +16,9 @@ public class AreaBorders {
 	public CSSValue[] cssWidth = new CSSValue[4];
 	public CSSValue[] cssColour = new CSSValue[4];
 
-	private AreaBorders(int bottom, int left, int right, int top,
+	private AreaBorders(boolean isMergedCells, int bottom, int left, int right, int top,
 			CSSValue[] cssStyle, CSSValue[] cssWidth, CSSValue[] cssColour) {
+		this.isMergedCells = isMergedCells;
 		this.bottom = bottom;
 		this.left = left;
 		this.right = right;
@@ -25,8 +28,15 @@ public class AreaBorders {
 		this.cssColour = cssColour;
 	}
 
-
 	public static AreaBorders create(int bottom, int left, int right, int top, BirtStyle borderStyle) {
+		return create( false, bottom, left, right, top, borderStyle );
+	}
+
+	public static AreaBorders createForMergedCells(int bottom, int left, int right, int top, BirtStyle borderStyle) {
+		return create( true, bottom, left, right, top, borderStyle );
+	}
+	
+	public static AreaBorders create(boolean isMergedCells, int bottom, int left, int right, int top, BirtStyle borderStyle) {
 		
 		CSSValue borderStyleBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE );
 		CSSValue borderWidthBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH );
@@ -49,7 +59,7 @@ public class AreaBorders {
 */
 		if( ( borderStyleBottom == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleBottom.getCssText() ) )
 				|| ( borderWidthBottom == null ) || ( "0".equals(borderWidthBottom.getCssText()) )
-				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom) ) ) {
+				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom.getCssText() ) ) ) {
 				borderStyleBottom = null;
 				borderWidthBottom = null;
 				borderColourBottom = null;
@@ -57,7 +67,7 @@ public class AreaBorders {
 
 		if( ( borderStyleLeft == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleLeft.getCssText() ) )
 				|| ( borderWidthLeft == null ) || ( "0".equals(borderWidthLeft.getCssText()) )
-				|| ( borderColourLeft == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourLeft) ) ) {
+				|| ( borderColourLeft == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourLeft.getCssText() ) ) ) {
 				borderStyleLeft = null;
 				borderWidthLeft = null;
 				borderColourLeft = null;
@@ -65,7 +75,7 @@ public class AreaBorders {
 
         if( ( borderStyleRight == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleRight.getCssText() ) )
 				|| ( borderWidthRight == null ) || ( "0".equals(borderWidthRight.getCssText()) )
-				|| ( borderColourRight == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourRight) ) ) {
+				|| ( borderColourRight == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourRight.getCssText() ) ) ) {
 				borderStyleRight = null;
 				borderWidthRight = null;
 				borderColourRight = null;
@@ -73,7 +83,7 @@ public class AreaBorders {
 
 		if( ( borderStyleTop == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleTop.getCssText() ) )
 				|| ( borderWidthTop == null ) || ( "0".equals(borderWidthTop.getCssText()) )
-				|| ( borderColourTop == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourTop) ) ) {
+				|| ( borderColourTop == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourTop.getCssText() ) ) ) {
 				borderStyleTop = null;
 				borderWidthTop = null;
 				borderColourTop = null;
@@ -87,9 +97,31 @@ public class AreaBorders {
 			CSSValue[] cssStyle = new CSSValue[] { borderStyleBottom, borderStyleLeft, borderStyleRight, borderStyleTop };
 			CSSValue[] cssWidth = new CSSValue[] { borderWidthBottom, borderWidthLeft, borderWidthRight, borderWidthTop };
 			CSSValue[] cssColour = new CSSValue[] { borderColourBottom, borderColourLeft, borderColourRight, borderColourTop };
-			return new AreaBorders(bottom, left, right, top, cssStyle, cssWidth, cssColour);
+			return new AreaBorders(isMergedCells, bottom, left, right, top, cssStyle, cssWidth, cssColour);
 		}
 		return null;
 	}
+
+
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		result.append( "[" ).append( top ).append( "," ).append( left ).append( "]" );
+		result.append("-");
+		result.append( "[" ).append( bottom ).append( "," ).append( right ).append( "]" );
+		result.append("=");
+		for( int i = 0; i < 4; ++i ) {
+			result.append("[");
+			result.append( cssStyle[i] );
+			result.append(";");
+			result.append( cssWidth[i] );
+			result.append(";");
+			result.append( cssColour[i] );
+			result.append("]");
+		}
+		return result.toString();
+	}
+	
+	
 	
 }

@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
 import java.text.AttributedString;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -907,7 +908,7 @@ public abstract class StyleManagerUtils {
 */
 		if( ( borderStyleBottom == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleBottom ) )
 				|| ( borderWidthBottom == null ) || ( "0".equals(borderWidthBottom) )
-				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom) ) ) {
+				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom.getCssText() ) ) ) {
 				borderStyleBottom = null;
 				borderWidthBottom = null;
 				borderColourBottom = null;
@@ -915,7 +916,7 @@ public abstract class StyleManagerUtils {
 
 		if( ( borderStyleLeft == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleLeft ) )
 				|| ( borderWidthLeft == null ) || ( "0".equals(borderWidthLeft) )
-				|| ( borderColourLeft == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourLeft) ) ) {
+				|| ( borderColourLeft == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourLeft.getCssText() ) ) ) {
 				borderStyleLeft = null;
 				borderWidthLeft = null;
 				borderColourLeft = null;
@@ -923,7 +924,7 @@ public abstract class StyleManagerUtils {
 
         if( ( borderStyleRight == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleRight ) )
 				|| ( borderWidthRight == null ) || ( "0".equals(borderWidthRight) )
-				|| ( borderColourRight == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourRight) ) ) {
+				|| ( borderColourRight == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourRight.getCssText() ) ) ) {
 				borderStyleRight = null;
 				borderWidthRight = null;
 				borderColourRight = null;
@@ -931,7 +932,7 @@ public abstract class StyleManagerUtils {
 
 		if( ( borderStyleTop == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleTop ) )
 				|| ( borderWidthTop == null ) || ( "0".equals(borderWidthTop) )
-				|| ( borderColourTop == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourTop) ) ) {
+				|| ( borderColourTop == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourTop.getCssText() ) ) ) {
 				borderStyleTop = null;
 				borderWidthTop = null;
 				borderColourTop = null;
@@ -985,10 +986,10 @@ public abstract class StyleManagerUtils {
 		CSSValue borderStyleBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE );
 		CSSValue borderWidthBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH );
 		CSSValue borderColourBottom = borderStyle.getProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR );
-				
-		if( ( borderStyleBottom == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleBottom ) )
+		
+		if( ( borderStyleBottom == null ) || ( CSSConstants.CSS_NONE_VALUE.equals( borderStyleBottom.getCssText() ) )
 				|| ( borderWidthBottom == null ) || ( "0".equals(borderWidthBottom) )
-				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom) ) ) {
+				|| ( borderColourBottom == null ) || ( CSSConstants.CSS_TRANSPARENT_VALUE.equals(borderColourBottom.getCssText() ) ) ) {
 				borderStyleBottom = null;
 				borderWidthBottom = null;
 				borderColourBottom = null;
@@ -1015,6 +1016,40 @@ public abstract class StyleManagerUtils {
 				}
 			}
 		}
+	}
+
+	public int applyAreaBordersToCell(Collection<AreaBorders> knownAreaBorders, Cell cell, BirtStyle birtCellStyle, int rowIndex, int colIndex) {
+		for( AreaBorders areaBorders : knownAreaBorders ) {
+			if( ( areaBorders.bottom == rowIndex ) && ( ( areaBorders.left <= colIndex ) && ( areaBorders.right >= colIndex ) ) ) {
+				if( ( areaBorders.cssStyle[ 0 ] != null ) && ( areaBorders.cssWidth[ 0 ] != null ) && ( areaBorders.cssColour[ 0 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE, areaBorders.cssStyle[0] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, areaBorders.cssWidth[0] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR, areaBorders.cssColour[0] );
+				}
+			}
+			if( ( areaBorders.left == colIndex ) && ( ( areaBorders.top <= rowIndex ) && ( ( areaBorders.bottom < 0 ) || ( areaBorders.bottom >= rowIndex ) ) ) ) {
+				if( ( areaBorders.cssStyle[ 1 ] != null ) && ( areaBorders.cssWidth[ 1 ] != null ) && ( areaBorders.cssColour[ 1 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_STYLE, areaBorders.cssStyle[1] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_WIDTH, areaBorders.cssWidth[1] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_COLOR, areaBorders.cssColour[1] );
+				}
+			}
+			if( ( areaBorders.right == colIndex ) && ( ( areaBorders.top <= rowIndex ) && ( ( areaBorders.bottom < 0 ) || ( areaBorders.bottom >= rowIndex ) ) ) ) {
+				if( ( areaBorders.cssStyle[ 2 ] != null ) && ( areaBorders.cssWidth[ 2 ] != null ) && ( areaBorders.cssColour[ 2 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_STYLE, areaBorders.cssStyle[2] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_WIDTH, areaBorders.cssWidth[2] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_COLOR, areaBorders.cssColour[2] );
+				}
+			}
+			if( ( areaBorders.top == rowIndex ) && ( ( areaBorders.left <= colIndex ) && ( areaBorders.right >= colIndex ) ) ) {
+				if( ( areaBorders.cssStyle[ 3 ] != null ) && ( areaBorders.cssWidth[ 3 ] != null ) && ( areaBorders.cssColour[ 3 ] != null ) ) {
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_STYLE, areaBorders.cssStyle[3] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_WIDTH, areaBorders.cssWidth[3] );
+					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_COLOR, areaBorders.cssColour[3] );
+				}
+			}
+		}
+		return colIndex;
 	}
 }
 

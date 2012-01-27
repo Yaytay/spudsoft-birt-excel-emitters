@@ -42,7 +42,7 @@ public class Borders2ReportTest extends ReportRunner {
 	 * - neighbouring cells may override the values for the chosen cell.
 	 * I don't know how to tell which takes precedence, but the following works for the tests I've carried out.
 	 */
-	private void assertBorder( Sheet sheet, int row, int col, short bottom, short left, short right, short top ) {
+	public static void assertBorder( Sheet sheet, int row, int col, short bottom, short left, short right, short top ) {
 		
 		Row curRow = sheet.getRow( row );
 		Row prevRow = ( row > 0 ) ? sheet.getRow( row - 1 ) : null;
@@ -60,20 +60,23 @@ public class Borders2ReportTest extends ReportRunner {
 		CellStyle styleLeft = ( cellLeft == null ) ? null : cellLeft.getCellStyle();
 		CellStyle styleRight = ( cellRight == null ) ? null : cellRight.getCellStyle();
 		
+		System.out.println( "style == " + style );
+		System.out.println( "style == " + style );
+		
 		if( ( top != style.getBorderTop() ) && 
-				( styleUp == null ) || ( top != styleUp.getBorderBottom() ) ) {
+				( ( styleUp == null ) || ( top != styleUp.getBorderBottom() ) ) ) {
 			assertEquals( top,    style.getBorderTop() );
 		}
 		if( ( bottom != style.getBorderBottom() ) && 
-				( styleDown == null ) || ( top != styleDown.getBorderTop() ) ) {
+				( ( styleDown == null ) || ( bottom != styleDown.getBorderTop() ) ) ) {
 			assertEquals( bottom, style.getBorderBottom() );
 		}
 		if( ( left != style.getBorderLeft() ) && 
-				( styleLeft == null ) || ( top != styleLeft.getBorderRight() ) ) {
+				( ( styleLeft == null ) || ( left != styleLeft.getBorderRight() ) ) ) {
 			assertEquals( left,   style.getBorderLeft() );
 		}
 		if( ( right != style.getBorderRight() ) && 
-				( styleRight == null ) || ( right != styleRight.getBorderLeft() ) ) {
+				( ( styleRight == null ) || ( right != styleRight.getBorderLeft() ) ) ) {
 			assertEquals( right,  style.getBorderRight() );
 		}
 	}

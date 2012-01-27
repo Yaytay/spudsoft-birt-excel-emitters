@@ -88,7 +88,7 @@ public class BirtStyle {
 	
 	
 	private IStyle elemStyle;
-	private CSSValue[] propertyOverride;
+	private CSSValue[] propertyOverride = new CSSValue[ BirtStyle.NUMBER_OF_STYLES ]; 
 	private CSSEngine cssEngine;
 	
 	public BirtStyle( CSSEngine cssEngine ) {
@@ -110,7 +110,6 @@ public class BirtStyle {
 		}
 		
 		// Cache the element properties to avoid calculation cost many time
-		propertyOverride = new CSSValue[ BirtStyle.NUMBER_OF_STYLES ];
 		for( int i = 0; i < StyleManager.COMPARE_CSS_PROPERTIES.length; ++i ) {
 			int prop = StyleManager.COMPARE_CSS_PROPERTIES[ i ];
 			propertyOverride[ prop ] = elemStyle.getProperty( prop ); 

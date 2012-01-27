@@ -121,6 +121,8 @@ public class CellContentHandler extends AbstractHandler {
 			}
 		} else if( element != null ) {
 			birtCellStyle = new BirtStyle( element );			
+		} else {
+			birtCellStyle = new BirtStyle( state.getSm().getCssEngine() );
 		}
 		if( preferredAlignment != null ) {
 			birtCellStyle.setProperty( StyleConstants.STYLE_TEXT_ALIGN, preferredAlignment );
@@ -190,39 +192,19 @@ public class CellContentHandler extends AbstractHandler {
 			}
 		}
 		
-		for( AreaBorders areaBorders : state.areaBorders ) {
-			if( areaBorders.bottom == state.rowNum ) {
-				if( ( areaBorders.cssStyle[ 0 ] != null ) && ( areaBorders.cssWidth[ 0 ] != null ) && ( areaBorders.cssColour[ 0 ] != null ) ) {
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_STYLE, areaBorders.cssStyle[0] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_WIDTH, areaBorders.cssWidth[0] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_BOTTOM_COLOR, areaBorders.cssColour[0] );
-				}
-			}
-			if( areaBorders.left == state.colNum ) {
-				if( ( areaBorders.cssStyle[ 1 ] != null ) && ( areaBorders.cssWidth[ 1 ] != null ) && ( areaBorders.cssColour[ 1 ] != null ) ) {
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_STYLE, areaBorders.cssStyle[1] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_WIDTH, areaBorders.cssWidth[1] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_LEFT_COLOR, areaBorders.cssColour[1] );
-				}
-			}
-			if( areaBorders.right == state.colNum ) {
-				if( ( areaBorders.cssStyle[ 2 ] != null ) && ( areaBorders.cssWidth[ 2 ] != null ) && ( areaBorders.cssColour[ 2 ] != null ) ) {
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_STYLE, areaBorders.cssStyle[2] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_WIDTH, areaBorders.cssWidth[2] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_RIGHT_COLOR, areaBorders.cssColour[2] );
-				}
-			}
-			if( areaBorders.top == state.rowNum ) {
-				if( ( areaBorders.cssStyle[ 3 ] != null ) && ( areaBorders.cssWidth[ 3 ] != null ) && ( areaBorders.cssColour[ 3 ] != null ) ) {
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_STYLE, areaBorders.cssStyle[3] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_WIDTH, areaBorders.cssWidth[3] );
-					birtCellStyle.setProperty( StyleConstants.STYLE_BORDER_TOP_COLOR, areaBorders.cssColour[3] );
-				}
+		int colIndex = cell.getColumnIndex();
+		state.getSmu().applyAreaBordersToCell(state.areaBorders, cell, birtCellStyle, state.rowNum, colIndex);
+		
+		if((birtCell != null) && (( birtCell.getColSpan() > 1 )||( birtCell.getRowSpan() > 1 ))) {
+			AreaBorders mergedRegionBorders = AreaBorders.createForMergedCells( state.rowNum + birtCell.getRowSpan() - 1, colIndex, colIndex + birtCell.getColSpan() - 1, state.rowNum, birtCellStyle );
+			if( mergedRegionBorders != null ) {
+				state.insertBorderOverload( mergedRegionBorders );
 			}
 		}
 		
 		setCellStyle(sm, cell, birtCellStyle, lastValue);
 
+		// Excel auto calculates the row height (if it isn't specified) as long as the cell isn't merged - if it is merged I have to do it
 		if( ( colSpan > 1 ) && ( ( lastValue instanceof String ) || ( lastValue instanceof RichTextString ) ) ) {
 			Font defaultFont = state.getWb().getFontAt(cell.getCellStyle().getFontIndex());
 			double cellWidth = spanWidthMillimetres( state.currentSheet, cell.getColumnIndex(), cell.getColumnIndex() + colSpan - 1 );

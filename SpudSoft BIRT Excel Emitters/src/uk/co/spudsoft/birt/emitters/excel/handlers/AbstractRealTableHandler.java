@@ -89,8 +89,6 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 			state.removeBorderOverload(borderDefn);
 		}
 		
-		// state.getSmu().applyBordersToArea( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, startRow, state.rowNum - 1, new BirtStyle( table ) );
-
 		log.debug( "Details rows from ", startDetailsRow, " to ", endDetailsRow );
 		
 		if( ( startDetailsRow > 0 ) && ( endDetailsRow > startDetailsRow ) ) {

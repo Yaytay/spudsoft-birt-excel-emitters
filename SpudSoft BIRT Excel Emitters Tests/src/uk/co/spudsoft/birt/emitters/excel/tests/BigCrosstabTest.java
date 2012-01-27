@@ -25,7 +25,7 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( 8, workbook.getNumCellStyles() );
+			assertEquals( 13, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			assertEquals( 60, workbook.getSheetAt(0).getRow(1).getCell(2).getCellStyle().getRotation());
@@ -57,7 +57,7 @@ public class BigCrosstabTest extends ReportRunner {
 			assertNotNull(workbook);
 			
 			assertEquals( 1, workbook.getNumberOfSheets() );
-			assertEquals( 28, workbook.getNumCellStyles() );
+			assertEquals( 33, workbook.getNumCellStyles() );
 			assertEquals( "Big Crosstab Report 1", workbook.getSheetAt(0).getSheetName());
 			
 			assertEquals( 60, workbook.getSheetAt(0).getRow(1).getCell(2).getCellStyle().getRotation());

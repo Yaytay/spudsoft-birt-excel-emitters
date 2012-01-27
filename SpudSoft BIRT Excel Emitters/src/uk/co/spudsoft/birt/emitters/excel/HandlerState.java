@@ -1,7 +1,6 @@
 package uk.co.spudsoft.birt.emitters.excel;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -111,8 +110,6 @@ public class HandlerState {
 		this.sm = sm;
 		this.renderOptions = renderOptions;
 	}
-	
-	
 
 	public IContentEmitter getEmitter() {
 		return emitter;
@@ -162,6 +159,33 @@ public class HandlerState {
 		if( areaBorders != null ) {
 			areaBorders.remove(defn);
 		}
+	}
+	
+	public boolean cellIsMergedWithBorders( int row, int column ) {
+		if( areaBorders != null ) {
+			for( AreaBorders areaBorder : areaBorders ) {
+				if( ( areaBorder.isMergedCells ) 
+						&& ( areaBorder.top == row )
+						&& ( areaBorder.left == column ) ) {
+					return true;
+				}
+			}
+			
+		}
+		return false;
+	}
+	
+	public boolean rowHasMergedCellsWithBorders( int row ) {
+		if( areaBorders != null ) {
+			for( AreaBorders areaBorder : areaBorders ) {
+				if( ( areaBorder.isMergedCells ) 
+						&& ( areaBorder.top <= row )
+						&& ( areaBorder.bottom >= row ) ) {
+					return true;
+				}
+			}			
+		}
+		return false;
 	}
 	
 	public void addRowSpan(int rowX, int colX, int rowY, int colY) {
