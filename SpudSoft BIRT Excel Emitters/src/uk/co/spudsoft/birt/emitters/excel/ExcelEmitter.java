@@ -3,6 +3,7 @@ package uk.co.spudsoft.birt.emitters.excel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.core.exception.BirtException;
@@ -29,6 +30,8 @@ import org.eclipse.birt.report.engine.content.ITextContent;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.emitter.IContentEmitter;
 import org.eclipse.birt.report.engine.emitter.IEmitterServices;
+import org.eclipse.birt.report.engine.ir.Expression;
+import org.eclipse.birt.report.engine.ir.Report;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.ExcelEmitterPlugin;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -40,6 +43,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	public static final String REMOVE_BLANK_ROWS = "ExcelEmitter.RemoveBlankRows";
 	public static final String ROTATION_PROP = "ExcelEmitter.Rotation";
 	public static final String FORCEAUTOCOLWIDTHS_PROP = "ExcelEmitter.ForceAutoColWidths";
+	public static final String SINGLE_SHEET = "ExcelEmitter.SingleSheet";
 
 	public static final String DISPLAYFORMULAS_PROP = "ExcelEmitter.DisplayFormulas";
 	public static final String DISPLAYGRIDLINES_PROP = "ExcelEmitter.DisplayGridlines";
@@ -83,6 +87,11 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	 */
 	private StyleManagerUtils smu;
 	private IRenderOption renderOptions;
+	/**
+	 * The last page seen, cached so it can be used to call endPage
+	 * 
+	 */
+	private IPageContent lastPage;
 
 	
 	
@@ -145,6 +154,19 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	}
 
 	public void end( IReportContent report ) throws BirtException {
+		Map<String,Expression> userProperties = null;
+		if( report != null ) {
+			Report design = report.getDesign();
+			if( design != null ) {
+				userProperties = design.getUserProperties();
+			}
+		}
+		
+		if( EmitterServices.booleanOption( handlerState.getRenderOptions(), userProperties, ExcelEmitter.SINGLE_SHEET, false ) ) {
+			handlerState.reportEnding = true;
+			handlerState.getHandler().endPage(handlerState, lastPage);
+		}
+		
 		log.removePrefix('>');
 		log.debug("end:", report);
 		
@@ -204,6 +226,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 		handlerState.getHandler().startPage(handlerState,page);
 	}
 	public void endPage( IPageContent page ) throws BirtException {
+		lastPage = page;
 		log.debug( handlerState, "endPage: " );
 		handlerState.getHandler().endPage(handlerState,page);
 		log.removePrefix( 'P' );

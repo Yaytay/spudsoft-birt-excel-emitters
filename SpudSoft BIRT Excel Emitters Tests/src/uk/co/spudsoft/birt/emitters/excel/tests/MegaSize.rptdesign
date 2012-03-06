@@ -10983,6 +10983,7 @@ from megatable limit 70000]]></xml-property>
                     <property name="dataType">integer</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">40</property>
             <column id="18191"/>
             <column id="18192"/>
             <column id="18193"/>

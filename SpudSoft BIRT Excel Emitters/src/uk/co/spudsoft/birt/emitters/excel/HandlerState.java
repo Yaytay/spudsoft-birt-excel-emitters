@@ -81,6 +81,11 @@ public class HandlerState {
 	public float requiredRowHeightInPoints;
 	public int rowOffset;
 	public int colOffset;
+	/**
+	 * Set to true when end() is called and pageEnd has to be called
+	 */
+	public boolean reportEnding;
+	
 
 	/**
 	 * Border overrides for the current row/table

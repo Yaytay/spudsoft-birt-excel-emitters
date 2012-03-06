@@ -65,6 +65,7 @@ public class ReportRunner {
 	protected boolean debug;
 	protected boolean removeEmptyRows = true;
 	protected boolean htmlPagination;
+	protected boolean singleSheet;
 	
 	protected Boolean displayFormulas = null;
 	protected Boolean displayGridlines = null;
@@ -480,6 +481,9 @@ public class ReportRunner {
 		}
 		if( htmlPagination ) {
 			renderOptions.setOption( HTMLRenderOption.HTML_PAGINATION, Boolean.TRUE );
+		}
+		if( singleSheet ) {
+			renderOptions.setOption( "ExcelEmitter.SingleSheet", true );
 		}
 		if( displayFormulas != null ) {
 			renderOptions.setOption( "ExcelEmitter.DisplayFormulas", displayFormulas );

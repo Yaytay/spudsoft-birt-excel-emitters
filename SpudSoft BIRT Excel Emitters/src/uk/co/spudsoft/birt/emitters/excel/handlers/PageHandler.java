@@ -1,6 +1,7 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,7 +35,7 @@ import uk.co.spudsoft.birt.emitters.excel.StyleManagerUtils;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
 public class PageHandler extends AbstractHandler {
-
+	
 	public PageHandler(Logger log, IPageContent page) {
 		super(log, null, page);
 	}
@@ -100,13 +101,6 @@ public class PageHandler extends AbstractHandler {
 	
 	@Override
 	public void startPage(HandlerState state, IPageContent page) throws BirtException {
-	    state.currentSheet = state.getWb().createSheet();
-		log.debug("Page type: ", page.getPageType());
-		
-		if( page.getPageType() != null ) {
-			setupPageSize(state, page);
-		}
-		
 		Map<String,Expression> userProperties = null;
 		IReportContent content = page.getReportContent();
 		if( content != null ) {
@@ -114,6 +108,18 @@ public class PageHandler extends AbstractHandler {
 			if( design != null ) {
 				userProperties = design.getUserProperties();
 			}
+		}
+		
+		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.SINGLE_SHEET, false )  
+				&& ( state.getWb().getNumberOfSheets() > 0 ) ) {
+			return ;
+		}
+		
+	    state.currentSheet = state.getWb().createSheet();
+		log.debug("Page type: ", page.getPageType());
+		
+		if( page.getPageType() != null ) {
+			setupPageSize(state, page);
 		}
 		
 		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
@@ -129,7 +135,6 @@ public class PageHandler extends AbstractHandler {
 			state.currentSheet.setDisplayZeros(false);
 		}
 		
-		
 		processHeaderFooter(state, page.getHeader(), state.currentSheet.getHeader() );
 		processHeaderFooter(state, page.getFooter(), state.currentSheet.getFooter() );
 		
@@ -138,6 +143,21 @@ public class PageHandler extends AbstractHandler {
 
 	@Override
 	public void endPage(HandlerState state, IPageContent page) throws BirtException {
+		
+		Map<String,Expression> userProperties = null;
+		IReportContent content = page.getReportContent();
+		if( content != null ) {
+			Report design = content.getDesign();
+			if( design != null ) {
+				userProperties = design.getUserProperties();
+			}
+		}
+
+		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.SINGLE_SHEET, false )  
+			&& ! state.reportEnding ) {
+			return ;
+		}		
+		
 		if( state.sheetName != null ) {
 			log.debug("Attempting to name sheet ", ( state.getWb().getNumberOfSheets() - 1 ), "\"", state.sheetName, "\" ");
 			boolean alreadyFound = false;

@@ -27,7 +27,7 @@ public class MegaSizeTest extends ReportRunner {
 	@Test
 	public void testMegaXlsx() throws BirtException, IOException {
 
-		debug = false;
+		debug = true;
 		InputStream inputStream = runAndRenderReport("MegaSize.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {
