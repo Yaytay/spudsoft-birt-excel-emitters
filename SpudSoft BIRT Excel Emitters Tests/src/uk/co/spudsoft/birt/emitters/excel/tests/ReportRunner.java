@@ -56,6 +56,7 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.IRunTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
 import org.eclipse.birt.report.engine.api.impl.ReportEngine;
+import org.eclipse.birt.report.model.api.IResourceLocator;
 
 import uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask;
 import uk.co.spudsoft.birt.emitters.excel.tests.framework.Activator;
@@ -325,7 +326,10 @@ public class ReportRunner {
 		
 		assertNotNull( resourceStream );
 		try {
-			IReportRunnable reportRunnable = reportEngine.openReportDesign( resourceStream );
+			File designFile = new File( filepath ); 
+			IResourceLocator resourceLocator = new ResourceLocator(designFile.getParentFile()); 
+			
+			IReportRunnable reportRunnable = reportEngine.openReportDesign( filename, resourceStream, resourceLocator );
 			assertNotNull(reportRunnable);
 			
 			File tempDoc = createTempFile(baseFilename( filename ), ".rptdocument");

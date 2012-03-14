@@ -2,7 +2,7 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
     <simple-property-list name="includeResource">
-        <value>src/uk/co/spudsoft/birt/emitters/excel/tests/Issue24</value>
+        <value>Issue24</value>
     </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/first_report.gif</property>
@@ -11,7 +11,7 @@
     <property name="imageDPI">96</property>
     <list-property name="cssStyleSheets">
         <structure>
-            <property name="fileName">src/uk/co/spudsoft/birt/emitters/excel/tests/Issue24.css</property>
+            <property name="fileName">Issue24.css</property>
         </structure>
     </list-property>
     <template-parameter-definitions>

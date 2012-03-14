@@ -117,6 +117,7 @@ public class CellContentHandler extends AbstractHandler {
 		if( birtCell != null ) {
 			birtCellStyle = new BirtStyle( birtCell );
 			if( element != null ) {
+				// log.debug( "Overlaying style from ", element );
 				birtCellStyle.overlay( element );
 			}
 		} else if( element != null ) {
@@ -246,6 +247,7 @@ public class CellContentHandler extends AbstractHandler {
 	 * The BIRT element supplying the value, used to set the style of the cell.
 	 */
 	private <T> void setCellContents(Cell cell, Object value) {
+		// log.debug( "Setting value to {}", value );
 		if( value instanceof Double ) {
 			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue((Double)value);
@@ -313,6 +315,7 @@ public class CellContentHandler extends AbstractHandler {
 			}
 		}
 		
+		// log.debug( "BirtStyle: ", birtStyle);
 		CellStyle cellStyle = sm.getStyle(birtStyle);
 		cell.setCellStyle(cellStyle);
 	}

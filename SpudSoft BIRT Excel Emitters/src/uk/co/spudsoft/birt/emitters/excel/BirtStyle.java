@@ -227,6 +227,7 @@ public class BirtStyle {
 		result.set( StyleConstants.STYLE_BORDER_TOP_STYLE );
 		result.set( StyleConstants.STYLE_BORDER_TOP_WIDTH );
 		result.set( StyleConstants.STYLE_BORDER_TOP_COLOR );
+		result.set( StyleConstants.STYLE_VERTICAL_ALIGN );
 		result.set( StyleConstants.STYLE_DATA_FORMAT );		
 		return result;
 	}
@@ -247,7 +248,7 @@ public class BirtStyle {
 	
 	public void overlay( IContent element ) {
 		
-		// System.out.println( "overlay: Before - " + StyleManagerUtils.birtStyleToString( this ) );
+		// System.out.println( "overlay: Before - " + this.toString() );
 		
 		IStyle style = element.getComputedStyle();
 		for(int propIndex = 0; propIndex < StyleConstants.NUMBER_OF_STYLE; ++propIndex ) {
@@ -275,6 +276,15 @@ public class BirtStyle {
 		overlayBorder( style, StyleConstants.STYLE_BORDER_RIGHT_STYLE, StyleConstants.STYLE_BORDER_RIGHT_WIDTH, StyleConstants.STYLE_BORDER_RIGHT_COLOR );
 		overlayBorder( style, StyleConstants.STYLE_BORDER_TOP_STYLE, StyleConstants.STYLE_BORDER_TOP_WIDTH, StyleConstants.STYLE_BORDER_TOP_COLOR );
 		
+		// Vertical align, not computed safely, so only check immediate style
+		CSSValue verticalAlign = element.getStyle().getProperty( StyleConstants.STYLE_VERTICAL_ALIGN );
+		if( verticalAlign != null ) {
+			CSSValue localValue = getProperty( StyleConstants.STYLE_VERTICAL_ALIGN );
+			if( ! verticalAlign.equals( localValue ) ) {
+				setProperty( StyleConstants.STYLE_VERTICAL_ALIGN, verticalAlign );
+			}
+		}
+				
 		// Data format
 		CSSValue overlayDataFormat = style.getProperty( StyleConstants.STYLE_DATA_FORMAT );
 		CSSValue localDataFormat = getProperty( StyleConstants.STYLE_DATA_FORMAT );
@@ -288,7 +298,7 @@ public class BirtStyle {
 			setFloat(TEXT_ROTATION, CSSPrimitiveValue.CSS_DEG, rotation);
 		}
 		
-		// System.out.println( "overlay: After - " + StyleManagerUtils.birtStyleToString( this ) );
+		// System.out.println( "overlay: After - " + this.toString() );
 	}
 
 	@Override
