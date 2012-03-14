@@ -80,12 +80,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	 * The state date passed around the handlers.
 	 */
 	private HandlerState handlerState;
-	/**
-	 * <p>
-	 * Set of functions for carrying out conversions between BIRT and POI. 
-	 * </p>
-	 */
-	private StyleManagerUtils smu;
+
 	private IRenderOption renderOptions;
 	/**
 	 * The last page seen, cached so it can be used to call endPage
@@ -93,9 +88,13 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	 */
 	private IPageContent lastPage;
 
-	
+	/**
+	 * Factory for creating the appropriate StyleManagerUtils object
+	 */
+	private StyleManagerUtils.Factory utilsFactory;
 	
 	protected ExcelEmitter(StyleManagerUtils.Factory utilsFactory) {
+		this.utilsFactory = utilsFactory;
 		try {
 			if( ExcelEmitterPlugin.getDefault() != null ) {
 				log = ExcelEmitterPlugin.getDefault().getLogger();
@@ -103,7 +102,6 @@ public abstract class ExcelEmitter implements IContentEmitter {
 				log = new Logger( this.getClass().getPackage().getName() );
 			}
 			log.debug("ExcelEmitter");
-			smu = utilsFactory.create(log);
 		} catch( Exception ex ) {
 			Throwable t = ex;
 			while( t != null ) {
@@ -147,6 +145,8 @@ public abstract class ExcelEmitter implements IContentEmitter {
 		
 	    Workbook wb = createWorkbook();
 	    CSSEngine cssEngine = report.getRoot().getCSSEngine();
+		StyleManagerUtils smu = utilsFactory.create(log);
+	    
 	    StyleManager sm = new StyleManager( wb, log, smu, cssEngine );
 	    
 		handlerState = new HandlerState(this, log, smu, wb, sm, renderOptions);

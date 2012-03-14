@@ -48,6 +48,8 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
  *
  */
 public class StyleManagerHUtils extends StyleManagerUtils {
+	private short paletteIndex = 64;
+	private static short minPaletteIndex = 40;
 
 	private static Factory factory = new StyleManagerUtils.Factory() {
 		@Override
@@ -137,8 +139,14 @@ public class StyleManagerHUtils extends StyleManagerUtils {
 		HSSFPalette palette = workbook.getCustomPalette();
 		
 		HSSFColor result = palette.findColor(rgbByte[0], rgbByte[1], rgbByte[2]);
-		if( result ==  null) {
-			result = palette.findSimilarColor(rgbByte[0], rgbByte[1], rgbByte[2]);
+		if( result == null) {
+			if( paletteIndex > minPaletteIndex ) {
+				--paletteIndex;
+				palette.setColorAtIndex(paletteIndex, rgbByte[0], rgbByte[1], rgbByte[2]);
+				return paletteIndex;
+			} else {
+				result = palette.findSimilarColor(rgbByte[0], rgbByte[1], rgbByte[2]);
+			}
 		}
 		return result.getIndex();
 	}
