@@ -100,7 +100,7 @@ public class BackgroundFormatsTests extends ReportRunner {
 			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(1).getCell(7)));
 			
 			assertEquals( "FFFF:0:0",              ((HSSFColor)sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColorColor()).getHexString());
-			assertEquals( "FFFF:9999:0",           ((HSSFColor)sheet.getRow(1).getCell(2).getCellStyle().getFillForegroundColorColor()).getHexString());
+			assertEquals( "FFFF:A5A5:0",           ((HSSFColor)sheet.getRow(1).getCell(2).getCellStyle().getFillForegroundColorColor()).getHexString());
 			assertEquals( "FFFF:FFFF:0",           ((HSSFColor)sheet.getRow(1).getCell(3).getCellStyle().getFillForegroundColorColor()).getHexString());
 			assertEquals( "0:8080:0",              ((HSSFColor)sheet.getRow(1).getCell(4).getCellStyle().getFillForegroundColorColor()).getHexString());
 			assertEquals( "0:0:FFFF",              ((HSSFColor)sheet.getRow(1).getCell(5).getCellStyle().getFillForegroundColorColor()).getHexString());
