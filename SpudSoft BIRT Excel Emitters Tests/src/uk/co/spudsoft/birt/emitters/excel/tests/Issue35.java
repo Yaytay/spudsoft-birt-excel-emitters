@@ -27,7 +27,7 @@ public class Issue35 extends ReportRunner {
 			assertEquals( 1, workbook.getNumberOfSheets() );
 	
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals( 25, this.firstNullRow(sheet));
+			assertEquals( 256, this.firstNullRow(sheet));
 
 			assertEquals( CellStyle.VERTICAL_TOP, sheet.getRow(3).getCell(0).getCellStyle().getVerticalAlignment() );
 			assertEquals( CellStyle.VERTICAL_TOP, sheet.getRow(3).getCell(1).getCellStyle().getVerticalAlignment() );

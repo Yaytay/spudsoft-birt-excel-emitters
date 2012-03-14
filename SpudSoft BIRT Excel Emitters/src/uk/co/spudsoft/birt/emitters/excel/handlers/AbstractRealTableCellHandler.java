@@ -17,6 +17,7 @@ import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
 import org.eclipse.birt.report.engine.emitter.IContentEmitter;
 import org.eclipse.birt.report.engine.ir.CellDesign;
+import org.eclipse.birt.report.engine.ir.GridItemDesign;
 import org.eclipse.birt.report.engine.layout.pdf.util.HTML2Content;
 
 import uk.co.spudsoft.birt.emitters.excel.Coordinate;
@@ -146,7 +147,21 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 			
 			state.setHandler(new NestedTableHandler(log, this, table));
 			state.getHandler().startTable(state, table);
+		} else if( ( tableHandler != null ) 
+				&& ( table.getGenerateBy() instanceof GridItemDesign )
+				&& ( ((GridItemDesign)table.getGenerateBy()).getColumnCount() == colSpan )
+				&& ( ((GridItemDesign)table.getGenerateBy()).getRowCount() == 1 )
+				) {
 			
+			containsTable = true;
+			parentRow = getAncestor(AbstractRealTableRowHandler.class);
+			interruptCell(state, false);
+			
+			NestedTableHandler nestedTableHandler = new NestedTableHandler(log, this, table);
+			nestedTableHandler.setInserted(true);
+			state.setHandler(nestedTableHandler);
+			state.getHandler().startTable(state, table);
+
 		} else {
 			state.setHandler(new FlattenedTableHandler(this, log, this, table));
 			state.getHandler().startTable(state, table);

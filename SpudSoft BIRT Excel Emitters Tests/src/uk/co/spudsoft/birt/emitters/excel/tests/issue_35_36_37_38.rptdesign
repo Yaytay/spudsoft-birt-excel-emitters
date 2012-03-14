@@ -291,7 +291,7 @@ addData(i++, "United States", "Customer #2", "2011-12-12", "TITLE #7", "VERSION"
 addData(i++, "United States", "Customer #2", "2011-12-12", "TITLE #8", "VERSION", 1008);
 addData(i++, "United States", "Customer #2", "2011-12-12", "TITLE #9", "VERSION", 1009);
 i = 0;]]></method>
-            <method name="fetch"><![CDATA[if( i < 10 ) { // data.length ) {
+            <method name="fetch"><![CDATA[if( i < data.length ) {
     for(key in data[i]) {
         dataSetRow[key] = data[ i ][key];
     }

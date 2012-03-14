@@ -52,7 +52,9 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 		log.debug( "Resume row at ", state.rowNum );
 
 		myRow = state.rowNum;
-		currentRow = state.currentSheet.createRow( state.rowNum );
+		if( state.currentSheet.getRow(state.rowNum) == null ) {
+			currentRow = state.currentSheet.createRow( state.rowNum );
+		}
 		state.requiredRowHeightInPoints = 0;		
 		
 		rowStyle = new BirtStyle( (IRowContent)element );

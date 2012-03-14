@@ -8,9 +8,15 @@ import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
 public class NestedTableHandler extends AbstractRealTableHandler {
+	
+	boolean inserted = false;
 
 	public NestedTableHandler(Logger log, IHandler parent, ITableContent table) {
 		super(log, parent, table);
+	}
+	
+	public void setInserted(boolean inserted) {
+		this.inserted = inserted;
 	}
 
 	@Override
@@ -26,7 +32,10 @@ public class NestedTableHandler extends AbstractRealTableHandler {
 
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
-		state.setHandler(new NestedTableRowHandler(log, this, row));
+		NestedTableRowHandler rowHandler = new NestedTableRowHandler(log, this, row);
+		rowHandler.setInserted(inserted);
+
+		state.setHandler(rowHandler);
 		state.getHandler().startRow(state, row);
 	}
 	
