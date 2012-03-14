@@ -9,6 +9,7 @@ import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITableGroupContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.engine.ir.Expression;
+import org.eclipse.birt.report.engine.ir.GridItemDesign;
 import org.eclipse.birt.report.engine.ir.ReportElementDesign;
 
 import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
@@ -61,12 +62,20 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 		if( borderDefn != null ) {
 			state.insertBorderOverload(borderDefn);
 		}
+		
+		if( table.getGenerateBy() instanceof GridItemDesign ) {
+			startDetailsRow = state.rowNum;
+		}
 	}
 	
 	@Override
 	public void endTable(HandlerState state, ITableContent table) throws BirtException {
 		state.setHandler(parent);
 
+		if( table.getGenerateBy() instanceof GridItemDesign ) {
+			endDetailsRow = state.rowNum;
+		}
+		
 		state.getSmu().applyBottomBorderToRow( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, state.rowNum - 1, new BirtStyle( table ) );
 		
 		if( borderDefn != null ) {

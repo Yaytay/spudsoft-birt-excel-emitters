@@ -1,7 +1,6 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,6 +14,7 @@ import org.eclipse.birt.report.engine.content.IDataContent;
 import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.content.ILabelContent;
+import org.eclipse.birt.report.engine.content.IListContent;
 import org.eclipse.birt.report.engine.content.IPageContent;
 import org.eclipse.birt.report.engine.content.IReportContent;
 import org.eclipse.birt.report.engine.content.IRowContent;
@@ -266,6 +266,13 @@ public class PageHandler extends AbstractHandler {
         anchor.setDy2( smu.anchorDyFromPoints( ptHeight, cell.getRow().getHeightInPoints() ) );
         anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
 	    drawing.createPicture(anchor, cellImage.imageIdx);
+	}
+	
+	
+	@Override
+	public void startList(HandlerState state, IListContent list) throws BirtException {
+		state.setHandler(new TopLevelListHandler(log,this,list));
+		state.getHandler().startList(state, list);
 	}
 
 	@Override

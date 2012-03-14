@@ -10,6 +10,7 @@ import org.eclipse.birt.report.engine.content.IDataContent;
 import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.content.ILabelContent;
+import org.eclipse.birt.report.engine.content.IListContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
 import org.eclipse.birt.report.engine.content.impl.CellContent;
@@ -131,7 +132,6 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
-
 		int colSpan = ((ICellContent)element).getColSpan();
 		ITableHandler tableHandler = getAncestor(ITableHandler.class);
 		if( ( tableHandler != null ) 
@@ -150,6 +150,28 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 		} else {
 			state.setHandler(new FlattenedTableHandler(this, log, this, table));
 			state.getHandler().startTable(state, table);
+		}
+	}
+	
+	@Override
+	public void startList(HandlerState state, IListContent list) throws BirtException {
+		int colSpan = ((ICellContent)element).getColSpan();
+		ITableHandler tableHandler = getAncestor(ITableHandler.class);
+		if( ( tableHandler != null ) 
+				&& ( tableHandler.getColumnCount() == colSpan )
+				&& ( 1 == ( (CellDesign)( (CellContent)list.getParent() ).getGenerateBy()).getContentCount() )
+				) {
+			
+			containsTable = true;
+			parentRow = getAncestor(AbstractRealTableRowHandler.class);
+			interruptCell(state, false);
+			parentRow.interruptRow(state);
+			
+			state.setHandler(new NestedListHandler(log, this, list));
+			state.getHandler().startList(state, list);
+		} else {
+			state.setHandler(new FlattenedListHandler(this, log, this, list));
+			state.getHandler().startList(state, list);
 		}
 	}
 
