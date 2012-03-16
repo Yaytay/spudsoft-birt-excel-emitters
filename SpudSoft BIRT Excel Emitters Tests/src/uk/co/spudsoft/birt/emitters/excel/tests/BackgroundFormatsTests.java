@@ -40,8 +40,8 @@ public class BackgroundFormatsTests extends ReportRunner {
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(1).getCell(3)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(1).getCell(4)));
 			assertEquals( "false",                 formatter.formatCellValue(sheet.getRow(1).getCell(5)));
-			assertEquals( "Fri, 11 Oct 2019",      formatter.formatCellValue(sheet.getRow(1).getCell(6)));
-			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(1).getCell(7)));
+			assertEquals( "Oct 11, 2019",          formatter.formatCellValue(sheet.getRow(1).getCell(6)));
+			assertEquals( "1:18:46 PM",            formatter.formatCellValue(sheet.getRow(1).getCell(7)));
 
 			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(0).getCellStyle().getFillForegroundColorColor()).getARGBHex());
 			assertEquals( "FF000000",              ((XSSFColor)sheet.getRow(0).getCell(1).getCellStyle().getFillForegroundColorColor()).getARGBHex());
@@ -96,8 +96,8 @@ public class BackgroundFormatsTests extends ReportRunner {
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(1).getCell(3)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(1).getCell(4)));
 			assertEquals( "false",                 formatter.formatCellValue(sheet.getRow(1).getCell(5)));
-			assertEquals( "Fri, 11 Oct 2019",      formatter.formatCellValue(sheet.getRow(1).getCell(6)));
-			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(1).getCell(7)));
+			assertEquals( "Oct 11, 2019",          formatter.formatCellValue(sheet.getRow(1).getCell(6)));
+			assertEquals( "1:18:46 PM",            formatter.formatCellValue(sheet.getRow(1).getCell(7)));
 			
 			assertEquals( "FFFF:0:0",              ((HSSFColor)sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColorColor()).getHexString());
 			assertEquals( "FFFF:A5A5:0",           ((HSSFColor)sheet.getRow(1).getCell(2).getCellStyle().getFillForegroundColorColor()).getHexString());

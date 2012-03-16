@@ -30,8 +30,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
 import java.text.AttributedString;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -497,8 +500,8 @@ public abstract class StyleManagerUtils {
 			birtFormat = birtFormat.substring(0, brace);
 		}
 		return birtFormat;
-	}
-	
+	}	
+
 	/**
 	 * <p>
 	 * Convert a BIRT date/time format to a POI data format.
@@ -511,29 +514,29 @@ public abstract class StyleManagerUtils {
 	 * @return
 	 * A string representing a data format in Excel.
 	 */
-	private String poiDateTimeFormatFromBirt(String birtFormat) {
+	private String poiDateTimeFormatFromBirt(String birtFormat, Locale locale) {
         if ( "General Date".equalsIgnoreCase( birtFormat ) ) {
-        	return "dd/MM/yyyy hh:mm";
+        	birtFormat = DateFormatConverter.getJavaDateTimePattern(DateFormat.LONG, locale);
         }
         if ( "Long Date".equalsIgnoreCase( birtFormat ) ) {
-        	return "dddd, mmmm dd, yyyy";
+        	birtFormat = DateFormatConverter.getJavaDatePattern(DateFormat.LONG, locale);
         }
         if ( "Medium Date".equalsIgnoreCase( birtFormat ) ) {
-        	return "ddd, dd mmm yyyy";
+        	birtFormat = DateFormatConverter.getJavaDatePattern(DateFormat.MEDIUM, locale);
         }
         if ( "Short Date".equalsIgnoreCase( birtFormat ) ) {
-        	return "yyyy-MM-dd";
+        	birtFormat = DateFormatConverter.getJavaDatePattern(DateFormat.SHORT, locale);
         }
         if ( "Long Time".equalsIgnoreCase( birtFormat ) ) {
-        	return "hh:mm:ss";
+        	birtFormat = DateFormatConverter.getJavaTimePattern(DateFormat.LONG, locale);
         }
         if ( "Medium Time".equalsIgnoreCase( birtFormat ) ) {
-        	return "hh:mm";
+        	birtFormat = DateFormatConverter.getJavaTimePattern(DateFormat.MEDIUM, locale);
         }
         if ( "Short Time".equalsIgnoreCase( birtFormat ) ) {
-        	return "hh:mm";
+        	birtFormat = "kk:mm"; // DateFormatConverter.getJavaTimePattern(DateFormat.SHORT, locale);
         }
-		return birtFormat;
+		return DateFormatConverter.convert( locale, birtFormat );
 	}
 	
 	public static String getNumberFormat( BirtStyle style ) {
@@ -624,7 +627,7 @@ public abstract class StyleManagerUtils {
 	 * @param poiStyle
 	 * The CellStyle that is to receive the number format.
 	 */
-	public void applyNumberFormat(Workbook workbook, BirtStyle birtStyle, CellStyle poiStyle) {
+	public void applyNumberFormat(Workbook workbook, BirtStyle birtStyle, CellStyle poiStyle, Locale locale) {
 		String dataFormat = null;
 		String format = getNumberFormat(birtStyle);
 		if( format != null ) {
@@ -633,25 +636,25 @@ public abstract class StyleManagerUtils {
 		} else {
 			format = getDateTimeFormat(birtStyle);
 			if( format != null ) {
-				log.debug( "BIRT date/time format == " + format );
-				dataFormat = poiDateTimeFormatFromBirt( format );
+				log.debug( "BIRT date/time format == ", format );
+				dataFormat = poiDateTimeFormatFromBirt( format, locale );
 			} else {
 				format = getTimeFormat(birtStyle);
 				if( format != null ) {
-					log.debug( "BIRT time format == " + format );
-					dataFormat = poiDateTimeFormatFromBirt( format );
+					log.debug( "BIRT time format == ", format );
+					dataFormat = poiDateTimeFormatFromBirt( format, locale );
 				} else {
 					format = getDateFormat(birtStyle);
 					if( format != null ) {
-						log.debug( "BIRT date format == " + format );
-						dataFormat = poiDateTimeFormatFromBirt( format );
+						log.debug( "BIRT date format == ", format );
+						dataFormat = poiDateTimeFormatFromBirt( format, locale );
 					}
 				}
 			}
 		}
 		if( dataFormat != null ) {
 			DataFormat poiFormat = workbook.createDataFormat();
-			log.debug( "Setting POI data format to ", poiFormat);
+			log.debug( "Setting POI data format to ", dataFormat);
 			poiStyle.setDataFormat(poiFormat.getFormat(dataFormat));
 		}
 	}

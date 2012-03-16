@@ -36,8 +36,8 @@ public class AutoColWidthsTest extends ReportRunner {
 			assertEquals( 3812,                    sheet.getColumnWidth( 3 ) );
 			assertEquals( 3812,                    sheet.getColumnWidth( 4 ) );
 			assertEquals( 2048,                    sheet.getColumnWidth( 5 ) );
-			assertEquals( 3888,                    sheet.getColumnWidth( 6 ) );
-			assertEquals( 2048,                    sheet.getColumnWidth( 7 ) );
+			assertEquals( 3166,                    sheet.getColumnWidth( 6 ) );
+			assertEquals( 2822,                    sheet.getColumnWidth( 7 ) );
 			assertEquals( 2048,                    sheet.getColumnWidth( 8 ) );
 						
 			DataFormatter formatter = new DataFormatter();
@@ -47,8 +47,8 @@ public class AutoColWidthsTest extends ReportRunner {
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(2).getCell(3)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(2).getCell(4)));
 			assertEquals( "false",                 formatter.formatCellValue(sheet.getRow(2).getCell(5)));
-			assertEquals( "Fri, 11 Oct 2019",      formatter.formatCellValue(sheet.getRow(2).getCell(6)));
-			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(2).getCell(7)));
+			assertEquals( "Oct 11, 2019",          formatter.formatCellValue(sheet.getRow(2).getCell(6)));
+			assertEquals( "1:18:46 PM",            formatter.formatCellValue(sheet.getRow(2).getCell(7)));
 
 		} finally {
 			inputStream.close();

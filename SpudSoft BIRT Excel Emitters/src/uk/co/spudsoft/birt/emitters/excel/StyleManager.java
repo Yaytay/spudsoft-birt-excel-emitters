@@ -22,6 +22,7 @@ package uk.co.spudsoft.birt.emitters.excel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -65,6 +66,7 @@ public class StyleManager {
 	private StyleManagerUtils smu;
 	private CSSEngine cssEngine;
 	private Logger log;
+	private Locale locale;
 
 	/**
 	 * @param workbook
@@ -78,12 +80,13 @@ public class StyleManager {
 	 * @param cssEngine
 	 * BIRT CSS Engine for creating BIRT styles. 
 	 */
-	public StyleManager(Workbook workbook, Logger log, StyleManagerUtils smu, CSSEngine cssEngine) {
+	public StyleManager(Workbook workbook, Logger log, StyleManagerUtils smu, CSSEngine cssEngine, Locale locale) {
 		this.workbook = workbook;
 		this.fm = new FontManager(cssEngine, workbook, smu);
 		this.log = log;
 		this.smu = smu;
 		this.cssEngine = cssEngine;
+		this.locale = locale;
 	}
 	
 	public FontManager getFontManager() {
@@ -187,7 +190,7 @@ public class StyleManager {
 		// Bottom border 
 		smu.applyBorderStyle(workbook, poiStyle, BorderSide.BOTTOM, birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_COLOR), birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_STYLE), birtStyle.getProperty(StyleConstants.STYLE_BORDER_BOTTOM_WIDTH));
 		// Number format
-		smu.applyNumberFormat(workbook, birtStyle, poiStyle);
+		smu.applyNumberFormat(workbook, birtStyle, poiStyle, locale);
 		// Whitespace/wrap
 		if( CSSConstants.CSS_PRE_VALUE.equals( birtStyle.getString( StyleConstants.STYLE_WHITE_SPACE ) ) ) {
 			poiStyle.setWrapText( true );

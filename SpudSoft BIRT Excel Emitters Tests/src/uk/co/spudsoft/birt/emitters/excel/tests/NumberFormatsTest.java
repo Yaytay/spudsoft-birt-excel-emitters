@@ -47,16 +47,16 @@ public class NumberFormatsTest extends ReportRunner {
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(1).getCell(3)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(1).getCell(4)));
 			assertEquals( "false",                 formatter.formatCellValue(sheet.getRow(1).getCell(5)));
-			assertEquals( "Fri, 11 Oct 2019",      formatter.formatCellValue(sheet.getRow(1).getCell(6)));
-			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(1).getCell(7)));
+			assertEquals( "Oct 11, 2019",          formatter.formatCellValue(sheet.getRow(1).getCell(6)));
+			assertEquals( "1:18:46 PM",            formatter.formatCellValue(sheet.getRow(1).getCell(7)));
 
 			assertEquals( "2",                     formatter.formatCellValue(sheet.getRow(2).getCell(1)));
 			assertEquals( "2019-10-11 13:18:46",   formatter.formatCellValue(sheet.getRow(2).getCell(2)));
 			assertEquals( "6.2831853072",          formatter.formatCellValue(sheet.getRow(2).getCell(3)));
 			assertEquals( "6.2831853072",          formatter.formatCellValue(sheet.getRow(2).getCell(4)));
 			assertEquals( "true",                  formatter.formatCellValue(sheet.getRow(2).getCell(5)));
-			assertEquals( "Fri, 11 Oct 2019",      formatter.formatCellValue(sheet.getRow(2).getCell(6)));
-			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(2).getCell(7)));
+			assertEquals( "Oct 11, 2019",          formatter.formatCellValue(sheet.getRow(2).getCell(6)));
+			assertEquals( "1:18:46 PM",            formatter.formatCellValue(sheet.getRow(2).getCell(7)));
 
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(5).getCell(1)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(5).getCell(2)));
@@ -75,19 +75,19 @@ public class NumberFormatsTest extends ReportRunner {
 			assertEquals( "6.28E00",               formatter.formatCellValue(sheet.getRow(6).getCell(7)));
 			
 			assertEquals( "1",                     formatter.formatCellValue(sheet.getRow(9).getCell(1)));
-			assertEquals( "11/10/2019 13:18",      formatter.formatCellValue(sheet.getRow(9).getCell(2)));
+			assertEquals( "October 11, 2019 1:18:46 PM",      formatter.formatCellValue(sheet.getRow(9).getCell(2)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(9).getCell(3)));
 			assertEquals( "3.1415926536",          formatter.formatCellValue(sheet.getRow(9).getCell(4)));
 			assertEquals( "false",                 formatter.formatCellValue(sheet.getRow(9).getCell(5)));
-			assertEquals( "2019-10-11",            formatter.formatCellValue(sheet.getRow(9).getCell(6)));
+			assertEquals( "10/11/19",              formatter.formatCellValue(sheet.getRow(9).getCell(6)));
 			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(9).getCell(7)));
 			
 			assertEquals( "2",                     formatter.formatCellValue(sheet.getRow(10).getCell(1)));
-			assertEquals( "11/10/2019 13:18",      formatter.formatCellValue(sheet.getRow(10).getCell(2)));
+			assertEquals( "October 11, 2019 1:18:46 PM",      formatter.formatCellValue(sheet.getRow(10).getCell(2)));
 			assertEquals( "6.2831853072",          formatter.formatCellValue(sheet.getRow(10).getCell(3)));
 			assertEquals( "6.2831853072",          formatter.formatCellValue(sheet.getRow(10).getCell(4)));
 			assertEquals( "true",                  formatter.formatCellValue(sheet.getRow(10).getCell(5)));
-			assertEquals( "2019-10-11",            formatter.formatCellValue(sheet.getRow(10).getCell(6)));
+			assertEquals( "10/11/19",              formatter.formatCellValue(sheet.getRow(10).getCell(6)));
 			assertEquals( "13:18",                 formatter.formatCellValue(sheet.getRow(10).getCell(7)));
 			
 			assertEquals( "MSRP $3.14",            formatter.formatCellValue(sheet.getRow(15).getCell(1)));

@@ -147,7 +147,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	    CSSEngine cssEngine = report.getRoot().getCSSEngine();
 		StyleManagerUtils smu = utilsFactory.create(log);
 	    
-	    StyleManager sm = new StyleManager( wb, log, smu, cssEngine );
+	    StyleManager sm = new StyleManager( wb, log, smu, cssEngine, report.getReportContext().getLocale() );
 	    
 		handlerState = new HandlerState(this, log, smu, wb, sm, renderOptions);
 		handlerState.setHandler( new PageHandler(log, null) );
