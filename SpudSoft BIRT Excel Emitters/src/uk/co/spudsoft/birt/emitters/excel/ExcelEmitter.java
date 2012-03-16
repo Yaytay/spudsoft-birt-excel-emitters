@@ -44,6 +44,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	public static final String ROTATION_PROP = "ExcelEmitter.Rotation";
 	public static final String FORCEAUTOCOLWIDTHS_PROP = "ExcelEmitter.ForceAutoColWidths";
 	public static final String SINGLE_SHEET = "ExcelEmitter.SingleSheet";
+	public static final String DISABLE_GROUPING = "ExcelEmitter.DisableGrouping";
 
 	public static final String DISPLAYFORMULAS_PROP = "ExcelEmitter.DisplayFormulas";
 	public static final String DISPLAYGRIDLINES_PROP = "ExcelEmitter.DisplayGridlines";

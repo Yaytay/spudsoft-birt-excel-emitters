@@ -59,6 +59,7 @@ import org.eclipse.birt.report.engine.api.impl.ReportEngine;
 import org.eclipse.birt.report.model.api.IResourceLocator;
 
 import uk.co.spudsoft.birt.emitters.bugfix.FixedRenderTask;
+import uk.co.spudsoft.birt.emitters.excel.ExcelEmitter;
 import uk.co.spudsoft.birt.emitters.excel.tests.framework.Activator;
 
 public class ReportRunner {
@@ -72,6 +73,7 @@ public class ReportRunner {
 	protected Boolean displayGridlines = null;
 	protected Boolean displayRowColHeadings = null;
 	protected Boolean displayZeros = null;
+	protected Boolean disableGrouping = null;
 	
 	protected Map<String,Object> parameters = new HashMap<String, Object>();
 	protected long startTime;
@@ -500,6 +502,9 @@ public class ReportRunner {
 		}
 		if( displayZeros != null ) {
 			renderOptions.setOption( "ExcelEmitter.DisplayZeros", displayZeros );
+		}
+		if( disableGrouping != null ) {
+			renderOptions.setOption( ExcelEmitter.DISABLE_GROUPING, disableGrouping );
 		}
 		
 		return renderOptions;
