@@ -55,7 +55,7 @@ public class StringCellHandler extends CellContentHandler {
 		}  else if( obj instanceof IForeignContent ) {
 			contentVisitor.visitForeign( (IForeignContent)obj, null );
 		} else {
-			System.err.println( "Not visiting " + obj.getClass() );
+			log.warn(0, "Not visiting " + obj.getClass(), null);
 		}
 	}
 

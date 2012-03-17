@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IAutoTextContent;
+import org.eclipse.birt.report.engine.content.IContent;
 import org.eclipse.birt.report.engine.content.IDataContent;
 import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
@@ -24,6 +25,7 @@ import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.engine.ir.Expression;
 import org.eclipse.birt.report.engine.ir.Report;
+import org.eclipse.birt.report.engine.presentation.ContentEmitterVisitor;
 
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
 import uk.co.spudsoft.birt.emitters.excel.ClientAnchorConversions;
@@ -98,6 +100,18 @@ public class PageHandler extends AbstractHandler {
 			}
 		}
 	}
+
+	@SuppressWarnings("rawtypes")
+	private void outputStructuredHeaderFooter( HandlerState state, Collection birtHeaderFooter ) throws BirtException {
+		ContentEmitterVisitor visitor = new ContentEmitterVisitor(state.getEmitter());
+		for( Object content : birtHeaderFooter ) {
+			System.out.println( "content type = " + content.getClass() );
+			if( content instanceof IContent ) {
+				visitor.visit((IContent)content, null);
+			}
+		}
+		
+	}
 	
 	@Override
 	public void startPage(HandlerState state, IPageContent page) throws BirtException {
@@ -135,12 +149,16 @@ public class PageHandler extends AbstractHandler {
 			state.currentSheet.setDisplayZeros(false);
 		}
 		
-		processHeaderFooter(state, page.getHeader(), state.currentSheet.getHeader() );
-		processHeaderFooter(state, page.getFooter(), state.currentSheet.getFooter() );
+		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.STRUCTURED_HEADER, false ) ) {
+			outputStructuredHeaderFooter(state, page.getHeader());
+		} else {
+			processHeaderFooter(state, page.getHeader(), state.currentSheet.getHeader() );
+			processHeaderFooter(state, page.getFooter(), state.currentSheet.getFooter() );
+		} 
 		
 		state.getSmu().prepareMarginDimensions(state.currentSheet, page);
 	}
-
+	
 	@Override
 	public void endPage(HandlerState state, IPageContent page) throws BirtException {
 		
@@ -157,6 +175,10 @@ public class PageHandler extends AbstractHandler {
 			&& ! state.reportEnding ) {
 			return ;
 		}		
+		
+		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.STRUCTURED_HEADER, false ) ) {
+			outputStructuredHeaderFooter(state, page.getFooter());
+		} 
 		
 		if( state.sheetName != null ) {
 			log.debug("Attempting to name sheet ", ( state.getWb().getNumberOfSheets() - 1 ), "\"", state.sheetName, "\" ");

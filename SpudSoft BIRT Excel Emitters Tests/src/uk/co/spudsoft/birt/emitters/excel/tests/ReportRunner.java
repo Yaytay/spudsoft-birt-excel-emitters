@@ -74,6 +74,7 @@ public class ReportRunner {
 	protected Boolean displayRowColHeadings = null;
 	protected Boolean displayZeros = null;
 	protected Boolean disableGrouping = null;
+	protected Boolean structuredHeader = null;
 	
 	protected Map<String,Object> parameters = new HashMap<String, Object>();
 	protected long startTime;
@@ -505,6 +506,9 @@ public class ReportRunner {
 		}
 		if( disableGrouping != null ) {
 			renderOptions.setOption( ExcelEmitter.DISABLE_GROUPING, disableGrouping );
+		}
+		if( structuredHeader != null ) {
+			renderOptions.setOption( ExcelEmitter.STRUCTURED_HEADER, structuredHeader );
 		}
 		
 		return renderOptions;
