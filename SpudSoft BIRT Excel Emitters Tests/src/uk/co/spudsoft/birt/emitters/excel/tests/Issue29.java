@@ -39,7 +39,7 @@ public class Issue29 extends ReportRunner {
 				}
 			}
 			assertEquals( "Bibble", sheet.getRow(5).getCell(0).getStringCellValue() );
-			assertEquals( 34.7, sheet.getRow(0).getHeightInPoints(), 0.1 );
+			assertEquals( 24.0, sheet.getRow(0).getHeightInPoints(), 0.1 );
 		
 		} finally {
 			inputStream.close();
@@ -70,7 +70,7 @@ public class Issue29 extends ReportRunner {
 				}
 			}
 			assertEquals( "Bibble", sheet.getRow(5).getCell(0).getStringCellValue() );
-			assertEquals( 34.7, sheet.getRow(0).getHeightInPoints(), 0.1 );
+			assertEquals( 24.0, sheet.getRow(0).getHeightInPoints(), 0.1 );
 		
 		} finally {
 			inputStream.close();

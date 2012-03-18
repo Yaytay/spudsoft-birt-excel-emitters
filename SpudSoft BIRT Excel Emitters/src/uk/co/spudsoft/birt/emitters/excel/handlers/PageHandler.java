@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IAutoTextContent;
 import org.eclipse.birt.report.engine.content.IContent;
@@ -208,6 +210,16 @@ public class PageHandler extends AbstractHandler {
 		
 		state.currentSheet = null;
 	}
+	
+	private CellRangeAddress getMergedRegionBegunBy( Sheet sheet, int row, int col ) {
+		for( int i = 0; i < sheet.getNumMergedRegions(); ++i ) {
+			CellRangeAddress range = sheet.getMergedRegion(i);
+			if( ( range.getFirstColumn() == col ) && ( range.getFirstRow() == row ) ) {
+				return range;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * <p>
@@ -243,11 +255,13 @@ public class PageHandler extends AbstractHandler {
             mmWidth = ClientAnchorConversions.pixels2Millimetres( image.getWidth().getMeasure() );
         }
 		// Allow image to span multiple columns
-		if(cellImage.spanColumns) {
+		CellRangeAddress mergedRegion = getMergedRegionBegunBy( state.currentSheet, location.getRow(), location.getCol() );
+		if( (cellImage.spanColumns) || ( mergedRegion != null ) ) {
 	        log.debug( "Image size: ", image.getWidth(), " translates as mmWidth = ", mmWidth );
 	        if( mmWidth > 0) {
 	            double mmAccumulatedWidth = 0;
-	            for( endCol = cell.getColumnIndex(); mmAccumulatedWidth < mmWidth; ++ endCol ) {
+	            int endColLimit = cellImage.spanColumns ? 256 : mergedRegion.getLastColumn();
+	            for( endCol = cell.getColumnIndex(); mmAccumulatedWidth < mmWidth && endCol < endColLimit; ++ endCol ) {
 	                lastColWidth = ClientAnchorConversions.widthUnits2Millimetres( (short)state.currentSheet.getColumnWidth( endCol ) )
 	                		+ 2.0;
 	                mmAccumulatedWidth += lastColWidth;
@@ -261,7 +275,6 @@ public class PageHandler extends AbstractHandler {
 	            }
 	        }
 		} else {
-			// Adjust the height to fit the aspect ratio caused by the column width
 			float widthRatio = (float)(mmWidth / lastColWidth);
 			ptHeight = ptHeight / widthRatio;
 		}
