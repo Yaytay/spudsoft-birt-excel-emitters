@@ -3,7 +3,6 @@ package uk.co.spudsoft.birt.emitters.excel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.eclipse.birt.core.exception.BirtException;
@@ -30,8 +29,6 @@ import org.eclipse.birt.report.engine.content.ITextContent;
 import org.eclipse.birt.report.engine.css.engine.CSSEngine;
 import org.eclipse.birt.report.engine.emitter.IContentEmitter;
 import org.eclipse.birt.report.engine.emitter.IEmitterServices;
-import org.eclipse.birt.report.engine.ir.Expression;
-import org.eclipse.birt.report.engine.ir.Report;
 
 import uk.co.spudsoft.birt.emitters.excel.framework.ExcelEmitterPlugin;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
@@ -135,7 +132,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 		}
 				
 		renderOptions = service.getRenderOption();
-		boolean debug = EmitterServices.booleanOption( renderOptions, null, DEBUG, false );
+		boolean debug = EmitterServices.booleanOption( renderOptions, (IContent)null, DEBUG, false );
 		if( debug )  {
 			this.log.setDebug(debug);
 		}		
@@ -156,15 +153,8 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	}
 
 	public void end( IReportContent report ) throws BirtException {
-		Map<String,Expression> userProperties = null;
-		if( report != null ) {
-			Report design = report.getDesign();
-			if( design != null ) {
-				userProperties = design.getUserProperties();
-			}
-		}
 		
-		if( EmitterServices.booleanOption( handlerState.getRenderOptions(), userProperties, ExcelEmitter.SINGLE_SHEET, false ) ) {
+		if( EmitterServices.booleanOption( handlerState.getRenderOptions(), report, ExcelEmitter.SINGLE_SHEET, false ) ) {
 			handlerState.reportEnding = true;
 			handlerState.getHandler().endPage(handlerState, lastPage);
 		}

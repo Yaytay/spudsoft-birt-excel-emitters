@@ -2,6 +2,7 @@ package uk.co.spudsoft.birt.emitters.excel.handlers;
 
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IAutoTextContent;
+import org.eclipse.birt.report.engine.content.IContent;
 import org.eclipse.birt.report.engine.content.IDataContent;
 import org.eclipse.birt.report.engine.content.IForeignContent;
 import org.eclipse.birt.report.engine.content.IImageContent;
@@ -9,7 +10,6 @@ import org.eclipse.birt.report.engine.content.ILabelContent;
 import org.eclipse.birt.report.engine.content.IListBandContent;
 import org.eclipse.birt.report.engine.content.IListContent;
 import org.eclipse.birt.report.engine.content.IListGroupContent;
-import org.eclipse.birt.report.engine.content.IStyledElement;
 import org.eclipse.birt.report.engine.content.ITextContent;
 
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
@@ -19,7 +19,7 @@ public class FlattenedListHandler extends AbstractHandler {
 
 	private CellContentHandler contentHandler;
 	
-	public FlattenedListHandler(CellContentHandler contentHandler, Logger log, IHandler parent, IStyledElement element) {
+	public FlattenedListHandler(CellContentHandler contentHandler, Logger log, IHandler parent, IContent element) {
 		super(log, parent, element);
 		this.contentHandler = contentHandler;
 	}

@@ -55,27 +55,20 @@ public class AbstractRealListHandler extends AbstractHandler {
 			state.removeBorderOverload(borderDefn);
 		}
 		
-		Map<String,Expression> userProperties = null;
-		Object generatorObject = list.getGenerateBy();
-		if( generatorObject instanceof ReportElementDesign ) {
-			ReportElementDesign generatorDesign = (ReportElementDesign)generatorObject;
-			userProperties = generatorDesign.getUserProperties(); 
-		}		
-		
 		if( list.getBookmark() != null ) {
 			createName(state, prepareName( list.getBookmark() ), startRow, 0, state.rowNum - 1, 0);
 		}
 		
-		if( EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
+		if( EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
 			state.currentSheet.setDisplayFormulas(true);
 		}
-		if( ! EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
 			state.currentSheet.setDisplayGridlines(false);
 		}
-		if( ! EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
 			state.currentSheet.setDisplayRowColHeadings(false);
 		}
-		if( ! EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
 			state.currentSheet.setDisplayZeros(false);
 		}
 	}

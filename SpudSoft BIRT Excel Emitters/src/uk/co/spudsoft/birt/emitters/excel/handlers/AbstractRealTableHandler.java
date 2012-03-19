@@ -84,15 +84,8 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 		
 		log.debug( "Details rows from ", startDetailsRow, " to ", endDetailsRow );
 		
-		Map<String,Expression> userProperties = null;
-		Object generatorObject = table.getGenerateBy();
-		if( generatorObject instanceof ReportElementDesign ) {
-			ReportElementDesign generatorDesign = (ReportElementDesign)generatorObject;
-			userProperties = generatorDesign.getUserProperties(); 
-		}		
-		
 		if( ( startDetailsRow > 0 ) && ( endDetailsRow > startDetailsRow ) ) {
-			boolean forceAutoColWidths = EmitterServices.booleanOption( null, userProperties, ExcelEmitter.FORCEAUTOCOLWIDTHS_PROP, false );
+			boolean forceAutoColWidths = EmitterServices.booleanOption( null, table, ExcelEmitter.FORCEAUTOCOLWIDTHS_PROP, false );
 			for( int col = 0; col < table.getColumnCount(); ++col ) {
 				int oldWidth = state.currentSheet.getColumnWidth(col);
 				if( forceAutoColWidths || ( oldWidth == 256 * state.currentSheet.getDefaultColumnWidth() ) ) {
@@ -117,16 +110,16 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 			createName(state, prepareName( table.getBookmark() ), startRow, 0, state.rowNum - 1, table.getColumnCount() - 1);
 		}
 		
-		if( EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
+		if( EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
 			state.currentSheet.setDisplayFormulas(true);
 		}
-		if( ! EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
 			state.currentSheet.setDisplayGridlines(false);
 		}
-		if( ! EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
 			state.currentSheet.setDisplayRowColHeadings(false);
 		}
-		if( ! EmitterServices.booleanOption( null, userProperties, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
 			state.currentSheet.setDisplayZeros(false);
 		}
 	}

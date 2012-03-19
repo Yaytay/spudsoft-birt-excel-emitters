@@ -66,8 +66,8 @@ public class AbstractRealTableRowHandler extends AbstractHandler {
 	
 	public void interruptRow(HandlerState state) throws BirtException {
 		log.debug( "Interrupt row at ", state.rowNum );
-
-		boolean blankRow = EmitterServices.booleanOption( state.getRenderOptions(), null, ExcelEmitter.REMOVE_BLANK_ROWS, true );
+	
+		boolean blankRow = EmitterServices.booleanOption( state.getRenderOptions(), element, ExcelEmitter.REMOVE_BLANK_ROWS, true );
 
 		if( state.rowHasMergedCellsWithBorders( state.rowNum ) ) {
 			for( AreaBorders areaBorder : state.areaBorders ) {

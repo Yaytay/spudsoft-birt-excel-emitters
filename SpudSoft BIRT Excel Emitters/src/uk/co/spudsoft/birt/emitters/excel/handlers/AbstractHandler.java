@@ -34,11 +34,11 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 public class AbstractHandler implements IHandler {
 
 	protected Logger log;
-	protected IStyledElement element;
+	protected IContent element;
 	protected IHandler parent;
 	private CSSValue backgroundColour;
 	
-	public AbstractHandler(Logger log, IHandler parent, IStyledElement element) {
+	public AbstractHandler(Logger log, IHandler parent, IContent element) {
 		this.log = log;
 		this.parent = parent;
 		this.element = element;

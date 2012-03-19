@@ -1,7 +1,6 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -19,14 +18,11 @@ import org.eclipse.birt.report.engine.content.IImageContent;
 import org.eclipse.birt.report.engine.content.ILabelContent;
 import org.eclipse.birt.report.engine.content.IListContent;
 import org.eclipse.birt.report.engine.content.IPageContent;
-import org.eclipse.birt.report.engine.content.IReportContent;
 import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITextContent;
 import org.eclipse.birt.report.engine.content.impl.CellContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
-import org.eclipse.birt.report.engine.ir.Expression;
-import org.eclipse.birt.report.engine.ir.Report;
 import org.eclipse.birt.report.engine.presentation.ContentEmitterVisitor;
 
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
@@ -117,16 +113,8 @@ public class PageHandler extends AbstractHandler {
 	
 	@Override
 	public void startPage(HandlerState state, IPageContent page) throws BirtException {
-		Map<String,Expression> userProperties = null;
-		IReportContent content = page.getReportContent();
-		if( content != null ) {
-			Report design = content.getDesign();
-			if( design != null ) {
-				userProperties = design.getUserProperties();
-			}
-		}
 		
-		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.SINGLE_SHEET, false )  
+		if( EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.SINGLE_SHEET, false )  
 				&& ( state.getWb().getNumberOfSheets() > 0 ) ) {
 			return ;
 		}
@@ -138,20 +126,20 @@ public class PageHandler extends AbstractHandler {
 			setupPageSize(state, page);
 		}
 		
-		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
+		if( EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
 			state.currentSheet.setDisplayFormulas(true);
 		}
-		if( ! EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
 			state.currentSheet.setDisplayGridlines(false);
 		}
-		if( ! EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
 			state.currentSheet.setDisplayRowColHeadings(false);
 		}
-		if( ! EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
 			state.currentSheet.setDisplayZeros(false);
 		}
 		
-		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.STRUCTURED_HEADER, false ) ) {
+		if( EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.STRUCTURED_HEADER, false ) ) {
 			outputStructuredHeaderFooter(state, page.getHeader());
 		} else {
 			processHeaderFooter(state, page.getHeader(), state.currentSheet.getHeader() );
@@ -164,21 +152,12 @@ public class PageHandler extends AbstractHandler {
 	@Override
 	public void endPage(HandlerState state, IPageContent page) throws BirtException {
 		
-		Map<String,Expression> userProperties = null;
-		IReportContent content = page.getReportContent();
-		if( content != null ) {
-			Report design = content.getDesign();
-			if( design != null ) {
-				userProperties = design.getUserProperties();
-			}
-		}
-
-		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.SINGLE_SHEET, false )  
+		if( EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.SINGLE_SHEET, false )  
 			&& ! state.reportEnding ) {
 			return ;
 		}		
 		
-		if( EmitterServices.booleanOption( state.getRenderOptions(), userProperties, ExcelEmitter.STRUCTURED_HEADER, false ) ) {
+		if( EmitterServices.booleanOption( state.getRenderOptions(), page, ExcelEmitter.STRUCTURED_HEADER, false ) ) {
 			outputStructuredHeaderFooter(state, page.getFooter());
 		} 
 		
