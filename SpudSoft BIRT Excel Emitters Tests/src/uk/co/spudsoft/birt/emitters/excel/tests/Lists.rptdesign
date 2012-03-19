@@ -588,6 +588,13 @@ from CLASSICMODELS.CUSTOMERS]]></xml-property>
     </page-setup>
     <body>
         <list id="124">
+            <list-property name="userProperties">
+                <structure>
+                    <property name="name">ExcelEmitter.DisableGrouping</property>
+                    <property name="type">boolean</property>
+                </structure>
+            </list-property>
+            <property name="ExcelEmitter.DisableGrouping">true</property>
             <property name="borderBottomColor">#FFFF00</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderLeftColor">#FFFF00</property>
@@ -800,6 +807,13 @@ from CLASSICMODELS.CUSTOMERS]]></xml-property>
                                 <property name="colSpan">3</property>
                                 <property name="rowSpan">1</property>
                                 <list id="163">
+                                    <list-property name="userProperties">
+                                        <structure>
+                                            <property name="name">ExcelEmitter.DisableGrouping</property>
+                                            <property name="type">boolean</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="ExcelEmitter.DisableGrouping">false</property>
                                     <header>
                                         <label id="164">
                                             <text-property name="text">Full Width Nested List Header</text-property>

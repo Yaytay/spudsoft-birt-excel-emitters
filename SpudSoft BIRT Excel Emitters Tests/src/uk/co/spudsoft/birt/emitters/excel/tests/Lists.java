@@ -35,6 +35,9 @@ public class Lists extends ReportRunner {
 			assertEquals( 9, this.firstNullRow(workbook.getSheetAt(8)));
 			assertEquals( 11, this.firstNullRow(workbook.getSheetAt(9)));
 
+			assertEquals( "Australia", workbook.getSheetAt(0).getSheetName() );
+			assertEquals( "Austria", workbook.getSheetAt(1).getSheetName() );
+			
 		} finally {
 			inputStream.close();
 		}
