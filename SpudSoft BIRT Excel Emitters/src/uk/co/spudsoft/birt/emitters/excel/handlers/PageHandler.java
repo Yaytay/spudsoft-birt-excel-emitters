@@ -186,6 +186,7 @@ public class PageHandler extends AbstractHandler {
 		state.rowNum = 0;
 		state.colNum = 0;
 		state.clearRowSpans();
+		state.areaBorders.clear();
 		
 		state.currentSheet = null;
 	}
