@@ -31,7 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URLConnection;
 import java.text.AttributedString;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -493,6 +492,10 @@ public abstract class StyleManagerUtils {
 		if( "General Number".equalsIgnoreCase(birtFormat)) {
 			return null;
 		}
+		if( birtFormat.startsWith( ExcelEmitter.CUSTOM_NUMBER_FORMAT ) ) {
+			return birtFormat.substring(ExcelEmitter.CUSTOM_NUMBER_FORMAT.length());
+		}
+			
 		birtFormat = birtFormat.replace("E00", "E+00");
 		birtFormat = birtFormat.replaceAll("^([^0#.\\-,E;%\u2030\u00A4']*)", "\"$1\"");
 		int brace = birtFormat.indexOf('{');
@@ -583,6 +586,17 @@ public abstract class StyleManagerUtils {
 		newValue.setNumberFormat( dataValue.getNumberPattern(), dataValue.getNumberLocale() );
 		newValue.setStringFormat( dataValue.getStringPattern(), dataValue.getStringLocale() );
 		return newValue;
+	}
+	
+	public static void setNumberFormat( BirtStyle style, String pattern, String locale ) {		
+		DataFormatValue dfv = (DataFormatValue)style.getProperty( StyleConstants.STYLE_DATA_FORMAT );
+		if( dfv == null ) {
+			dfv = new DataFormatValue();
+		} else {
+			dfv = cloneDataFormatValue( dfv );
+		}
+		dfv.setNumberFormat( pattern, locale );
+		style.setProperty( StyleConstants.STYLE_DATA_FORMAT, dfv);
 	}
 	
 	public static void setDateFormat( BirtStyle style, String pattern, String locale ) {		

@@ -35,6 +35,8 @@ import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
 import uk.co.spudsoft.birt.emitters.excel.ClientAnchorConversions;
 import uk.co.spudsoft.birt.emitters.excel.Coordinate;
+import uk.co.spudsoft.birt.emitters.excel.EmitterServices;
+import uk.co.spudsoft.birt.emitters.excel.ExcelEmitter;
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 import uk.co.spudsoft.birt.emitters.excel.RichTextRun;
 import uk.co.spudsoft.birt.emitters.excel.StyleManager;
@@ -201,6 +203,11 @@ public class CellContentHandler extends AbstractHandler {
 			if( mergedRegionBorders != null ) {
 				state.insertBorderOverload( mergedRegionBorders );
 			}
+		}
+		
+		String customNumberFormat = EmitterServices.stringOption(state.getRenderOptions(), element, ExcelEmitter.CUSTOM_NUMBER_FORMAT, null);
+		if( customNumberFormat != null ) {
+			StyleManagerUtils.setNumberFormat(birtCellStyle, ExcelEmitter.CUSTOM_NUMBER_FORMAT + customNumberFormat, null);
 		}
 		
 		setCellStyle(sm, cell, birtCellStyle, lastValue);
