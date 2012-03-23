@@ -237,7 +237,7 @@ public class CellContentHandler extends AbstractHandler {
 	 * The sum of the widths of all columns between startCol and endCol (inclusive) in millimetres.
 	 */
 	private double spanWidthMillimetres( Sheet sheet, int startCol, int endCol ) {
-		short result = 0;
+		int result = 0;
 		for ( int columnIndex = startCol; columnIndex <= endCol; ++columnIndex ) {
 			result += sheet.getColumnWidth(columnIndex);
 		}

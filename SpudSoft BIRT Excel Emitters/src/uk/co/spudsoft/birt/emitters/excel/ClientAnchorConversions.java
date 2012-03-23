@@ -52,7 +52,7 @@ public class ClientAnchorConversions {
      * @return
      * The size in millimetres.
      */
-    public static double widthUnits2Millimetres( short widthUnits ) {
+    public static double widthUnits2Millimetres( int widthUnits ) {
         int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR) * UNIT_OFFSET_LENGTH;
         int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
         pixels += Math.round(offsetWidthUnits / ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
