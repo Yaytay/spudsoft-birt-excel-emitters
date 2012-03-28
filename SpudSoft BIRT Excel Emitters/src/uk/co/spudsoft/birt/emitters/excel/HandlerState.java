@@ -194,12 +194,15 @@ public class HandlerState {
 	}
 	
 	public void addRowSpan(int rowX, int colX, int rowY, int colY) {
+		log.debug( "addRowSpan [" + rowX + "," + colX + "] - [" + rowY + "," + colY + "]" );
 	    rowSpans.add(new Area(new Coordinate(rowX, colX), new Coordinate(rowY, colY)));
 	}
 	
     public int computeNumberSpanBefore(int row, int col) {
         int i = 0;
         for(Area a : rowSpans) {
+        	log.debug( "Considering span [ ", a.x.getRow(), ",", a.x.getCol(), "]-[", a.y.getRow(), ",", a.y.getCol(), "] for ", row, ",", col );
+        	
         	// I'm now not removing passed spans, so do check a.y.row()
         	if( a.y.getRow() < row ) {
         		continue;

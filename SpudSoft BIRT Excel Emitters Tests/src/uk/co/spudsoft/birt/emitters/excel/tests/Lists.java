@@ -15,7 +15,7 @@ public class Lists extends ReportRunner {
 	@Test
 	public void testLists() throws BirtException, IOException {
 
-		debug = false;
+		debug = true;
 		InputStream inputStream = runAndRenderReport("Lists.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {

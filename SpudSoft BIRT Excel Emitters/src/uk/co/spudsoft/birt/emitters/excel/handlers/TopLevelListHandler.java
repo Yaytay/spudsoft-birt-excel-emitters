@@ -32,6 +32,7 @@ public class TopLevelListHandler extends AbstractRealListHandler {
 	
 	@Override
 	public void startList(HandlerState state, IListContent list) throws BirtException {
+		log.debug( "Call startList on ", this );
 		super.startList(state, list);
 		String name = list.getName();
 		if( ( name != null ) && ! name.isEmpty() ) {
@@ -44,7 +45,8 @@ public class TopLevelListHandler extends AbstractRealListHandler {
 	
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
-		state.setHandler(new NestedTableHandler(log, this, table));
+		++state.colNum;
+		state.setHandler(new NestedTableHandler(log, this, table, 1));
 		state.getHandler().startTable(state, table);
 	}
 

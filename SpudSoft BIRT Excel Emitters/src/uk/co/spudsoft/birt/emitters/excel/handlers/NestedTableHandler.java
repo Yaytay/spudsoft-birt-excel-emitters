@@ -4,23 +4,52 @@ import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 
+import uk.co.spudsoft.birt.emitters.excel.Area;
+import uk.co.spudsoft.birt.emitters.excel.Coordinate;
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
 public class NestedTableHandler extends AbstractRealTableHandler {
 	
 	boolean inserted = false;
+	
+	private Coordinate topLeft;
+	private Coordinate bottomRight;
+	private int parentRowSpan;
+	
+	@Override
+	public String toString() {
+		return "NestedTableHandler [topLeft=" + topLeft + ", bottomRight=" + bottomRight + ", parentRowSpan=" + parentRowSpan + "]";
+	}
 
-	public NestedTableHandler(Logger log, IHandler parent, ITableContent table) {
+	public NestedTableHandler(Logger log, IHandler parent, ITableContent table, int parentRowSpan) {
 		super(log, parent, table);
+		this.parentRowSpan = parentRowSpan;
 	}
 	
 	public void setInserted(boolean inserted) {
 		this.inserted = inserted;
 	}
+	
+	public boolean includesRow( int rowNum ) {
+		return ( ( topLeft.getRow() <= rowNum ) && ( bottomRight.getRow() >= rowNum ) );
+	}
+	
+	public int extendParentsRowBy( int rowNum ) {
+		if( rowNum == topLeft.getRow() + parentRowSpan - 1 ) {
+			if( bottomRight.getRow() - topLeft.getRow() >= parentRowSpan - 1 ) {
+				int extension = 2 + bottomRight.getRow() - topLeft.getRow() - parentRowSpan;
+				log.debug( "Nested table ", this, " extends row ", rowNum, " by ", extension );
+				return extension;
+			}
+		}
+		return 1;
+	}
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
+		topLeft = new Coordinate(state.rowNum, state.colNum - 1);
+		log.debug( "startTable called with topLeft = [", topLeft.getRow(), ", ", topLeft.getCol(), "]" );
 		super.startTable(state, table);
 		if( state.sheetName == null ) {
 			String name = table.getName();
@@ -32,11 +61,33 @@ public class NestedTableHandler extends AbstractRealTableHandler {
 
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
-		NestedTableRowHandler rowHandler = new NestedTableRowHandler(log, this, row);
-		rowHandler.setInserted(inserted);
-
+		log.debug( "startRow called with topLeft = [", topLeft.getRow(), ", ", topLeft.getCol(), "]" );
+		NestedTableRowHandler rowHandler = new NestedTableRowHandler(log, this, row, topLeft.getCol());
+		
 		state.setHandler(rowHandler);
 		state.getHandler().startRow(state, row);
 	}
+
+	@Override
+	public void endTable(HandlerState state, ITableContent table) throws BirtException {
+
+		bottomRight = new Coordinate(state.rowNum - 1, state.colNum);
+		
+		// Parent could be a ListHandler (all derive from TopLevelListHandler) or a CellHandler
+		// If it's a cell handler we need to undo the rowNum increment from the last nested table row
+		if( ! ( parent instanceof TopLevelListHandler ) ) {
+			log.debug( "Decrementing rowNum from ", state.rowNum );
+			--state.rowNum;
+			--state.colNum;
+		}
+		super.endTable(state, table);
+
+		state.rowNum = topLeft.getRow();
+		
+		NestedTableContainer parentTableHandler = this.getAncestor( NestedTableContainer.class );
+		parentTableHandler.addNestedTable( this );
+	}
+	
+	
 	
 }

@@ -8,4 +8,13 @@ public class Area {
         this.x = x;
         this.y = y;
     }
+
+	public Coordinate getX() {
+		return x;
+	}
+
+	public Coordinate getY() {
+		return y;
+	}
+    
 }

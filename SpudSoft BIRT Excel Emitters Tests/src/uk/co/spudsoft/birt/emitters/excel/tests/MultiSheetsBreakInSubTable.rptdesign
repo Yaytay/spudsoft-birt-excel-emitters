@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.2.v20120213 Build &lt;3.7.2.v20120214-1408></property>
     <text-property name="title">Multiple Sheets - Break in sub-table</text-property>
     <property name="units">in</property>
     <method name="initialize"><![CDATA[var rowCount = 0;
@@ -793,18 +793,6 @@ if( rowCount < 2 ) {
                                 </cell>
                             </row>
                         </detail>
-                        <footer>
-                            <row id="191">
-                                <cell id="192"/>
-                                <cell id="193"/>
-                                <cell id="194"/>
-                                <cell id="195"/>
-                                <cell id="196"/>
-                                <cell id="197"/>
-                                <cell id="198"/>
-                                <cell id="199"/>
-                            </row>
-                        </footer>
                     </table>
                 </cell>
             </row>

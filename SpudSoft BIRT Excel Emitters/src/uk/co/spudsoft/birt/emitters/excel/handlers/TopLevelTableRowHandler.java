@@ -26,4 +26,8 @@ public class TopLevelTableRowHandler extends AbstractRealTableRowHandler {
 		state.getHandler().startCell(state, cell);
 	}
 	
+	@Override
+	protected boolean isNested() {
+		return false;
+	}
 }

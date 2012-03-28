@@ -46,6 +46,20 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 
 	@Override
 	public void startCell(HandlerState state, ICellContent cell) throws BirtException {
+		log.debug( "Cell - " 
+				+ "BIRT[" 
+					+ cell.getRow()
+					+ ( cell.getRowSpan() > 1 ? "-" + (cell.getRow() + cell.getRowSpan()-1) : "" )
+					+ ","
+					+ cell.getColumn() 
+					+ ( cell.getColSpan() > 1 ? "-" + (cell.getColumn() + cell.getColSpan()-1) : "" )
+					+ "]"
+				+ " state[" 
+					+ state.rowNum
+					+ ","
+					+ state.colNum 
+					+ "]"
+				);
 		resumeCell(state);
 	}
 	
@@ -72,8 +86,11 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 		}
 
 		if( ( lastValue != null ) || includeFormatOnly ) {
-			Cell currentCell = state.currentSheet.getRow(state.rowNum).createCell( column );
-			// currentCell.setCellType(Cell.CELL_TYPE_BLANK);
+			Cell currentCell = state.currentSheet.getRow(state.rowNum).getCell( column );
+			if( currentCell == null ) {
+				log.debug( "Creating cell[", state.rowNum, ",", column, "]");
+				currentCell = state.currentSheet.getRow(state.rowNum).createCell( column );
+			}
 					
 			ICellContent cell = (ICellContent)element; 
 			
@@ -83,11 +100,16 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 				int endCol = state.colNum + cell.getColSpan() - 1;
                 
                 if(cell.getRowSpan() > 1) {
+                	log.debug( "Adding row span [", state.rowNum, ",", state.colNum, "] to [", endRow, ",", endCol, "]" );
                     state.addRowSpan(state.rowNum, state.colNum, endRow, endCol);
                 }
 				
                 int offset = state.computeNumberSpanBefore(state.rowNum, state.colNum);
-                CellRangeAddress newMergedRegion = new CellRangeAddress( state.rowNum, endRow, state.colNum + offset, endCol + offset );
+                log.debug( "Offset for [", state.rowNum, ",", state.colNum, "] calculated as ", offset);
+                log.debug( "Merging [", state.rowNum, ",", state.colNum + offset, "] to [", endRow, ",", endCol + offset, "]" );
+                log.debug( "Should be merging ? [", state.rowNum, ",", column, "] to [", endRow, ",", column + cell.getColSpan() - 1, "]" );
+                // CellRangeAddress newMergedRegion = new CellRangeAddress( state.rowNum, endRow, state.colNum + offset, endCol + offset );
+                CellRangeAddress newMergedRegion = new CellRangeAddress( state.rowNum, endRow, column, column + cell.getColSpan() - 1 );
                 state.currentSheet.addMergedRegion( newMergedRegion );
                                 
 				colSpan = cell.getColSpan();
@@ -95,13 +117,14 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	
 			endCellContent(state, cell, lastElement, currentCell);
 		}
-
+		
 		if( state.cellIsMergedWithBorders( state.rowNum, column ) ) {
 			int absoluteColumn = column;
 			++state.colNum;
 			--colSpan;
 			while( colSpan > 0 ) {
 				++absoluteColumn;
+				log.debug( "Creating cell[", state.rowNum, ",", absoluteColumn, "]");
 				Cell currentCell = state.currentSheet.getRow(state.rowNum).createCell( absoluteColumn );
 				endCellContent(state, null, null, currentCell);
 				++state.colNum;
@@ -134,6 +157,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
 		int colSpan = ((ICellContent)element).getColSpan();
+		int rowSpan = ((ICellContent)element).getRowSpan();
 		ITableHandler tableHandler = getAncestor(ITableHandler.class);
 		if( ( tableHandler != null ) 
 				&& ( tableHandler.getColumnCount() == colSpan )
@@ -145,19 +169,20 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 			interruptCell(state, false);
 			parentRow.interruptRow(state);
 			
-			state.setHandler(new NestedTableHandler(log, this, table));
+			state.setHandler(new NestedTableHandler(log, this, table, rowSpan));
 			state.getHandler().startTable(state, table);
 		} else if( ( tableHandler != null ) 
 				&& ( table.getGenerateBy() instanceof GridItemDesign )
 				&& ( ((GridItemDesign)table.getGenerateBy()).getColumnCount() == colSpan )
-				&& ( ((GridItemDesign)table.getGenerateBy()).getRowCount() == 1 )
 				) {
 			
 			containsTable = true;
 			parentRow = getAncestor(AbstractRealTableRowHandler.class);
 			interruptCell(state, false);
 			
-			NestedTableHandler nestedTableHandler = new NestedTableHandler(log, this, table);
+			removeMergedCell( state, state.rowNum, state.colNum );
+			
+			NestedTableHandler nestedTableHandler = new NestedTableHandler(log, this, table, rowSpan);
 			nestedTableHandler.setInserted(true);
 			state.setHandler(nestedTableHandler);
 			state.getHandler().startTable(state, table);
@@ -182,6 +207,7 @@ public class AbstractRealTableCellHandler extends CellContentHandler {
 			interruptCell(state, false);
 			parentRow.interruptRow(state);
 			
+			state.colNum = column;
 			state.setHandler(new NestedListHandler(log, this, list));
 			state.getHandler().startList(state, list);
 		} else {

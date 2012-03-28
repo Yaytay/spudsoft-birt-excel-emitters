@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.2.v20120213 Build &lt;3.7.2.v20120214-1408></property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">8</property>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">8</property>
+        </structure>
+        <structure>
+            <property name="name">rowFetchSize</property>
+            <property name="id">8</property>
+        </structure>
+    </list-property>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -24,73 +38,89 @@
     </data-sources>
     <data-sets>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set" id="8">
+            <property name="nullsOrdering">nulls lowest</property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">CUSTOMERNUMBER</property>
+                    <property name="analysis">measure</property>
                     <text-property name="displayName">CUSTOMERNUMBER</text-property>
                     <text-property name="heading">CUSTOMERNUMBER</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">CUSTOMERNAME</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">CUSTOMERNAME</text-property>
                     <text-property name="heading">CUSTOMERNAME</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">CONTACTLASTNAME</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">CONTACTLASTNAME</text-property>
                     <text-property name="heading">CONTACTLASTNAME</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">CONTACTFIRSTNAME</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">CONTACTFIRSTNAME</text-property>
                     <text-property name="heading">CONTACTFIRSTNAME</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">PHONE</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">PHONE</text-property>
                     <text-property name="heading">PHONE</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">ADDRESSLINE1</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">ADDRESSLINE1</text-property>
                     <text-property name="heading">ADDRESSLINE1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">ADDRESSLINE2</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">ADDRESSLINE2</text-property>
                     <text-property name="heading">ADDRESSLINE2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">CITY</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">CITY</text-property>
                     <text-property name="heading">CITY</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">STATE</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">STATE</text-property>
                     <text-property name="heading">STATE</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">POSTALCODE</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">POSTALCODE</text-property>
                     <text-property name="heading">POSTALCODE</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">COUNTRY</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="displayName">COUNTRY</text-property>
                     <text-property name="heading">COUNTRY</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">SALESREPEMPLOYEENUMBER</property>
+                    <property name="analysis">measure</property>
                     <text-property name="displayName">SALESREPEMPLOYEENUMBER</text-property>
                     <text-property name="heading">SALESREPEMPLOYEENUMBER</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">CREDITLIMIT</property>
+                    <property name="analysis">measure</property>
                     <text-property name="displayName">CREDITLIMIT</text-property>
                     <text-property name="heading">CREDITLIMIT</text-property>
                 </structure>
             </list-property>
+            <list-property name="filter"/>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -255,7 +285,9 @@
                 </structure>
             </list-property>
             <xml-property name="queryText"><![CDATA[select *
-from CLASSICMODELS.CUSTOMERS]]></xml-property>
+from CUSTOMERS
+
+]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>

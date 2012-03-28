@@ -24,6 +24,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 	
 	@Override
 	public void emitText(HandlerState state, ITextContent text) throws BirtException {
+		log.debug( "Creating row ", state.rowNum, " for text" );
 		state.currentSheet.createRow( state.rowNum );
 
 		emitContent(state, text, text.getText(), ( ! "inline".equals( getStyleProperty(text, StyleConstants.STYLE_DISPLAY, "block") ) ) );
@@ -39,6 +40,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 
 	@Override
 	public void emitData(HandlerState state, IDataContent data) throws BirtException {
+		log.debug( "Creating row ", state.rowNum, " for data" );
 		state.currentSheet.createRow( state.rowNum );
 
 		emitContent(state, data, data.getValue(), ( ! "inline".equals( getStyleProperty(data, StyleConstants.STYLE_DISPLAY, "block") ) ) );
@@ -54,6 +56,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 
 	@Override
 	public void emitLabel(HandlerState state, ILabelContent label) throws BirtException {
+		log.debug( "Creating row ", state.rowNum, " for label" );
 		state.currentSheet.createRow( state.rowNum );
 
 		String labelText = ( label.getLabelText() != null ) ? label.getLabelText() : label.getText();
@@ -83,6 +86,7 @@ public class TopLevelContentHandler extends CellContentHandler {
 
 	@Override
 	public void emitImage(HandlerState state, IImageContent image) throws BirtException {
+		log.debug( "Creating row ", state.rowNum, " for image" );
 		state.currentSheet.createRow( state.rowNum );
 
 		recordImage(state, new Coordinate( state.rowNum, 0 ), image, true);

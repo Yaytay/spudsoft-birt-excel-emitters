@@ -29,7 +29,7 @@ public class AutoRowHeightsTest2 extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 1, this.firstNullRow(sheet));
 			
-			assertEquals( 2315, sheet.getRow(0).getHeight() );
+			assertEquals( 2298, sheet.getRow(0).getHeight() );
 		} finally {
 			inputStream.close();
 		}
@@ -51,7 +51,7 @@ public class AutoRowHeightsTest2 extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 1, this.firstNullRow(sheet));
 			
-			assertEquals( 2315, sheet.getRow(0).getHeight() );
+			assertEquals( 2298, sheet.getRow(0).getHeight() );
 		} finally {
 			inputStream.close();
 		}

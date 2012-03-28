@@ -1,6 +1,7 @@
 package uk.co.spudsoft.birt.emitters.excel.handlers;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.ss.util.SheetUtil;
 import org.eclipse.birt.core.exception.BirtException;
@@ -8,9 +9,7 @@ import org.eclipse.birt.report.engine.content.ITableBandContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
 import org.eclipse.birt.report.engine.content.ITableGroupContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
-import org.eclipse.birt.report.engine.ir.Expression;
 import org.eclipse.birt.report.engine.ir.GridItemDesign;
-import org.eclipse.birt.report.engine.ir.ReportElementDesign;
 
 import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
 import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
@@ -20,7 +19,7 @@ import uk.co.spudsoft.birt.emitters.excel.FilteredSheet;
 import uk.co.spudsoft.birt.emitters.excel.HandlerState;
 import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
-public class AbstractRealTableHandler extends AbstractHandler implements ITableHandler {
+public class AbstractRealTableHandler extends AbstractHandler implements ITableHandler, NestedTableContainer {
 
 	protected int startRow;
 	protected int startDetailsRow = -1;
@@ -31,6 +30,8 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 	
 	private BirtStyle tableStyle;
 	private AreaBorders borderDefn;
+	
+	private List< NestedTableHandler > nestedTables;
 
 	public AbstractRealTableHandler(Logger log, IHandler parent, ITableContent table) {
 		super(log, parent, table);
@@ -40,6 +41,44 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 	public int getColumnCount() {
 		return ((ITableContent)this.element).getColumnCount();
 	}
+	
+	@Override
+	public void addNestedTable( NestedTableHandler nestedTableHandler ) {
+		if( nestedTables == null ) {
+			nestedTables = new ArrayList<NestedTableHandler>();
+		}
+		log.debug( "Adding nested table: ", nestedTableHandler );
+		nestedTables.add(nestedTableHandler);
+	}
+	
+	@Override
+	public boolean rowHasNestedTable( int rowNum ) {
+		if( nestedTables != null ) {
+			for( NestedTableHandler nestedTableHandler : nestedTables ) {
+				if( nestedTableHandler.includesRow( rowNum ) ) {
+					log.debug( "Row ", rowNum, " has nested table ", nestedTableHandler );
+					return true;
+				}
+			}
+		}
+		log.debug( "Row ", rowNum, " has no nested tables" );
+		return false;
+	}
+	
+	@Override
+	public int extendRowBy( int rowNum ) {
+		int offset = 1;
+		if( nestedTables != null ) {
+			for( NestedTableHandler nestedTableHandler : nestedTables ) {
+				int nestedTablesOffset = nestedTableHandler.extendParentsRowBy( rowNum );
+				if( nestedTablesOffset > offset ) {
+					log.debug( "Row ", rowNum, " is extended by ", nestedTablesOffset, " thanks to ", nestedTableHandler );
+					offset = nestedTablesOffset;
+				}
+			}
+		}
+		return offset;
+	}
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
@@ -47,8 +86,8 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 
 		for( int col = 0; col < table.getColumnCount(); ++col ) {
 			DimensionType width = table.getColumn(col).getWidth();
-			log.debug( "BIRT table column width: ", col, " = ", width);
 			if( width != null ) {
+				log.debug( "BIRT table column width: ", col, " = ", width);
 				int newWidth = state.getSmu().poiColumnWidthFromDimension(width);
 				int oldWidth = state.currentSheet.getColumnWidth(col);
 				if( ( oldWidth == 256 * state.currentSheet.getDefaultColumnWidth() ) || ( newWidth > oldWidth ) ) {

@@ -122,7 +122,7 @@ public class Logger {
 					}
 					System.out.println( prefix.toString() + " " + msg.toString() );
 				} else {
-					System.out.println( prefix.toString() + " " + message.toString() );
+					System.out.println( prefix.toString() + " " + message[0].toString() );
 				}
 			}
 		} else if( backupLog.isDebugEnabled() ) {
@@ -134,7 +134,7 @@ public class Logger {
 				}
 				backupLog.debug( msg.toString() );
 			} else {
-				backupLog.debug( prefix.toString() + " " + message.toString() );
+				backupLog.debug( prefix.toString() + " " + message[0].toString() );
 			}
 		}
 	}

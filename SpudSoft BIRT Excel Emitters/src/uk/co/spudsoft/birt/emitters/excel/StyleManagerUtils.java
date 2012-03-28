@@ -966,6 +966,7 @@ public abstract class StyleManagerUtils {
 						if( ( col == colStart ) || ( col == colEnd ) || ( row == rowStart ) || ( row == rowEnd ) ) {
 							Cell styleCell = styleRow.getCell(col);
 							if( styleCell == null ) {
+								log.debug( "Creating cell[", row, ",", col, "]");
 								styleCell = styleRow.createCell(col);
 							}
 							if( styleCell != null ) {

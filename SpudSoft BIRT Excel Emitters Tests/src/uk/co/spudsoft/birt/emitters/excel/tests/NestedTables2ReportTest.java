@@ -53,20 +53,42 @@ public class NestedTables2ReportTest extends ReportRunner {
 			assertEquals( "Nested Tables Test Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals(6, firstNullRow(sheet));
-			
-			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
-			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(1).getStringCellValue());
+			assertEquals(12, firstNullRow(sheet));
+
+			assertEquals( 1,  sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 1,  sheet.getRow(0).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(1).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(2).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(2).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 1,  sheet.getRow(3).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(3).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(3).getCell(2).getNumericCellValue(), 0.0 );
+
+			assertEquals( 2,  sheet.getRow(4).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(4).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 4,  sheet.getRow(5).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 4,  sheet.getRow(5).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(6).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(6).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(7).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 4,  sheet.getRow(7).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(7).getCell(2).getNumericCellValue(), 0.0 );
+
+			assertEquals( 3,  sheet.getRow(8).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(8).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(9).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(9).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 9,  sheet.getRow(10).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 9,  sheet.getRow(10).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(11).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(11).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 9,  sheet.getRow(11).getCell(2).getNumericCellValue(), 0.0 );
 			
 			XSSFColor bgColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillForegroundColorColor();
-			assertEquals( "FFFFFFFF", bgColour.getARGBHex() );
-			// assertEquals( null, bgColour );
+			assertEquals( "FF800000", bgColour.getARGBHex() );
 			XSSFColor baseColour = ((XSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFont().getXSSFColor();
-			assertEquals( "FFFFFFFF", baseColour.getARGBHex() );
-			// assertTrue( !bgColour.equals( baseColour ) );
-			XSSFRichTextString rich = (XSSFRichTextString)sheet.getRow(0).getCell(0).getRichStringCellValue();
-			assertEquals( 2, rich.numFormattingRuns() );
-			assertEquals( 5, rich.getString().length() );
+			assertEquals( "FF000000", baseColour.getARGBHex() );
 		} finally {
 			inputStream.close();
 		}
@@ -86,20 +108,42 @@ public class NestedTables2ReportTest extends ReportRunner {
 			assertEquals( "Nested Tables Test Report", workbook.getSheetAt(0).getSheetName());
 			
 			Sheet sheet = workbook.getSheetAt(0);
-			assertEquals(6, firstNullRow(sheet));
-			
-			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(0).getStringCellValue());
-			assertEquals( "1\n2\n3", sheet.getRow(0).getCell(1).getStringCellValue());
+			assertEquals(12, firstNullRow(sheet));
+
+			assertEquals( 1,  sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 1,  sheet.getRow(0).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(1).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(2).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(2).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 1,  sheet.getRow(3).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(3).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(3).getCell(2).getNumericCellValue(), 0.0 );
+
+			assertEquals( 2,  sheet.getRow(4).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(4).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 4,  sheet.getRow(5).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 4,  sheet.getRow(5).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(6).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(6).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 2,  sheet.getRow(7).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 4,  sheet.getRow(7).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(7).getCell(2).getNumericCellValue(), 0.0 );
+
+			assertEquals( 3,  sheet.getRow(8).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(8).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(9).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(9).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 9,  sheet.getRow(10).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 9,  sheet.getRow(10).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 3,  sheet.getRow(11).getCell(0).getNumericCellValue(), 0.0 );
+			assertEquals( 6,  sheet.getRow(11).getCell(1).getNumericCellValue(), 0.0 );
+			assertEquals( 9,  sheet.getRow(11).getCell(2).getNumericCellValue(), 0.0 );
 			
 			short bgColour = ((HSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFillBackgroundColor();
 			assertEquals( "0:0:0", workbook.getCustomPalette().getColor(bgColour).getHexString() );
 			short baseColour = workbook.getFontAt(((HSSFCell)sheet.getRow(0).getCell(0)).getCellStyle().getFontIndex()).getColor();
-			assertEquals( "0:0:0", workbook.getCustomPalette().getColor(baseColour).getHexString() );
-			// Someone else can explain how it makes sense for these two to need to be the same, given that the result is them being different!
-			assertEquals( workbook.getCustomPalette().getColor(bgColour).getHexString(), workbook.getCustomPalette().getColor(baseColour).getHexString() );
-			HSSFRichTextString rich = (HSSFRichTextString)sheet.getRow(0).getCell(0).getRichStringCellValue();
-			assertEquals( 1, rich.numFormattingRuns() );
-			assertEquals( 5, rich.getString().length() );
+			assertEquals( "FFFF:FFFF:FFFF", workbook.getCustomPalette().getColor(baseColour).getHexString() );
 		} finally {
 			inputStream.close();
 		}

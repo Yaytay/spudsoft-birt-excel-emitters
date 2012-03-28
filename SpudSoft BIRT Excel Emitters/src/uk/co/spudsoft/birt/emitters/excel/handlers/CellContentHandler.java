@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,6 +17,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.ICellContent;
 import org.eclipse.birt.report.engine.content.IContent;
@@ -30,6 +32,7 @@ import org.eclipse.birt.report.engine.layout.emitter.Image;
 import org.eclipse.birt.report.engine.presentation.ContentEmitterVisitor;
 import org.w3c.dom.css.CSSValue;
 
+import uk.co.spudsoft.birt.emitters.excel.Area;
 import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
 import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
@@ -254,7 +257,7 @@ public class CellContentHandler extends AbstractHandler {
 	 * The BIRT element supplying the value, used to set the style of the cell.
 	 */
 	private <T> void setCellContents(Cell cell, Object value) {
-		// log.debug( "Setting value to {}", value );
+		log.debug( "Setting cell[", cell.getRow().getRowNum(), ",", cell.getColumnIndex(), "] value to ", value );
 		if( value instanceof Double ) {
 			// cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue((Double)value);
@@ -481,6 +484,24 @@ public class CellContentHandler extends AbstractHandler {
 				
 				state.images.add( new CellImage(location, imageIdx, image, spanColumns) );
 				lastElement = image;
+			}
+		}
+	}
+	
+	protected void removeMergedCell(HandlerState state, int row, int col) {
+		for( int mergeNum = 0; mergeNum < state.currentSheet.getNumMergedRegions(); ++mergeNum ) {
+			CellRangeAddress region = state.currentSheet.getMergedRegion(mergeNum);
+			if( ( region.getFirstRow() == row ) && ( region.getFirstColumn() == col ) ) {
+				state.currentSheet.removeMergedRegion(mergeNum);
+				break;
+			}
+		}
+		
+		for( Iterator<Area> iter = state.rowSpans.iterator(); iter.hasNext(); ) {
+			Area area = iter.next();
+			Coordinate topLeft = area.getX();
+			if( ( topLeft.getRow() == row ) || ( topLeft.getCol() == col ) ) {
+				iter.remove();
 			}
 		}
 	}

@@ -37,6 +37,7 @@ public class NestedTablesSingleColumnGridReportTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
+		debug = true;
 		InputStream inputStream = runAndRenderReport("NestedTablesSingleColumnGrid.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {

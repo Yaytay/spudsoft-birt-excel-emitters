@@ -111,7 +111,9 @@ public class MultiSheetsReportTest extends ReportRunner {
 	@Test
 	public void testBreakInSubTable() throws BirtException, IOException {
 
+		debug = true;
 		InputStream inputStream = runAndRenderReportCustomTask("MultiSheetsBreakInSubTable.rptdesign", "xlsx");
+		debug = false;
 		assertNotNull(inputStream);
 		try {			
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);

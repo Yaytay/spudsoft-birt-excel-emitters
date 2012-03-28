@@ -121,6 +121,10 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	
 	
 	public void initialize( IEmitterServices service ) throws BirtException {
+		renderOptions = service.getRenderOption();
+		boolean debug = EmitterServices.booleanOption( renderOptions, (IContent)null, DEBUG, false );
+		log.setDebug(debug);
+		
 		log.debug("inintialize");
 		reportOutputStream = service.getRenderOption().getOutputStream();
 		reportOutputFilename = service.getRenderOption().getOutputFileName();
@@ -131,12 +135,6 @@ public abstract class ExcelEmitter implements IContentEmitter {
 					, null
 					);			
 		}
-				
-		renderOptions = service.getRenderOption();
-		boolean debug = EmitterServices.booleanOption( renderOptions, (IContent)null, DEBUG, false );
-		if( debug )  {
-			this.log.setDebug(debug);
-		}		
 	}
 
 	public void start( IReportContent report ) throws BirtException {
