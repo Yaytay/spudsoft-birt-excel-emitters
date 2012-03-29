@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.eclipse.birt.report.engine.content.IPageContent;
 import org.eclipse.birt.report.engine.css.engine.StyleConstants;
@@ -1067,6 +1068,35 @@ public abstract class StyleManagerUtils {
 			}
 		}
 		return colIndex;
+	}
+	
+	public void extendRows( HandlerState state, int startRow, int startCol, int endRow, int endCol ) {
+		for( int colNum = startCol; colNum < endCol; ++colNum) {
+			Cell lastCell = null;
+			for( int rowNum = startRow; rowNum < endRow; ++rowNum ) {
+				Row row = state.currentSheet.getRow(rowNum);
+				if( row != null ) {
+					Cell cell = row.getCell(colNum);
+					if( cell != null ) {
+						lastCell = cell;
+					}
+				}
+			}
+			if( ( lastCell != null ) && ( lastCell.getRowIndex() < endRow - 1 ) ) {
+				log.debug( "Extend: merging from [", lastCell.getRowIndex(), ",", lastCell.getColumnIndex(), "] to [", endRow, ",", lastCell.getColumnIndex(), "]" );
+				CellRangeAddress range = new CellRangeAddress(lastCell.getRowIndex(), endRow - 1, lastCell.getColumnIndex(), lastCell.getColumnIndex());
+				state.currentSheet.addMergedRegion(range);
+				for( int rowNum = lastCell.getRowIndex() + 1; rowNum <= endRow; ++rowNum ) {
+					Row row = state.currentSheet.getRow(rowNum);
+					if( row == null ) {
+						log.error(0, "Creating a row, this really shouldn't be necessary", null);
+						row = state.currentSheet.createRow(rowNum);
+					}
+					Cell cell = row.createCell(colNum);
+					cell.setCellStyle( lastCell.getCellStyle() );
+				}
+			}
+		}
 	}
 }
 

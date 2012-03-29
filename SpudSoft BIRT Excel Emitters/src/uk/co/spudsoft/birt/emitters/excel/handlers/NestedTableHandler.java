@@ -86,6 +86,10 @@ public class NestedTableHandler extends AbstractRealTableHandler {
 		
 		NestedTableContainer parentTableHandler = this.getAncestor( NestedTableContainer.class );
 		parentTableHandler.addNestedTable( this );
+		
+		if( bottomRight.getRow() < topLeft.getRow() + parentRowSpan - 1 ) {
+			state.getSmu().extendRows( state, topLeft.getRow(), topLeft.getCol(), topLeft.getRow() + parentRowSpan, bottomRight.getCol() );
+		}
 	}
 	
 	

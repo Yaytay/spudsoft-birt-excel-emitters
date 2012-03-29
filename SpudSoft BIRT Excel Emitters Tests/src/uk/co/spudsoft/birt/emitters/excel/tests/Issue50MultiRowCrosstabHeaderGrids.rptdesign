@@ -463,7 +463,7 @@ order by
                             <row id="169">
                                 <cell id="170">
                                     <property name="colSpan">1</property>
-                                    <property name="rowSpan">2</property>
+                                    <property name="rowSpan">1</property>
                                     <label id="172">
                                         <text-property name="text">Customer Number</text-property>
                                     </label>
@@ -473,13 +473,6 @@ order by
                                     <property name="rowSpan">1</property>
                                     <label id="173">
                                         <text-property name="text">Customer Name</text-property>
-                                    </label>
-                                </cell>
-                            </row>
-                            <row id="174">
-                                <cell id="175">
-                                    <label id="176">
-                                        <text-property name="text">Filler</text-property>
                                     </label>
                                 </cell>
                             </row>

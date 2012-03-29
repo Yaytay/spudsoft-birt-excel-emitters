@@ -5,12 +5,12 @@ import java.util.Iterator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
 import org.eclipse.birt.report.model.api.util.DimensionUtil;
 
-import uk.co.spudsoft.birt.emitters.excel.Area;
 import uk.co.spudsoft.birt.emitters.excel.AreaBorders;
 import uk.co.spudsoft.birt.emitters.excel.BirtStyle;
 import uk.co.spudsoft.birt.emitters.excel.CellImage;
@@ -24,6 +24,7 @@ public abstract class AbstractRealTableRowHandler extends AbstractHandler {
 
 	protected Row currentRow;
 	protected int birtRowStartedAtPoiRow;
+	protected int birtRowStartedAtPoiCol;
 	protected int myRow;
 
 	private BirtStyle rowStyle;
@@ -36,6 +37,7 @@ public abstract class AbstractRealTableRowHandler extends AbstractHandler {
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
 		birtRowStartedAtPoiRow = state.rowNum;
+		birtRowStartedAtPoiCol = state.colNum;
 		resumeRow(state);
 	}
 
@@ -158,6 +160,7 @@ public abstract class AbstractRealTableRowHandler extends AbstractHandler {
 				int increase = ((NestedTableContainer)parent).extendRowBy( state.rowNum );
 				log.debug( "Incrementing rowNum from ", state.rowNum, " to ", state.rowNum + increase );
 				state.rowNum += increase;
+				state.getSmu().extendRows( state, birtRowStartedAtPoiRow, birtRowStartedAtPoiCol, state.rowNum, state.colNum );
 			} else if( currentRow.getPhysicalNumberOfCells() > 0 ){
 				log.debug( "Incrementing rowNum from ", state.rowNum );
 				state.rowNum += 1;
