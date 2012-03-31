@@ -10,13 +10,12 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 public class TopLevelTableRowHandler extends AbstractRealTableRowHandler {
 
 	public TopLevelTableRowHandler(Logger log, IHandler parent, IRowContent row) {
-		super(log, parent, row);
+		super(log, parent, row, 0);
 	}
 	
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
 		super.startRow(state, row);
-		state.colNum = 0;
 		state.rowOffset = 0;
 	}
 

@@ -1083,13 +1083,13 @@ public abstract class StyleManagerUtils {
 				}
 			}
 			if( ( lastCell != null ) && ( lastCell.getRowIndex() < endRow - 1 ) ) {
-				log.debug( "Extend: merging from [", lastCell.getRowIndex(), ",", lastCell.getColumnIndex(), "] to [", endRow, ",", lastCell.getColumnIndex(), "]" );
 				CellRangeAddress range = new CellRangeAddress(lastCell.getRowIndex(), endRow - 1, lastCell.getColumnIndex(), lastCell.getColumnIndex());
+				log.debug( "Extend: merging from [", range.getFirstRow(), ",", range.getFirstColumn(), "] to [", range.getLastRow(), ",", range.getLastColumn(), "]" );
 				state.currentSheet.addMergedRegion(range);
-				for( int rowNum = lastCell.getRowIndex() + 1; rowNum <= endRow; ++rowNum ) {
+				for( int rowNum = lastCell.getRowIndex() + 1; rowNum < endRow; ++rowNum ) {
 					Row row = state.currentSheet.getRow(rowNum);
 					if( row == null ) {
-						log.error(0, "Creating a row, this really shouldn't be necessary", null);
+						log.error(0, "Creating a row (for column " + colNum + "), this really shouldn't be necessary", null);
 						row = state.currentSheet.createRow(rowNum);
 					}
 					Cell cell = row.createCell(colNum);

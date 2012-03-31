@@ -22,6 +22,7 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 public class AbstractRealTableHandler extends AbstractHandler implements ITableHandler, NestedTableContainer {
 
 	protected int startRow;
+	protected int startCol;
 	protected int startDetailsRow = -1;
 	protected int endDetailsRow;
 	
@@ -82,22 +83,25 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
-		startRow =  state.rowNum;
+		startRow = state.rowNum;
+		startCol = state.colNum;
+		
+		log.debug( "startTable @ [", startRow, ",", startCol, "]" );
 
 		for( int col = 0; col < table.getColumnCount(); ++col ) {
 			DimensionType width = table.getColumn(col).getWidth();
 			if( width != null ) {
 				log.debug( "BIRT table column width: ", col, " = ", width);
 				int newWidth = state.getSmu().poiColumnWidthFromDimension(width);
-				int oldWidth = state.currentSheet.getColumnWidth(col);
+				int oldWidth = state.currentSheet.getColumnWidth(startCol + col);
 				if( ( oldWidth == 256 * state.currentSheet.getDefaultColumnWidth() ) || ( newWidth > oldWidth ) ) {
-					state.currentSheet.setColumnWidth(col, newWidth);
+					state.currentSheet.setColumnWidth(startCol + col, newWidth);
 				}
 			}
 		}
 		
 		tableStyle = new BirtStyle( table );
-		borderDefn = AreaBorders.create( -1, 0, table.getColumnCount() - 1, startRow, tableStyle );
+		borderDefn = AreaBorders.create( -1, startCol, startCol + table.getColumnCount() - 1, startRow, tableStyle );
 		if( borderDefn != null ) {
 			state.insertBorderOverload(borderDefn);
 		}
@@ -109,13 +113,12 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 	
 	@Override
 	public void endTable(HandlerState state, ITableContent table) throws BirtException {
-		state.setHandler(parent);
-
 		if( table.getGenerateBy() instanceof GridItemDesign ) {
 			endDetailsRow = state.rowNum;
 		}
 		
-		state.getSmu().applyBottomBorderToRow( state.getSm(), state.currentSheet, 0, table.getColumnCount() - 1, state.rowNum - 1, new BirtStyle( table ) );
+		log.debug( "Applying bottom border to [", state.rowNum - 1, ",", startCol, "] - [", state.rowNum - 1, ",", startCol + table.getColumnCount() - 1, "]" );
+		state.getSmu().applyBottomBorderToRow( state.getSm(), state.currentSheet, startCol, startCol + table.getColumnCount() - 1, state.rowNum - 1, tableStyle );
 		
 		if( borderDefn != null ) {
 			state.removeBorderOverload(borderDefn);

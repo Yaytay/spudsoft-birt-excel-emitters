@@ -91,33 +91,6 @@ public class Borders3ReportTest extends ReportRunner {
 			Sheet sheet = workbook.getSheetAt(0);
 			assertEquals( 26, firstNullRow(sheet));
 			
-			/*
-			for( int r = 0; r < 26; ++r ) {
-				for( int c = 0; c < 8; ++c ) {
-					Cell cell = sheet.getRow(r).getCell(c);
-					CellStyle style = cell.getCellStyle();
-					
-					if( style == null ) {
-						System.out.println( "assertNull( sheet.getRow(" + r + ").getCell(" + c + ") );" );
-					} else {
-						System.out.print( "Borders2ReportTest.assertBorder( sheet, " + r + ", " + c );
-						String bottom = "null";
-						String left = "null";
-						String right = "null";
-						String top = "null";
-						if( style != null ) {
-							bottom = translateBorderStyle( style.getBorderBottom() );
-							left = translateBorderStyle( style.getBorderLeft() );
-							right = translateBorderStyle( style.getBorderRight() );
-							top = translateBorderStyle( style.getBorderTop() );
-						}
-						System.out.print( ", " + bottom + ", " + left + ", " + right + ", " + top );
-						System.out.println( " );" );
-					}
-				}
-			}
-			*/
-			
 			Borders2ReportTest.assertBorder( sheet, 0, 0, CellStyle.BORDER_NONE, CellStyle.BORDER_MEDIUM, CellStyle.BORDER_NONE, CellStyle.BORDER_MEDIUM );
 			Borders2ReportTest.assertBorder( sheet, 0, 1, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_MEDIUM );
 			Borders2ReportTest.assertBorder( sheet, 0, 2, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_MEDIUM );
@@ -335,6 +308,7 @@ public class Borders3ReportTest extends ReportRunner {
 	@Test
 	public void testRunReportXls() throws BirtException, IOException {
 
+		debug = false;
 		removeEmptyRows = false;
 		InputStream inputStream = runAndRenderReport("Borders3.rptdesign", "xls");
 		assertNotNull(inputStream);

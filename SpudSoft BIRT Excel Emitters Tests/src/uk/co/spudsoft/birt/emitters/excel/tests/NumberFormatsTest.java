@@ -17,6 +17,7 @@ public class NumberFormatsTest extends ReportRunner {
 	@Test
 	public void testRunReport() throws BirtException, IOException {
 
+		debug = false;
 		InputStream inputStream = runAndRenderReport("NumberFormats.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {

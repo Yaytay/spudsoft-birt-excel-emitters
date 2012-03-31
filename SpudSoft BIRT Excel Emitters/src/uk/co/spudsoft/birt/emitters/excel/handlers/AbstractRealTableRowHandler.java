@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.ir.DimensionType;
@@ -26,16 +25,19 @@ public abstract class AbstractRealTableRowHandler extends AbstractHandler {
 	protected int birtRowStartedAtPoiRow;
 	protected int birtRowStartedAtPoiCol;
 	protected int myRow;
+	protected int startCol;
 
 	private BirtStyle rowStyle;
 	private AreaBorders borderDefn;
 
-	public AbstractRealTableRowHandler(Logger log, IHandler parent, IRowContent row) {
+	public AbstractRealTableRowHandler(Logger log, IHandler parent, IRowContent row, int startCol) {
 		super(log, parent, row);
+		this.startCol = startCol;
 	}
 
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
+		state.colNum = this.startCol;
 		birtRowStartedAtPoiRow = state.rowNum;
 		birtRowStartedAtPoiCol = state.colNum;
 		resumeRow(state);

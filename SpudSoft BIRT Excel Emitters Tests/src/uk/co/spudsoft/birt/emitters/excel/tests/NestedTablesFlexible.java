@@ -84,7 +84,7 @@ public class NestedTablesFlexible extends ReportRunner {
 	@Test
 	public void testNestedTables5() throws Exception {
 
-		debug = true;
+		debug = false;
 		removeEmptyRows = false;
 		InputStream inputStream = runAndRenderReport("NestedTables5.rptdesign", "xlsx");
 		assertNotNull(inputStream);

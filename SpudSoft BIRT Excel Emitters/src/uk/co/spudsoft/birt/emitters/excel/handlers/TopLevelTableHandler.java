@@ -22,11 +22,18 @@ public class TopLevelTableHandler extends AbstractRealTableHandler {
 	
 	@Override
 	public void startTable(HandlerState state, ITableContent table) throws BirtException {
+		state.colNum = 0;
 		super.startTable(state, table);
 		String name = table.getName();
 		if( ( name != null ) && ! name.isEmpty() ) {
 			state.sheetName = name;
 		}
+	}
+	
+	@Override
+	public void endTable(HandlerState state, ITableContent table) throws BirtException {
+		super.endTable(state, table);
+		state.setHandler(parent);
 	}
 
 	@Override

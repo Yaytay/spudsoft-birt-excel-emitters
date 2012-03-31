@@ -11,23 +11,10 @@ import org.junit.Test;
 
 public class Issue50MultiRowCrosstabHeaderGrids extends ReportRunner {
 
-	public boolean mergedRegion( Sheet sheet, int top, int left, int bottom, int right ) {
-		for( int i = 0; i < sheet.getNumMergedRegions(); ++i ) {
-			CellRangeAddress curRegion = sheet.getMergedRegion(i);
-			if( ( curRegion.getFirstRow() == top )
-					&& ( curRegion.getFirstColumn() == left )
-					&& ( curRegion.getLastRow() == bottom )
-					&& ( curRegion.getLastColumn() == right ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	@Test
 	public void testHeader() throws Exception {
 		
-		debug = true;
+		debug = false;
 		InputStream inputStream = runAndRenderReport("Issue50MultiRowCrosstabHeaderGrids.rptdesign", "xlsx");
 		assertNotNull(inputStream);
 		try {

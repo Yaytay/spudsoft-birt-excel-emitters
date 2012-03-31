@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.archive.FileArchiveWriter;
 import org.eclipse.birt.core.archive.IDocArchiveWriter;
 import org.eclipse.birt.core.exception.BirtException;
@@ -94,6 +95,19 @@ public class ReportRunner {
 	    } finally {
 	    	is.close();
 	    }
+	}
+	
+	public boolean mergedRegion( Sheet sheet, int top, int left, int bottom, int right ) {
+		for( int i = 0; i < sheet.getNumMergedRegions(); ++i ) {
+			CellRangeAddress curRegion = sheet.getMergedRegion(i);
+			if( ( curRegion.getFirstRow() == top )
+					&& ( curRegion.getFirstColumn() == left )
+					&& ( curRegion.getLastRow() == bottom )
+					&& ( curRegion.getLastColumn() == right ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected int firstNullRow(Sheet sheet) {

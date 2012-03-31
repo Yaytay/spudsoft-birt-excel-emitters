@@ -9,24 +9,20 @@ import uk.co.spudsoft.birt.emitters.excel.framework.Logger;
 
 public class NestedTableRowHandler extends AbstractRealTableRowHandler {
 
-	private int colOffset;
-
-	public NestedTableRowHandler(Logger log, IHandler parent, IRowContent row, int colOffset) {
-		super(log, parent, row);
-		this.colOffset = colOffset;
+	public NestedTableRowHandler(Logger log, IHandler parent, IRowContent row, int startCol) {
+		super(log, parent, row, startCol);
 	}
 
 	@Override
 	public void startRow(HandlerState state, IRowContent row) throws BirtException {
-		log.debug( "startRow called with colOffset = ", colOffset );
+		log.debug( "startRow called with colOffset = ", startCol );
 		super.startRow(state, row);
-		state.colNum = colOffset;
 	}
 
 	@Override
 	public void startCell(HandlerState state, ICellContent cell) throws BirtException {
-		log.debug( "startCell called with colOffset = ", colOffset );
-		state.setHandler(new NestedTableCellHandler(state.getEmitter(), log, this, cell, colOffset));
+		log.debug( "startCell called with colOffset = ", startCol );
+		state.setHandler(new NestedTableCellHandler(state.getEmitter(), log, this, cell, startCol));
 		state.getHandler().startCell(state, cell);
 	}
 
