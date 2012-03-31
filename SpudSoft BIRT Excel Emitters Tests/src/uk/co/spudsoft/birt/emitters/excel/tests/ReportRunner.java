@@ -69,6 +69,7 @@ public class ReportRunner {
 	protected boolean removeEmptyRows = true;
 	protected boolean htmlPagination;
 	protected boolean singleSheet;
+	protected boolean autoFilter;
 	
 	protected Boolean displayFormulas = null;
 	protected Boolean displayGridlines = null;
@@ -502,6 +503,9 @@ public class ReportRunner {
 		}
 		if( htmlPagination ) {
 			renderOptions.setOption( HTMLRenderOption.HTML_PAGINATION, Boolean.TRUE );
+		}
+		if( autoFilter ) {
+			renderOptions.setOption( ExcelEmitter.AUTO_FILTER, Boolean.TRUE );
 		}
 		if( singleSheet ) {
 			renderOptions.setOption( "ExcelEmitter.SingleSheet", true );

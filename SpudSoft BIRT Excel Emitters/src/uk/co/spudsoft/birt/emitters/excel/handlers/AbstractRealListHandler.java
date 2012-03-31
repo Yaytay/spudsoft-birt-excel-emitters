@@ -103,16 +103,16 @@ public class AbstractRealListHandler extends AbstractHandler implements NestedTa
 			createName(state, prepareName( list.getBookmark() ), startRow, 0, state.rowNum - 1, 0);
 		}
 		
-		if( EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
+		if( EmitterServices.booleanOption( state.getRenderOptions(), list, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
 			state.currentSheet.setDisplayFormulas(true);
 		}
-		if( ! EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), list, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
 			state.currentSheet.setDisplayGridlines(false);
 		}
-		if( ! EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), list, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
 			state.currentSheet.setDisplayRowColHeadings(false);
 		}
-		if( ! EmitterServices.booleanOption( null, list, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), list, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
 			state.currentSheet.setDisplayZeros(false);
 		}
 	}

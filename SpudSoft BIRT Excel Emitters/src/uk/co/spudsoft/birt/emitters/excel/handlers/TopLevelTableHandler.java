@@ -2,6 +2,7 @@ package uk.co.spudsoft.birt.emitters.excel.handlers;
 
 import java.util.Stack;
 
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.engine.content.IRowContent;
 import org.eclipse.birt.report.engine.content.ITableContent;
@@ -33,6 +34,14 @@ public class TopLevelTableHandler extends AbstractRealTableHandler {
 	@Override
 	public void endTable(HandlerState state, ITableContent table) throws BirtException {
 		super.endTable(state, table);
+		
+		boolean autoFilter = EmitterServices.booleanOption( state.getRenderOptions(), table, ExcelEmitter.AUTO_FILTER, false );
+		if( autoFilter ) {
+			log.debug( "Applying auto filter to [", this.startRow, ",", this.startCol, "] - [", this.endDetailsRow, ",", state.colNum - 1, "]" );
+			CellRangeAddress wholeTable = new CellRangeAddress(startRow, endDetailsRow, startCol, state.colNum - 1);
+			state.currentSheet.setAutoFilter(wholeTable);
+		}
+		
 		state.setHandler(parent);
 	}
 

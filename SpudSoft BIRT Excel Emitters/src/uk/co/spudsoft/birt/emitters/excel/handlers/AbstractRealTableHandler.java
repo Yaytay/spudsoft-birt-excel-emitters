@@ -127,7 +127,7 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 		log.debug( "Details rows from ", startDetailsRow, " to ", endDetailsRow );
 		
 		if( ( startDetailsRow > 0 ) && ( endDetailsRow > startDetailsRow ) ) {
-			boolean forceAutoColWidths = EmitterServices.booleanOption( null, table, ExcelEmitter.FORCEAUTOCOLWIDTHS_PROP, false );
+			boolean forceAutoColWidths = EmitterServices.booleanOption( state.getRenderOptions(), table, ExcelEmitter.FORCEAUTOCOLWIDTHS_PROP, false );
 			for( int col = 0; col < table.getColumnCount(); ++col ) {
 				int oldWidth = state.currentSheet.getColumnWidth(col);
 				if( forceAutoColWidths || ( oldWidth == 256 * state.currentSheet.getDefaultColumnWidth() ) ) {
@@ -152,16 +152,16 @@ public class AbstractRealTableHandler extends AbstractHandler implements ITableH
 			createName(state, prepareName( table.getBookmark() ), startRow, 0, state.rowNum - 1, table.getColumnCount() - 1);
 		}
 		
-		if( EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
+		if( EmitterServices.booleanOption( state.getRenderOptions(), table, ExcelEmitter.DISPLAYFORMULAS_PROP, false ) ) {
 			state.currentSheet.setDisplayFormulas(true);
 		}
-		if( ! EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), table, ExcelEmitter.DISPLAYGRIDLINES_PROP, true ) ) {
 			state.currentSheet.setDisplayGridlines(false);
 		}
-		if( ! EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), table, ExcelEmitter.DISPLAYROWCOLHEADINGS_PROP, true ) ) {
 			state.currentSheet.setDisplayRowColHeadings(false);
 		}
-		if( ! EmitterServices.booleanOption( null, table, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
+		if( ! EmitterServices.booleanOption( state.getRenderOptions(), table, ExcelEmitter.DISPLAYZEROS_PROP, true ) ) {
 			state.currentSheet.setDisplayZeros(false);
 		}
 	}

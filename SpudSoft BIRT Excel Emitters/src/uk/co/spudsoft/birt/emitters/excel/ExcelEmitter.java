@@ -44,6 +44,7 @@ public abstract class ExcelEmitter implements IContentEmitter {
 	public static final String DISABLE_GROUPING = "ExcelEmitter.DisableGrouping";
 	public static final String STRUCTURED_HEADER = "ExcelEmitter.StructuredHeader";
 	public static final String CUSTOM_NUMBER_FORMAT = "ExcelEmitter.CustomNumberFormat";
+	public static final String AUTO_FILTER = "ExcelEmitter.AutoFilter";
 
 	public static final String DISPLAYFORMULAS_PROP = "ExcelEmitter.DisplayFormulas";
 	public static final String DISPLAYGRIDLINES_PROP = "ExcelEmitter.DisplayGridlines";
